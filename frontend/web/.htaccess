@@ -6,5 +6,6 @@ RewriteCond %{REQUEST_FILENAME} !-d
 # Otherwise forward it to index.php
 RewriteRule . index.php
 #RewriteRule ^(.*)$ sso/$1 [L]
+#RewriteRule ^$ /ipms/user/login [L,R=301]
 
 
