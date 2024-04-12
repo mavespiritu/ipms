@@ -24,6 +24,13 @@ return [
             'class' => 'yii\console\controllers\MigrateController',
             'migrationPath' => '@file/migrations'
         ],
+        'migrate' => [
+            'class' => 'yii\console\controllers\MigrateController',
+            'migrationNamespaces' => [
+              # Other migration namespaces
+                'bedezign\yii2\audit\migrations',
+            ],
+        ],
     ],
     'components' => [
         'log' => [

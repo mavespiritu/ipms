@@ -8,6 +8,11 @@ body {
     height: 100%;
     font-family: "Source Sans 3" , sans-serif;
 }
+
+.box-body {
+  min-height: calc(100vh - 235px);
+}
+
 table.bordered-table{
   width: 100%;
 }
@@ -34,13 +39,13 @@ hr{
 li.user-header,
 a.logo,
 nav{
-  background-color: #1E3A8A !important;
+  background-color: #00766A !important;
   text-align: left !important;
 }
 
 a.btn-primary,
 button.btn-primary{
-  background-color: #1E3A8A !important;
+  background-color: #00766A !important;
 }
 
 a.btn-success,
@@ -411,6 +416,13 @@ a.desc:after {
   justify-content: flex-end;
 }
 
+.flex-col{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+}
+
 .summary-value{
   font-size: 26px;
 }
@@ -439,4 +451,23 @@ a.desc:after {
 {
   background-color: #f1f1f1;
   border-radius: 6px;
+}
+
+/* table.table > thead > tr{
+  background-color: #F4F4F5; 
+  color: black; 
+  font-weight: bolder; 
+} */
+
+table.table > thead > tr > td,
+table.table > thead > tr > th
+{
+  text-align: center;
+}
+
+label.control-label{
+  font-weight: bolder;
+}
+hr{
+  opacity: 0.10;
 }

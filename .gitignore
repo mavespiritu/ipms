@@ -23,6 +23,7 @@ Thumbs.db
 /frontend/web/store 
 /frontend/web/temp
 /frontend/web/uploads
+/frontend/web/upload_files
 
 # composer itself is not needed
 composer.phar

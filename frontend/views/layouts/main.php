@@ -49,12 +49,13 @@ if (class_exists('backend\assets\AppAsset')) {
         <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
         <script src="https://cdn.amcharts.com/lib/5/geodata/data/countries2.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
         <?= Html::csrfMetaTags() ?>
         <title><?= Html::encode($this->title) ?></title>
         <?php $this->head() ?>
     </head>
-    <body class="<?= !Yii::$app->user->isGuest ? 'hold-transition skin-blue' : 'hold-transition layout-top-nav skin-blue' ?>">
+    <body class="<?= !Yii::$app->user->isGuest ? 'hold-transition skin-green-light' : 'hold-transition layout-top-nav skin-green-light' ?>">
     <?php $this->beginBody() ?>
     <div class="wrapper">
 

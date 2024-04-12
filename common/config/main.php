@@ -12,8 +12,14 @@ return [
         ],
     ],
     'modules' => [
-        'rpmes' => [
-            'class' => 'common\modules\rpmes\Rpmes',
+        'dashboard' => [
+            'class' => 'common\modules\dashboard\Dashboard',
+        ],
+        'npis' => [
+            'class' => 'common\modules\npis\Npis',
+        ],
+        'dtr' => [
+            'class' => 'common\modules\dtr\Dtr',
         ],
         'file' => [
             'class' => 'file\FileModule',
@@ -22,26 +28,29 @@ return [
             'storePath' => '@frontend/web/store',
             'rules' => [
                 'maxFiles' => 10,
-                'maxSize' => 1024 * 1024 * 5, // 2 MB
+                'maxSize' => 1024 * 1024 * 10, // 2 MB
                 'mimeTypes' => [
                     'application/pdf',
                     'image/jpeg',
+                    'image/jpg',
                     'image/png',
+                    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    'application/vnd.ms-excel',
                 ],
             ],
         ],
         'user' => [
             'class' => 'markavespiritu\user\Module',
             'admins' => ['markavespiritu'],
-            'enableRegistration' => true,
-            'enableConfirmation' => true,
-            'enablePasswordRecovery' => true,
+            'enableRegistration' => false,
+            'enableConfirmation' => false,
+            'enablePasswordRecovery' => false,
             'mailer' => [
                     'sender'                => 'nro1.mailer@neda.gov.ph',
-                    'welcomeSubject'        => 'Welcome to the NEDA RO1 eRPMES',
-                    'confirmationSubject'   => 'Confirm your NEDA RO1 eRPMES account',
-                    'reconfirmationSubject' => 'Reconfirm your NEDA RO1 eRPMES account',
-                    'recoverySubject'       => 'Recover your NEDA RO1 eRPMES account',
+                    'welcomeSubject'        => 'Welcome to the IPMS',
+                    'confirmationSubject'   => 'Confirm your IPMS account',
+                    'reconfirmationSubject' => 'Reconfirm your IPMS account',
+                    'recoverySubject'       => 'Recover your IPMS account',
             ],
             'controllerMap' => [
                 'admin' => [
@@ -69,9 +78,12 @@ return [
         'rbac' => [
             'class' => 'markavespiritu\rbac\RbacWebModule',
         ],
-        /* 'audit' => [
+        'sso' => [
+            'class' => 'common\modules\sso\Sso',
+        ],
+        'audit' => [
             'class' => 'bedezign\yii2\audit\Audit',
             'accessRoles' => ['SuperAdministrator'],
-        ], */
+        ],
     ]
 ];

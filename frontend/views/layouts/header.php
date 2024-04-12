@@ -7,11 +7,11 @@ use yii\helpers\Html;
 
 <header class="main-header">
     <?php if(!Yii::$app->user->isGuest){ ?>
-        <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button" style="background-color: #1E3A8A;">
+        <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button" style="background-color: #00766A; color: white;">
             <span class="sr-only">Toggle navigation</span>
         </a>
     <?php } ?>
-    <?= !Yii::$app->user->isGuest ? Html::a('<span class="logo-mini">eRPMES</span><span class="logo-lg">' . Yii::$app->name . '</span>', Yii::$app->homeUrl, ['class' => 'logo']) : '' ?>
+    <?= !Yii::$app->user->isGuest ? Html::a('<span class="logo-mini">IPMSv2</span><span class="logo-lg">' . Yii::$app->name . '</span>', Yii::$app->homeUrl, ['class' => 'logo']) : '' ?>
 
     <nav class="navbar navbar-static-top" role="navigation">
         <?php if(Yii::$app->user->isGuest){ ?>
@@ -24,18 +24,17 @@ use yii\helpers\Html;
             <?php if(!Yii::$app->user->isGuest){ ?>
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="user-image" alt="User Image"/>
+                        <img src="/ipms/site/profile-picture" class="user-image" alt="User Image"/>
                         <span class="hidden-xs"><?= Yii::$app->user->identity->userinfo->fullName ?> &nbsp;<i class="fa fa-angle-down"></i></span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header">
-                            <img src="<?= $directoryAsset ?>/img/user2-160x160.jpg" class="img-circle"
+                            <img src="/ipms/site/profile-picture" class="img-circle"
                                  alt="User Image"/>
 
                             <p style="font-size: 12px;">
-                                <?= Yii::$app->user->identity->userinfo->fullName ?><br>
-                                <?= Yii::$app->user->identity->userinfo->agency->title ?>
+                                <?= Yii::$app->user->identity->userinfo->fullName ?>
                             </p>
                         </li>   
                         <!-- Menu Footer-->
@@ -53,10 +52,6 @@ use yii\helpers\Html;
                         </li>
                     </ul>
                 </li>
-            <?php }else{ ?>
-                <li class="text-white"><?= Html::a('DASHBOARD', ['/site/index']) ?></li>
-                <li class="text-white"><?= Html::a('LOGIN', ['/user/login']) ?></li>
-                <li class="text-white"><?= Html::a('SIGNUP', ['/user/register']) ?></li>
             <?php } ?>
             </ul>
         </div>
