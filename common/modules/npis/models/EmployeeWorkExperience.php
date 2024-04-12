@@ -199,7 +199,7 @@ class EmployeeWorkExperience extends \yii\db\ActiveRecord
 
                         $path .= '<td style="width: 80% !important; word-wrap: break-word; vertical-align: top;">'.Html::a($file->name.'.'.$file->type, ['/file/file/download', 'id' => $file->id], ['download' => true, 'data-pjax' => 0]).'</td>';
 
-                        $path.= Yii::$app->user->can('HR') && ($this->emp_id != Yii::$app->user->identity->userinfo->EMP_N) ? '<td style="vertical-align: top;" align=right>'.(Yii::$app->user->can('pds-update-work-experience') ? Html::a('<i class="fa fa-trash"></i>', '#', [
+                        $path.= Yii::$app->user->can('HR') && ($this->emp_id != Yii::$app->user->identity->userinfo->EMP_N) ? '<td style="vertical-align: top;" align=right>'.(Yii::$app->user->can('pds-work-experience-update') ? Html::a('<i class="fa fa-trash"></i>', '#', [
                             'onClick' => 'deleteWorkExperienceFile('.$file->id.');',
                         ]) : '').'</td>' : '';
 
@@ -242,7 +242,7 @@ class EmployeeWorkExperience extends \yii\db\ActiveRecord
 
                         $path .= '<td style="width: 80% !important; word-wrap: break-word; vertical-align: top;">'.Html::a($file->name.'.'.$file->type, ['/file/file/download', 'id' => $file->id], ['download' => true, 'data-pjax' => 0]).'</td>';
 
-                        $path.= Yii::$app->user->can('HR') && ($this->emp_id != Yii::$app->user->identity->userinfo->EMP_N) ? '<td style="vertical-align: top;" align=right>'.(Yii::$app->user->can('pds-update-work-experience') ? Html::a('<i class="fa fa-trash"></i>', '#', [
+                        $path.= Yii::$app->user->can('HR') && ($this->emp_id != Yii::$app->user->identity->userinfo->EMP_N) ? '<td style="vertical-align: top;" align=right>'.(Yii::$app->user->can('pds-work-experience-update') ? Html::a('<i class="fa fa-trash"></i>', '#', [
                             'onClick' => 'deleteWorkExperienceFile('.$file->id.');',
                         ]) : '').'</td>' : '';
 
@@ -285,7 +285,7 @@ class EmployeeWorkExperience extends \yii\db\ActiveRecord
 
                         $path .= '<td style="width: 80% !important; word-wrap: break-word; vertical-align: top;">'.Html::a($file->name.'.'.$file->type, ['/file/file/download', 'id' => $file->id], ['download' => true, 'data-pjax' => 0]).'</td>';
 
-                        $path.= Yii::$app->user->can('HR') && ($this->emp_id != Yii::$app->user->identity->userinfo->EMP_N) ? '<td style="vertical-align: top;" align=right>'.(Yii::$app->user->can('pds-update-work-experience') ? Html::a('<i class="fa fa-trash"></i>', '#', [
+                        $path.= Yii::$app->user->can('HR') && ($this->emp_id != Yii::$app->user->identity->userinfo->EMP_N) ? '<td style="vertical-align: top;" align=right>'.(Yii::$app->user->can('pds-work-experience-update') ? Html::a('<i class="fa fa-trash"></i>', '#', [
                             'onClick' => 'deleteWorkExperienceFile('.$file->id.');',
                         ]) : '').'</td>' : '';
 
@@ -328,7 +328,7 @@ class EmployeeWorkExperience extends \yii\db\ActiveRecord
 
                         $path .= '<td style="width: 80% !important; word-wrap: break-word; vertical-align: top;">'.Html::a($file->name.'.'.$file->type, ['/file/file/download', 'id' => $file->id], ['download' => true, 'data-pjax' => 0]).'</td>';
 
-                        $path.= Yii::$app->user->can('HR') && ($this->emp_id != Yii::$app->user->identity->userinfo->EMP_N) ? '<td style="vertical-align: top;" align=right>'.(Yii::$app->user->can('pds-update-work-experience') ? Html::a('<i class="fa fa-trash"></i>', '#', [
+                        $path.= Yii::$app->user->can('HR') && ($this->emp_id != Yii::$app->user->identity->userinfo->EMP_N) ? '<td style="vertical-align: top;" align=right>'.(Yii::$app->user->can('pds-work-experience-update') ? Html::a('<i class="fa fa-trash"></i>', '#', [
                             'onClick' => 'deleteWorkExperienceFile('.$file->id.');',
                         ]) : '').'</td>' : '';
 
@@ -371,7 +371,7 @@ class EmployeeWorkExperience extends \yii\db\ActiveRecord
 
                         $path .= '<td style="width: 80% !important; word-wrap: break-word; vertical-align: top;">'.Html::a($file->name.'.'.$file->type, ['/file/file/download', 'id' => $file->id], ['download' => true, 'data-pjax' => 0]).'</td>';
 
-                        $path.= Yii::$app->user->can('HR') && ($this->emp_id != Yii::$app->user->identity->userinfo->EMP_N) ? '<td style="vertical-align: top;" align=right>'.(Yii::$app->user->can('pds-update-work-experience') ? Html::a('<i class="fa fa-trash"></i>', '#', [
+                        $path.= Yii::$app->user->can('HR') && ($this->emp_id != Yii::$app->user->identity->userinfo->EMP_N) ? '<td style="vertical-align: top;" align=right>'.(Yii::$app->user->can('pds-work-experience-update') ? Html::a('<i class="fa fa-trash"></i>', '#', [
                             'onClick' => 'deleteWorkExperienceFile('.$file->id.');',
                         ]) : '').'</td>' : '';
 
