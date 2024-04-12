@@ -53,7 +53,7 @@ class ConnectController extends \yii\web\Controller
                 // Create a new user if not exists
                 $user = new User([
                     'email' => $ssoUser['email'],
-                    'email_verified_at' => strtotime($ssoUser['email_verified_at']),
+                    'username' => $ssoUser['email'],
                     'password' => Yii::$app->getSecurity()->generatePasswordHash(Yii::$app->security->generateRandomString(8)),
                     'confirmed_at' => strtotime(date("Y-m-d H:i:s")),
                     'registration_ip' => Yii::$app->request->getUserIP(),
@@ -65,16 +65,18 @@ class ConnectController extends \yii\web\Controller
                 $division = Office::findOne(['abbreviation' => $ssoUser['division']]);
 
                 if($user->save()){
-                    $userinfo = new UserInfo([
+                    $userinfo = UserInfo::findOne(['user_id' => $user->id]) ? 
+                    UserInfo::findOne(['user_id' => $user->id]) : 
+                    new UserInfo([
                         'user_id' => $user->id,
-                        'EMP_N' => $ssoUser['emp_id'],
+                        'EMP_N' => $ssoUser['ipms_id'],
                         'LAST_M' => $ssoUser['last_name'],
                         'FIRST_M' => $ssoUser['first_name'],
                         'MIDDLE_M' => $ssoUser['middle_name'],
                         'OFFICE_C' => $division->id
                     ]);
 
-                    $userinfo->save();
+                    $userinfo->save(false);
                 }
             }
 
