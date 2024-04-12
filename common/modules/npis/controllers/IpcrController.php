@@ -134,6 +134,7 @@ class IpcrController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $model->approval = 1;
             $model->verified_by = Yii::$app->user->identity->userinfo->EMP_N;
+            $model->date_verified = date("Y-m-d H:i:s");
             if($model->save(false))
             {
                 \Yii::$app->getSession()->setFlash('success', 'Record Saved');
@@ -161,6 +162,7 @@ class IpcrController extends Controller
         if ($model->load(Yii::$app->request->post())) {
             $model->approval = 1;
             $model->verified_by = Yii::$app->user->identity->userinfo->EMP_N;
+            $model->date_verified = date("Y-m-d H:i:s");
             if($model->save(false))
             {
                 \Yii::$app->getSession()->setFlash('success', 'Record Updated');
