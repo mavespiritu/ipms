@@ -44,7 +44,7 @@ class LogoutController extends \yii\web\Controller
 
         Yii::$app->user->logout();
 
-        return $this->redirect(['/']);
+        return $this->redirect(['/user/login']);
     }
 
 }

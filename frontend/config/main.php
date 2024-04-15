@@ -14,7 +14,7 @@ return [
     'id' => 'app-frontend',
     'basePath' => dirname(__DIR__),
     'bootstrap' => ['log'],
-    'defaultRoute' => '/rpmes/dashboard/',
+    'defaultRoute' => '/ipms/npis/pds/view',
     'controllerNamespace' => 'frontend\controllers',
     'timeZone' => 'Asia/Manila',
     'components' => [

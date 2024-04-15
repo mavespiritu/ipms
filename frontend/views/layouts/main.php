@@ -31,23 +31,7 @@ if (class_exists('backend\assets\AppAsset')) {
             integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4="
             crossorigin="anonymous"></script>
         <script type="text/javascript" src="<?= $asset->baseUrl.'/js/freeze-table/dist/js/freeze-table.js' ?>"></script>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
-        <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js" type="text/javascript"></script>
-        <script src="https://www.amcharts.com/lib/3/ammap.js"></script>
-        <script src="https://www.amcharts.com/lib/3/maps/js/philippinesLow.js"></script>
-        <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
-        <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
-        <script src="https://www.amcharts.com/lib/3/themes/light.js"></script>
-        <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
-        <script src="https://www.amcharts.com/lib/3/xy.js"></script>
-        <script src="https://cdn.amcharts.com/lib/5/xy.js"></script>
-        <script src="https://cdn.amcharts.com/lib/5/percent.js"></script>
-        <script src="https://www.amcharts.com/lib/3/ammap.js"></script>
-        <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
-        <script src="https://cdn.amcharts.com/lib/5/map.js"></script>
-        <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
-        <script src="https://cdn.amcharts.com/lib/5/geodata/data/countries2.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/pace-js@latest/pace.min.js"></script>
         <script src="https://cdn.jsdelivr.net/momentjs/latest/moment.min.js"></script>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pace-js@latest/pace-theme-default.min.css">
