@@ -90,66 +90,6 @@ class SiteController extends \yii\web\Controller
         ];
     }
 
-    public function actionLogout()
-    {
-        Yii::$app->user->logout();
-
-        return $this->goHome();
-    }
-
-    /**
-     * Displays homepage.
-     *
-     * @return mixed
-     */
-    public function actionIndex()
-    {
-        $model = new Submission();
-
-        $model->year = date("Y");
-        $quarters = ['Q1' => '1st Quarter', 'Q2' => '2nd Quarter', 'Q3' => '3rd Quarter', 'Q4' => '4th Quarter'];
-
-        //$status = ['C' => 'Completed', 'O' => 'On-going', 'N' => 'Not Yet Started'];
-
-        $years = Project::find()->select(['distinct(year) as year'])->asArray()->all();
-        $years = [date("Y") => date("Y")] + ArrayHelper::map($years, 'year', 'year');
-        array_unique($years);
-
-        $agencies = Agency::find()->select(['id', 'code as title']);
-        $agencies = Yii::$app->user->can('AgencyUser') ? $agencies->andWhere(['id' => Yii::$app->user->identity->userinfo->AGENCY_C]) : $agencies;
-        $agencies = $agencies->orderBy(['code' => SORT_ASC])->asArray()->all();
-        $agencies = ArrayHelper::map($agencies, 'id', 'title');
-
-        $categories = Category::find()->all();
-        $categories = ArrayHelper::map($categories, 'id', 'title');
-
-        $sectors = Sector::find()->all();
-        $sectors = ArrayHelper::map($sectors, 'id', 'title');
-
-        $subSectors = [];
-
-        $fundSources = FundSource::find()->select(['id', 'concat(title," (",code,")") as title'])->asArray()->all();
-        $fundSources = ArrayHelper::map($fundSources, 'id', 'title');
-
-        $provinces = Province::find()->where(['region_c' => 01])->orderBy(['province_m' => SORT_ASC])->all();
-        $provinces = ArrayHelper::map($provinces, 'province_c', 'province_m');
-
-        $fundSources = FundSource::find()->select(['id', 'concat(title," (",code,")") as title'])->orderBy(['title' => SORT_ASC])->asArray()->all();
-        $fundSources = ArrayHelper::map($fundSources, 'id', 'title');
-
-        return $this->render('index', [
-            'model' => $model,
-            'years' => $years,
-            'quarters' => $quarters,
-            'agencies' => $agencies,
-            'sectors' => $sectors,
-            'subSectors' => $subSectors,
-            'categories' => $categories,
-            'provinces' => $provinces,
-            'fundSources' => $fundSources,
-        ]);
-    }
-
     public function actionProfilePicture()
     {
         $imageUrl = 'http://58.69.112.182/npis/pages/get_picture.php?ID=' . Yii::$app->user->identity->userinfo->EMP_N;

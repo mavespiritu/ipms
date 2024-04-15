@@ -24,13 +24,13 @@ use yii\helpers\Html;
             <?php if(!Yii::$app->user->isGuest){ ?>
                 <li class="dropdown user user-menu">
                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <img src="/ipms/site/profile-picture" class="user-image" alt="User Image"/>
+                        <img src="/site/profile-picture" class="user-image" alt="User Image"/>
                         <span class="hidden-xs"><?= Yii::$app->user->identity->userinfo->fullName ?> &nbsp;<i class="fa fa-angle-down"></i></span>
                     </a>
                     <ul class="dropdown-menu">
                         <!-- User image -->
                         <li class="user-header">
-                            <img src="/ipms/site/profile-picture" class="img-circle"
+                            <img src="/site/profile-picture" class="img-circle"
                                  alt="User Image"/>
 
                             <p style="font-size: 12px;">
