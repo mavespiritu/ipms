@@ -16,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="box-header with-border"><h3 class="box-title">My PDS</h3></div>
             <div class="box-body">
                 <div class="user-block">
-                    <img src="/ipms/site/profile-picture" alt="User Image" style="height: 10%; width: 10%; border: 1px solid #6699CC; border-radius: 10px; margin-right: 10px;" />
+                    <img src="/site/profile-picture" alt="User Image" style="height: auto; width: 150px; border: 1px solid #6699CC; border-radius: 10px; margin-right: 10px;" />
                     <span class="username">
                         <span class="pull-right" style="vertical-align: top;">
                             <?= Html::a('Generate PDS', ['/npis/pds/excel', 'id' => Yii::$app->user->identity->userinfo->EMP_N],['class' => 'btn btn-info']) ?>
