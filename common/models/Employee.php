@@ -301,6 +301,9 @@ class Employee extends \yii\db\ActiveRecord
     public function behaviors()
     {
         return [
+            'fileBehavior' => [
+                'class' => \file\behaviors\FileBehavior::className()
+            ],
             'bedezign\yii2\audit\AuditTrailBehavior'
         ];
     }

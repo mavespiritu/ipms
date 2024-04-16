@@ -8626,10 +8626,7 @@
         "axelpal/yii2-attachments",
         "behat/gherkin",
         "bower-asset/bootstrap-datepicker",
-        "bower-asset/fullcalendar",
-        "bower-asset/fullcalendar-scheduler",
         "bower-asset/jquery-colorbox",
-        "bower-asset/jquery-ui",
         "c006/yii2-migration-utility",
         "cebe/yii2-gravatar",
         "ckeditor/ckeditor",
@@ -8660,7 +8657,6 @@
         "myclabs/deep-copy",
         "phar-io/manifest",
         "phar-io/version",
-        "philippfrenzel/yii2fullcalendar",
         "phpdocumentor/reflection-common",
         "phpdocumentor/reflection-docblock",
         "phpdocumentor/type-resolver",
@@ -8710,7 +8706,6 @@
         "webcreate/jquery-ias",
         "webmozart/assert",
         "yiisoft/yii2-faker",
-        "yiisoft/yii2-gii",
-        "yiisoft/yii2-jui"
+        "yiisoft/yii2-gii"
     ]
 }

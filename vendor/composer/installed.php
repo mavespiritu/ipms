@@ -1,11 +1,11 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => 'dev-master',
-        'version' => 'dev-master',
+        'pretty_version' => '5.x-dev',
+        'version' => '5.9999999.9999999.9999999-dev',
         'type' => 'project',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'c6a69c015aac51724a5c27fd4517d35793255c9c',
+        'reference' => '2d8826d2b36e8a54b3a7f33c34774b0cba642a55',
         'name' => 'yiisoft/yii2-app-advanced',
         'dev' => true,
     ),
@@ -154,7 +154,7 @@
             'install_path' => __DIR__ . '/../bower-asset/fullcalendar',
             'aliases' => array(),
             'reference' => '71f15cc03f43f37943b91afb5b74f5cbc892c486',
-            'dev_requirement' => true,
+            'dev_requirement' => false,
         ),
         'bower-asset/fullcalendar-scheduler' => array(
             'pretty_version' => 'v4.4.3',
@@ -163,7 +163,7 @@
             'install_path' => __DIR__ . '/../bower-asset/fullcalendar-scheduler',
             'aliases' => array(),
             'reference' => 'af79dec4871ed3b1cd5133c4b6021113e6795100',
-            'dev_requirement' => true,
+            'dev_requirement' => false,
         ),
         'bower-asset/inputmask' => array(
             'pretty_version' => '3.3.11',
@@ -199,7 +199,7 @@
             'install_path' => __DIR__ . '/../bower-asset/jquery-ui',
             'aliases' => array(),
             'reference' => '44ecf3794cc56b65954cc19737234a3119d036cc',
-            'dev_requirement' => true,
+            'dev_requirement' => false,
         ),
         'bower-asset/punycode' => array(
             'pretty_version' => 'v1.3.2',
@@ -700,7 +700,7 @@
             'install_path' => __DIR__ . '/../philippfrenzel/yii2fullcalendar',
             'aliases' => array(),
             'reference' => '53c8b2f524c5f5d85bd30f6ed7ba34b563479782',
-            'dev_requirement' => true,
+            'dev_requirement' => false,
         ),
         'phpdocumentor/reflection-common' => array(
             'pretty_version' => '2.2.0',
@@ -1282,12 +1282,12 @@
             'dev_requirement' => false,
         ),
         'yiisoft/yii2-app-advanced' => array(
-            'pretty_version' => 'dev-master',
-            'version' => 'dev-master',
+            'pretty_version' => '5.x-dev',
+            'version' => '5.9999999.9999999.9999999-dev',
             'type' => 'project',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'c6a69c015aac51724a5c27fd4517d35793255c9c',
+            'reference' => '2d8826d2b36e8a54b3a7f33c34774b0cba642a55',
             'dev_requirement' => false,
         ),
         'yiisoft/yii2-authclient' => array(
@@ -1360,7 +1360,7 @@
             'install_path' => __DIR__ . '/../yiisoft/yii2-jui',
             'aliases' => array(),
             'reference' => 'ce45c16d4fbbe7d1c516d8d0e8311e07f6138eed',
-            'dev_requirement' => true,
+            'dev_requirement' => false,
         ),
         'yiisoft/yii2-swiftmailer' => array(
             'pretty_version' => '2.1.2',

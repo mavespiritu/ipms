@@ -1,12 +1,14 @@
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+3:ital,wght@0,200..900;1,200..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Segoe UI&display=swap');
 *{
-  font-family: "Source Sans 3" , sans-serif;
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 400;
 }
 
 html,
 body {
     height: 100%;
-    font-family: "Source Sans 3" , sans-serif;
+    font-family: "Segoe UI", sans-serif;
+    font-weight: 400;
 }
 
 .box-body {
@@ -63,7 +65,8 @@ h3,
 h4,
 h5,
 h6{
-  font-family: "Source Sans 3" , sans-serif !important;
+  font-family: "Segoe UI", sans-serif !important;
+  font-weight: 500;
 }
 
 .box{
@@ -133,7 +136,7 @@ a.asc:after, a.desc:after {
     position: relative;
     top: 1px;
     display: inline-block;
-    font-family: "Source Sans 3" , sans-serif;
+    font-family: "Segoe UI", sans-serif;
     font-style: normal;
     font-weight: normal;
     line-height: 1;
@@ -433,7 +436,7 @@ a.desc:after {
 
 *::-webkit-scrollbar
 {
-  width: 12px;
+  width: 8px;
 }
 *::-webkit-scrollbar:horizontal
 {
@@ -470,4 +473,68 @@ label.control-label{
 }
 hr{
   opacity: 0.10;
+}
+.Segoe UI-thin {
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 100;
+  font-style: normal;
+}
+
+.Segoe UI-light {
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 300;
+  font-style: normal;
+}
+
+.Segoe UI-regular {
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.Segoe UI-bold {
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 700;
+  font-style: normal;
+}
+
+.Segoe UI-black {
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 900;
+  font-style: normal;
+}
+
+.Segoe UI-thin-italic {
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 100;
+  font-style: italic;
+}
+
+.Segoe UI-light-italic {
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 300;
+  font-style: italic;
+}
+
+.Segoe UI-regular-italic {
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 400;
+  font-style: italic;
+}
+
+.Segoe UI-bold-italic {
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 700;
+  font-style: italic;
+}
+
+.Segoe UI-black-italic {
+  font-family: "Segoe UI", sans-serif;
+  font-weight: 900;
+  font-style: italic;
+}
+.questrial-regular {
+  font-family: "Questrial", sans-serif;
+  font-weight: 400;
+  font-style: normal;
 }

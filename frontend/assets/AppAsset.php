@@ -21,7 +21,7 @@ class AppAsset extends AssetBundle
     public $js = [
         'js/freeze-table/dist/js/freeze-table.js',
         'jquery.growl/javascripts/jquery.growl.js',
-        'https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js'
+        'https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',
