@@ -20,7 +20,7 @@ $asset = AppAsset::register($this);
             <div class="box box-solid">
                 <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                     <h4><b>Good <?= date("A") == 'AM' ? 'morning' : 'afternoon' ?>, <?= ucwords(strtolower(Yii::$app->user->identity->userinfo->FIRST_M)) ?>!</b><br>
-                        <small>Today is <?= date("F j, Y") ?> <span id="realtime-clock"></span></small>
+                        <small>Today is <?= date("l, F j, Y") ?> <span id="realtime-clock"></span></small>
                     </h4>
                 </div>
             </div>
@@ -111,6 +111,8 @@ $asset = AppAsset::register($this);
                                         <td align=center><?= $hrsToGo.' ('.$hrsToGoInHours.')' ?></td>
                                     </tr>
                                 </table>
+                                <p>Today is <b><font color = red><?= $currentDate[0]['day'] ?></font></b>, it is expected that
+                                    at the end of the day you should have at least rendered <b><font color = red><?= $atLeast ?> hours</font></b>. <br><?= $recommendation ?></p>
                             </div>
                         </div>
                     </div>

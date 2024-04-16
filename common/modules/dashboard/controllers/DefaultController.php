@@ -79,9 +79,13 @@ class DefaultController extends Controller
 
         $connection = Yii::$app->ipms;
 
+        $currentDateSql = "select curdate() as date, dayname(curdate()) as day, date_format(concat(curdate(),' ', curtime()),'%p') as meridian";
+        $currentDate = $connection->createCommand($currentDateSql)
+            ->queryAll();
+
         $params = [
             ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
-            ':date' => date("Y-m-d"),
+            ':date' => $currentDate[0]['date'],
         ];
 
         $weeklyDtrSql = "
@@ -156,6 +160,131 @@ class DefaultController extends Controller
 
         $hrsToGoInHours = $hrsToGoQuery[0]['total'];
 
+        $dayIndex = 0;
+        $atLeast = 0;
+
+        if(date("l") == 'Monday')
+        {
+            $atLeast = 8;
+            $dayIndex = 0;
+        }
+        else if(date("l") == 'Tuesday')
+        {
+            $atLeast = 16;
+            $dayIndex = 1;
+        }
+        else if(date("l") == 'Wednesday')
+        {
+            $atLeast = 24;
+            $dayIndex = 2;
+        }
+        else if(date("l") == 'Thursday')
+        {
+            $atLeast = 32;
+            $dayIndex = 3;
+        }
+        else if(date("l") == 'Friday')
+        {
+            $atLeast = 40;
+            $dayIndex = 4;
+        }
+
+        $recommendation = '';
+
+        if(
+            ($currentDate[0]['day'] != 'Sunday') && 
+            ($currentDate[0]['day'] !='Saturday') && 
+            ($currentDate[0]['meridian'] == 'PM') &&
+            ($weeklyDtrs[$dayIndex]['pm_in']) &&
+            (!$weeklyDtrs[$dayIndex]['pm_out']) && 
+            ($weeklyDtrs[$dayIndex]['dtr_id'] != 'Reg 08-05') && 
+            ($weeklyDtrs[$dayIndex]['dtr_id'] != 'UT1 6:30-4:30') && 
+            ($weeklyDtrs[$dayIndex]['dtr_id'] != 'UT2 6:00-5:00') && 
+            ($weeklyDtrs[$dayIndex]['dtr_id'] != '08-05'))
+        {
+            $ppsNotYetAccounted = '00:00:00';
+            if((trim($weeklyDtrs[$dayIndex]['total_with_pass_slip']) == trim($weeklyDtrs[$dayIndex]['total_with_out_pass_slip'])) && ($weeklyDtrs[$dayIndex]['total_pass_slip']))
+            {
+                $ppsNotYetAccounted = $weeklyDtrs[$dayIndex]['total_pass_slip'];
+            }
+
+            $totalUntilCurrentDay = 0;
+            for($dd = 0; $dd <= $dayIndex; $dd++){
+                $totalUntilCurrentDay += $weeklyDtrs[$dd]['total_with_pass_slip_dbl'];
+            }
+
+            $neededHrsForTheDay = $atLeast - $totalUntilCurrentDay;
+
+            $pmTimeIn = '';
+            $pmTimeInTodaySql = "SELECT time(time_in) as time_in, time_to_sec(time(time_in)) as time_sec FROM tblactual_dtr WHERE date = CURDATE() AND emp_id= :emp_id AND time(time_in) = 'PM'";
+            $pmTimeInTodayQuery = $connection->createCommand($pmTimeInTodaySql)
+                ->bindValue(':emp_id', Yii::$app->user->identity->userinfo->EMP_N)
+                ->queryAll();
+            $pmTimeInToday = $pmTimeInTodayQuery[0];
+
+            $pmTimeIn = $pmTimeInToday['time_sec'] < 46800 ? '13:00:00' : $pmTimeInToday['time_in']; 
+
+            $recommendedTimeOutSql = "select 
+                DATE_FORMAT(
+                    concat(
+                        curdate(),
+                        ' ',
+                        addtime(
+                            '00:00:01',
+                            addtime(
+                                '".$ppsNotYetAccounted."',
+                                addtime(
+                                    '".$pmTimeIn."',
+                                    (SEC_TO_TIME('".((($neededHrsForTheDay * 60)*60)+0)."'))
+                                )
+                            )
+                        )
+                    ),
+                '%r') as first, 
+                time_to_sec(
+                    addtime(
+                        '00:00:01',
+                        addtime(
+                            '".$ppsNotYetAccounted."',
+                            addtime(
+                                '".$pmTimeIn."',
+                                (SEC_TO_TIME('".((($neededHrsForTheDay * 60)*60)+0)."'))
+                            )
+                        )
+                    )
+                ) as second";
+            $recommendedTimeOutQuery = $connection->createCommand($recommendedTimeOutSql)
+                ->queryAll();
+
+            $recommendedTimeOut = $recommendedTimeOutQuery[0];
+
+            if(isset($recommendedTimeOut) && $recommendedTimeOut['second'] > 68400){
+
+                $recommendation = "With your accumulated rendered time you'll not be able to achieve this.<br>
+                                    To make your total rendered time as close as possible to the expected time you should <br>
+                                    time out at not earlier than <b><font color = red>7:00:00 PM</font></b> today.";
+
+            }elseif(isset($recommendedTimeOut) && $recommendedTimeOut['second'] < 57600){
+
+               $recommendation = "To achieve this you should
+                      time out at not earlier than <b><font color = red>".$recommendedTimeOut[0]['first']."</font></b> today.
+                       <div class=separator>
+                      </div>
+                      <div class=separator>
+                      </div>
+                      <B>NOTE</B>: <br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                      The suggested time out is earlier than <b><font color = red>4:00:00 PM</font></b>
+                      please be reminded that if you are to follow it, you will incur an undertime. <br>As per policy, staffs
+                      should stay in the office during the core working hours (9:30:00 AM to 4:00:00 PM).
+                      ";
+
+            }
+            else
+            {
+             $recommendation = "To achieve this you shouldtime out at not earlier than <b><font color = red>".$recommendedTimeOut[0]['first']."</font></b> today.";
+            }
+        }
+
         return $this->render('index', [
             'am' => $am,
             'pm' => $pm,
@@ -168,6 +297,9 @@ class DefaultController extends Controller
             'totalInHrs' => $totalInHrs,
             'hrsToGo' => $hrsToGo,
             'hrsToGoInHours' => $hrsToGoInHours,
+            'atLeast' => $atLeast,
+            'recommendation' => $recommendation,
+            'currentDate' => $currentDate,
         ]);
     }
 }
