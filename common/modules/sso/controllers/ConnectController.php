@@ -83,7 +83,7 @@ class ConnectController extends \yii\web\Controller
             // Log in the user
             Yii::$app->user->login($user);
 
-            return $this->redirect(['/npis/pds/view']);
+            return $this->redirect(['/dashboard']);
         } else {
             // Handle error
             Yii::error('Error in user request: ' . $response->content, __METHOD__);
