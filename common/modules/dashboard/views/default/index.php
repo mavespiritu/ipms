@@ -25,11 +25,51 @@ $asset = AppAsset::register($this);
                 </div>
             </div>
             <div class="row">
+                <div class="col-md-3 col-xs-12">
+                    <div class="box box-solid">
+                        <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
+                            <p style="font-size: 0.9em;"><b>Total VL</b>
+                                <h1><?= $totalRunningVL > 0 ? number_format($totalRunningVL, 3) : 0 ?>
+                                    <small style="font-size: 12px;">days remaining</small>
+                                </h1>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-xs-12">
+                    <div class="box box-solid">
+                        <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
+                            <p style="font-size: 0.9em;"><b>Total SL</b></p>
+                            <h1>-</h1>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-xs-12">
+                    <div class="box box-solid">
+                        <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
+                            <p style="font-size: 0.9em;"><b>Total SPL</b>
+                                <h1><?= $totalRunningWL > 0 ? number_format($totalRunningWL, 3) : 0 ?>
+                                    <small style="font-size: 12px;">days remaining</small>
+                                </h1>
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-xs-12">
+                    <div class="box box-solid">
+                        <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
+                            <p style="font-size: 0.9em;"><b>Leave Credits Monetary Amount</b></p>
+                            <h1>-</h1>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
                 <div class="col-md-4 col-xs-12">
                     <div class="box box-solid">
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                             <p style="font-size: 1.1em;"><b>Birthday Celebrants</b></p>
-                            <div style="min-height: calc(100vh - 600px); max-height: 34vh; overflow-y: auto; padding-right: 20px;">
+                            <div style="min-height: calc(100vh - 500px); max-height: 34vh; overflow-y: auto; padding-right: 20px;">
                             <?php if($celebrants){ ?>
                                 <ul class="products-list product-list-in-box">
                                 <?php foreach($celebrants as $celebrant){ ?>
@@ -62,7 +102,7 @@ $asset = AppAsset::register($this);
                     <div class="box box-solid">
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                             <p style="font-size: 1.1em;"><b>Who's out</b></p>
-                            <div style="min-height: calc(100vh - 600px); max-height: 34vh; overflow-y: auto; padding-right: 20px;">
+                            <div style="min-height: calc(100vh - 500px); max-height: 34vh; overflow-y: auto; padding-right: 20px;">
                                 <p class="text-center">Coming soon.</p>
                             </div>
                         </div>
@@ -76,7 +116,7 @@ $asset = AppAsset::register($this);
                                     <?= Html::a('View More', ['#'], ['class' => 'btn btn-xs bg-navy text-bold']) ?>
                                 </span>
                             </p>
-                            <div style="min-height: calc(100vh - 600px); max-height: 34vh; overflow-y: auto; font-size: 11px;">
+                            <div style="min-height: calc(100vh - 500px); max-height: 34vh; overflow-y: auto; font-size: 11px;">
                                 <table id="dtr-table" class="table table-responsive table-bordered table-condensed">
                                     <thead>
                                         <tr>
@@ -122,18 +162,6 @@ $asset = AppAsset::register($this);
                     </div>
                 </div>
             </div>
-            <div class="row">
-                <div class="col-md-12 col-xs-12">
-                    <div class="box box-solid">
-                        <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
-                            <p style="font-size: 1.1em;"><b>Who's out</b></p>
-                            <div style="min-height: calc(100vh - 770px); max-height: 10vh; overflow-y: auto; padding-right: 20px;">
-                                <p class="text-center">Coming soon.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
         <div class="col-md-3 col-xs-12">
             <div class="box box-solid">
@@ -141,7 +169,7 @@ $asset = AppAsset::register($this);
                     <div class="calendar" id="calendar"></div>
                     <br>
                     <p style="font-size: 1.1em;"><b>Upcoming Holidays</b></p>
-                    <div style="min-height: calc(100vh - 550px); max-height: 40vh; overflow-y: auto; padding-right: 20px;">
+                    <div style="min-height: calc(100vh - 533px); max-height: 40vh; overflow-y: auto; padding-right: 20px;">
                     <?php if($holidays){ ?>
                         <ul class="products-list product-list-in-box">
                         <?php foreach($holidays as $holiday){ ?>
