@@ -87,7 +87,7 @@ $asset = AppAsset::register($this);
                                     <?php if(!empty($weeklyDtrs)){ ?>
                                         <?php foreach($weeklyDtrs as $dtr){ ?>
                                             <tr>
-                                                <td><?= date("F j", strtotime($dtr['date'])) ?></td>
+                                                <td><b><?= date("F j", strtotime($dtr['date'])) ?></b></td>
                                                 <td align=center><?= $dtr['am_in'] ?></td>
                                                 <td align=center><?= $dtr['am_out'] ?></td>
                                                 <td align=center><?= $dtr['pm_in'] ?></td>
