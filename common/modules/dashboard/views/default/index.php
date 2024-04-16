@@ -71,7 +71,11 @@ $asset = AppAsset::register($this);
                 <div class="col-md-4 col-xs-12">
                     <div class="box box-solid">
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
-                            <p style="font-size: 1.1em;"><b>My Weekly DTR</b></p>
+                            <p style="font-size: 1.1em;"><b>My Weekly DTR</b> 
+                                <span class="pull-right">
+                                    <?= Html::a('View More', ['#'], ['class' => 'btn btn-xs bg-navy text-bold']) ?>
+                                </span>
+                            </p>
                             <div style="min-height: calc(100vh - 600px); max-height: 34vh; overflow-y: auto; font-size: 11px;">
                                 <table id="dtr-table" class="table table-responsive table-bordered table-condensed">
                                     <thead>
