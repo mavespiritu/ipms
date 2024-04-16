@@ -130,7 +130,7 @@ class DefaultController extends Controller
 
         $hrsToRenderInHrs = $hrsToRenderInHrsQuery[0]['total'];
 
-        $hrsToGo = 0;
+        $hrsToGo = $hrsToRender[0]['total_hours'];
         $totalInHrs = "00:00:00";
         $hrsToGoInHrs = "00:00:00";
 
