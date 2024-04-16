@@ -79,8 +79,8 @@ $asset = AppAsset::register($this);
                                             <th>DATE</th>
                                             <th>AM IN</th>
                                             <th>AM OUT</th>
-                                            <th>AM IN</th>
-                                            <th>AM OUT</th>
+                                            <th>PM IN</th>
+                                            <th>PM OUT</th>
                                         </tr>
                                     </thead>
                                     <tbody>
