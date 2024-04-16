@@ -216,10 +216,12 @@ class DefaultController extends Controller
             $neededHrsForTheDay = $atLeast - $totalUntilCurrentDay;
 
             $pmTimeIn = '';
-            $pmTimeInTodaySql = "SELECT time(time_in) as time_in, time_to_sec(time(time_in)) as time_sec FROM tblactual_dtr WHERE date = CURDATE() AND emp_id= :emp_id AND time(time_in) = 'PM'";
+            $pmTimeInTodaySql = "select time(time_in) as time_in, time_to_sec(time(time_in)) as time_sec from tblactual_dtr
+            where date = curdate() and emp_id= :emp_id and time = 'PM'";
             $pmTimeInTodayQuery = $connection->createCommand($pmTimeInTodaySql)
                 ->bindValue(':emp_id', Yii::$app->user->identity->userinfo->EMP_N)
                 ->queryAll();
+
             $pmTimeInToday = $pmTimeInTodayQuery[0];
 
             $pmTimeIn = $pmTimeInToday['time_sec'] < 46800 ? '13:00:00' : $pmTimeInToday['time_in']; 
@@ -256,6 +258,8 @@ class DefaultController extends Controller
             $recommendedTimeOutQuery = $connection->createCommand($recommendedTimeOutSql)
                 ->queryAll();
 
+            //echo "<pre>"; print_r($recommendedTimeOutQuery); exit;
+
             $recommendedTimeOut = $recommendedTimeOutQuery[0];
 
             if(isset($recommendedTimeOut) && $recommendedTimeOut['second'] > 68400){
@@ -267,7 +271,7 @@ class DefaultController extends Controller
             }elseif(isset($recommendedTimeOut) && $recommendedTimeOut['second'] < 57600){
 
                $recommendation = "To achieve this you should
-                      time out at not earlier than <b><font color = red>".$recommendedTimeOut[0]['first']."</font></b> today.
+                      time out at not earlier than <b><font color = red>".$recommendedTimeOut['first']."</font></b> today.
                        <div class=separator>
                       </div>
                       <div class=separator>
@@ -281,7 +285,7 @@ class DefaultController extends Controller
             }
             else
             {
-             $recommendation = "To achieve this you shouldtime out at not earlier than <b><font color = red>".$recommendedTimeOut[0]['first']."</font></b> today.";
+             $recommendation = "To achieve this you should time out at not earlier than <b><font color = red>".$recommendedTimeOut['first']."</font></b> today.";
             }
         }
 

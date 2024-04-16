@@ -111,8 +111,8 @@ $asset = AppAsset::register($this);
                                         <td align=center><?= $hrsToGo.' ('.$hrsToGoInHours.')' ?></td>
                                     </tr>
                                 </table>
-                                <p>Today is <b><font color = red><?= $currentDate[0]['day'] ?></font></b>, it is expected that
-                                    at the end of the day you should have at least rendered <b><font color = red><?= $atLeast ?> hours</font></b>. <br><?= $recommendation ?></p>
+                                <p style="padding-right: 20px;">Today is <b><font color = red><?= $currentDate[0]['day'] ?></font></b>, it is expected that
+                                    at the end of the day you should have at least rendered <b><font color = red><?= $atLeast ?> hours</font></b>. <?= $recommendation ?></p>
                             </div>
                         </div>
                     </div>
