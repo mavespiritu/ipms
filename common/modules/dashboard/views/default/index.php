@@ -85,7 +85,7 @@ $asset = AppAsset::register($this);
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                             <p style="font-size: 1.1em;"><b>My Weekly DTR</b> 
                                 <span class="pull-right">
-                                    <?= Html::a('View More', ['#'], ['class' => 'btn btn-xs bg-navy text-bold']) ?>
+                                    <?php // Html::a('View More', ['#'], ['class' => 'btn btn-xs bg-navy text-bold']) ?>
                                 </span>
                             </p>
                             <div id="weekly-dtr"></div>
