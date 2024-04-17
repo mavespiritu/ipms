@@ -56,7 +56,7 @@ $asset = AppAsset::register($this);
                     <div class="box box-solid">
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                             <p style="font-size: 0.9em;"><b>Leave Credits Monetary Amount</b></p>
-                            <h1>-</h1>
+                                <div id="monetary-amount"></div>
                         </div>
                     </div>
                 </div>
@@ -245,6 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
             viewVlCredits();
             viewSlCredits();
             viewWlCredits();
+            viewMonetaryAmount();
             viewBirthdayCelebrants();
             viewWeeklyDtr();
         });
@@ -299,6 +300,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     $("#wl-credits").hide();
                     $("#wl-credits").fadeIn("slow");
                     $("#wl-credits").html(data);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        function viewMonetaryAmount()
+        {
+            $.ajax({
+                url: "'.Url::to(['/dashboard/default/monetary-amount']).'",
+                beforeSend: function(){
+                    $("#monetary-amount").html("<div class=\"text-center\" style=\"height: auto; display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
+                },
+                success: function (data) {
+                    $("#monetary-amount").empty();
+                    $("#monetary-amount").hide();
+                    $("#monetary-amount").fadeIn("slow");
+                    $("#monetary-amount").html(data);
                 },
                 error: function (err) {
                     console.log(err);
