@@ -373,7 +373,7 @@ class DefaultController extends Controller
 
         $totalRunningWL = $getWLCarryOver['CARRIED_OVER_FROM_LAST_MONTH'] - $getWLDeductedHoursNotUt['deducted_days_not_ut'];
 
-        $tempMonth = $currentMonth['month'] == 'January' ? 'December' : date("F", strtotime(date("n", strtotime($currentMonth['month'])) - 1));
+        $tempMonth = $currentMonth['month'] == 'January' ? 'December' : date("F", strtotime("2000-".str_pad(date("n", strtotime($currentMonth['month'])) - 1, 2, '0', STR_PAD_LEFT)."-01"));
         $tempYear = $currentMonth['month'] == 'January' ? $currentYear['year'] - 1 : $currentYear['year'];
         $tempYear = $tempMonth == 'December' ? $currentYear['year'] - 1 : $tempYear;
 
@@ -446,7 +446,7 @@ class DefaultController extends Controller
 
         $totalRunningVL = $getVLCarryOver['CARRIED_OVER_FROM_LAST_MONTH'] + $getVLJustEarned['EARNED_FOR_THE_MONTH'] - $getVLDeductedHrsNotUt['deducted_days_not_ut'];
 
-        if(!empty($getVLJustEarned))
+        if($getVLJustEarned['EARNED_FOR_THE_MONTH'] > 0)
         {
             $getVLAllotedSql = "select COALESCE(alloted_days, 0) as alloted_days from tblcredit where credit_id = 'VL'";
             $getVLAllotedQuery = $connection->createCommand($getVLAllotedSql)
@@ -467,6 +467,18 @@ class DefaultController extends Controller
         $getAdjustedVL = $getAdjustedVLQuery[0];
      
         $totalRunningVL += ($getAdjustedVL['vl_diff']);
+        /* echo "<pre>"; 
+        print_r('currentMonth: '.$currentMonth['month'].'<br>');
+        print_r('currentYear: '.$currentYear['year'].'<br>');
+        print_r('nextMonth: '.$nextMonth['month'].'<br>');
+        print_r('nextYear: '.$nextYear['year'].'<br>');
+        print_r('tempMonth: '.$tempMonth.'<br>');
+        print_r('tempYear: '.$tempYear.'<br>');
+        print_r('getVLCarryOver: '.$getVLCarryOver['CARRIED_OVER_FROM_LAST_MONTH'].'<br>');
+        print_r('getVLJustEarned: '.$getVLJustEarned['EARNED_FOR_THE_MONTH'].'<br>');
+        print_r('getVLDeductedHrsNotUt: '.$getVLDeductedHrsNotUt['deducted_days_not_ut'].'<br>');
+        print_r('getAdjustedVL: '.$getAdjustedVL['vl_diff'].'<br>');
+        exit; */
 
         return $this->render('index', [
             'am' => $am,
