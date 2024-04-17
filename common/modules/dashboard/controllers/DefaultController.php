@@ -33,7 +33,7 @@ class DefaultController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index'],
+                        'actions' => ['index', 'vl-credits', 'sl-credits', 'wl-credits', 'weekly-dtr', 'birthday-celebrants'],
                         'allow' => true,
                         'roles' => ['@'],
                     ],
@@ -48,35 +48,397 @@ class DefaultController extends Controller
      */
     public function actionIndex()
     {
-        $am = Dtr::findOne([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
-                'date' => date("Y-m-d"),
-                'time' => 'AM',
-                'year' => date('Y'),
-                'month' => date('F'),
-            ]);
-        
-        $pm = Dtr::findOne([
-            'emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
-            'date' => date("Y-m-d"),
-            'time' => 'PM',
-            'year' => date('Y'),
-            'month' => date('F'),
-        ]);
-        
-        $celebrants = Employee::find()
-                    ->where([
-                        'MONTH(birth_date)' => date("m"),
-                        'work_status' => 'Active'
-                    ])
-                    ->orderBy(['DAY(birth_date)' => SORT_ASC])
-                    ->all();
-
         $holidays = Holiday::find()
                     ->where(['>=', new Expression('MONTH(holiday_date)'), date('m')])
                     ->orderBy(['MONTH(holiday_date)' => SORT_ASC, 'DAY(holiday_date)' => SORT_ASC])
                     ->all();
 
+        return $this->render('index', [
+            'holidays' => $holidays,
+        ]);
+    }
+
+    public function actionVlCredits()
+    {
+        $connection = Yii::$app->ipms;
+
+        $currentMonthSql =  "select distinct(month) as month from tblweekly_dtr_summary 
+        where week_lower_limit <= curdate() 
+        and date_add(week_upper_limit, interval 2 day) >= curdate()";
+
+        $currentMonthQuery = $connection->createCommand($currentMonthSql)
+            ->queryAll();
+
+        $currentMonth = $currentMonthQuery[0];
+
+        $currentYearSql =  "select distinct(year) as year from tblweekly_dtr_summary
+        where week_lower_limit <= curdate()
+        and date_add(week_upper_limit, interval 2 day) >= curdate()";
+
+        $currentYearQuery = $connection->createCommand($currentYearSql)
+            ->queryAll();
+
+        $currentYear = $currentYearQuery[0];
+
+        $nextMonthSql = "SELECT monthname(DATE_ADD('".$currentYear['year']."-".date("m", strtotime($currentMonth['month']))."-01', INTERVAL 1 Month)) as month";
+
+        $nextMonthQuery = $connection->createCommand($nextMonthSql)
+            ->queryAll();
+        
+        $nextMonth = $nextMonthQuery[0];
+
+        $nextYearSql = "SELECT year(DATE_ADD('".$currentYear['year']."-".date("m", strtotime($currentMonth['month']))."-01', INTERVAL 1 Month)) as year";
+
+        $nextYearQuery = $connection->createCommand($nextYearSql)
+            ->queryAll();
+        
+        $nextYear = $nextYearQuery[0];
+
+        $tempMonth = $currentMonth['month'] == 'January' ? 'December' : date("F", strtotime("2000-".str_pad(date("n", strtotime($currentMonth['month'])) - 1, 2, '0', STR_PAD_LEFT)."-01"));
+        $tempYear = $currentMonth['month'] == 'January' ? $currentYear['year'] - 1 : $currentYear['year'];
+        $tempYear = $tempMonth == 'December' ? $currentYear['year'] - 1 : $tempYear;
+
+        $getVLCarryOverSql = "select COALESCE(total_days_earned_deducted, 0) as CARRIED_OVER_FROM_LAST_MONTH
+        from tblmonthly_credit_transaction
+        where emp_id = :emp_id
+        and month = :month
+        and year = :year
+        and credit_id = 'VL'";
+
+        $getVLCarryOverQuery = $connection->createCommand($getVLCarryOverSql)
+                ->bindValues([
+                    ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
+                    ':month' => $tempMonth,
+                    ':year' => $tempYear,
+                ])
+                ->queryAll();
+
+        $getVLCarryOver = $getVLCarryOverQuery[0];
+
+        $getVLJustEarnedSql = "select COALESCE(days_added, 0) as EARNED_FOR_THE_MONTH
+            from tblmonthly_credit_transaction
+            where emp_id = :emp_id
+            and month = :month
+            and year = :year
+            and credit_id = 'VL'";
+
+        $getVLJustEarnedQuery = $connection->createCommand($getVLJustEarnedSql)
+                ->bindValues([
+                    ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
+                    ':month' => $currentMonth['month'],
+                    ':year' => $currentYear['year'],
+                ])
+                ->queryAll();
+
+        $getVLJustEarned = $getVLJustEarnedQuery[0];
+
+        $getVLDeductedHrsNotUt = "select COALESCE(sum(deduction), 0) as deducted_days_not_ut
+        from tblcredit_deduction
+        where (reason <> 'UT'
+        and emp_id = :emp_id
+        and month = :month
+        and year = :year
+        and credit_id = 'VL')
+        or(reason = 'UT'
+            and emp_id = :emp_id
+            and month = :month
+            and year = :year
+            and credit_id = 'VL'
+            and DATE_ADD(week_lower_limit,INTERVAL 7 DAY) <= curdate()
+        )
+        or(reason <> 'UT'
+            and emp_id = :emp_id
+            and month = :next_month
+            and year = :next_year
+            and credit_id = 'VL'
+        )";
+
+        $getVLDeductedHrsNotUtQuery = $connection->createCommand($getVLDeductedHrsNotUt)
+            ->bindValues([
+                ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
+                ':month' => $currentMonth['month'],
+                ':next_month' => $nextMonth['month'],
+                ':year' => $currentYear['year'],
+                ':next_year' => $nextYear['year'],
+            ])
+            ->queryAll();
+
+        $getVLDeductedHrsNotUt = $getVLDeductedHrsNotUtQuery[0];
+
+        $totalRunningVL = $getVLCarryOver['CARRIED_OVER_FROM_LAST_MONTH'] + $getVLJustEarned['EARNED_FOR_THE_MONTH'] - $getVLDeductedHrsNotUt['deducted_days_not_ut'];
+
+        if($getVLJustEarned['EARNED_FOR_THE_MONTH'] > 0)
+        {
+            $getVLAllotedSql = "select COALESCE(alloted_days, 0) as alloted_days from tblcredit where credit_id = 'VL'";
+            $getVLAllotedQuery = $connection->createCommand($getVLAllotedSql)
+            ->queryAll();
+
+            $getVLAlloted = $getVLAllotedQuery[0];
+
+            $totalRunningVL -= $getVLAlloted['alloted_days'];
+        }
+
+        $getAdjustedVLSql = "select COALESCE(vl_diff, 0) as vl_diff from tblemp_credits_audited where emp_id = :emp_id";
+        $getAdjustedVLQuery = $connection->createCommand($getAdjustedVLSql)
+            ->bindValues([
+                ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
+            ])
+            ->queryAll();
+        
+        $getAdjustedVL = $getAdjustedVLQuery[0];
+
+        $totalRunningVL += ($getAdjustedVL['vl_diff']); 
+
+        return $this->renderAjax('_vl-credits',[
+            'totalRunningVL' => $totalRunningVL
+        ]);
+    }
+
+    public function actionSlCredits()
+    {
+        $connection = Yii::$app->ipms;
+
+        $currentMonthSql =  "select distinct(month) as month from tblweekly_dtr_summary 
+        where week_lower_limit <= curdate() 
+        and date_add(week_upper_limit, interval 2 day) >= curdate()";
+
+        $currentMonthQuery = $connection->createCommand($currentMonthSql)
+            ->queryAll();
+
+        $currentMonth = $currentMonthQuery[0];
+
+        $currentYearSql =  "select distinct(year) as year from tblweekly_dtr_summary
+        where week_lower_limit <= curdate()
+        and date_add(week_upper_limit, interval 2 day) >= curdate()";
+
+        $currentYearQuery = $connection->createCommand($currentYearSql)
+            ->queryAll();
+
+        $currentYear = $currentYearQuery[0];
+
+        $nextMonthSql = "SELECT monthname(DATE_ADD('".$currentYear['year']."-".date("m", strtotime($currentMonth['month']))."-01', INTERVAL 1 Month)) as month";
+
+        $nextMonthQuery = $connection->createCommand($nextMonthSql)
+            ->queryAll();
+        
+        $nextMonth = $nextMonthQuery[0];
+
+        $nextYearSql = "SELECT year(DATE_ADD('".$currentYear['year']."-".date("m", strtotime($currentMonth['month']))."-01', INTERVAL 1 Month)) as year";
+
+        $nextYearQuery = $connection->createCommand($nextYearSql)
+            ->queryAll();
+        
+        $nextYear = $nextYearQuery[0];
+
+        $tempMonth = $currentMonth['month'] == 'January' ? 'December' : date("F", strtotime("2000-".str_pad(date("n", strtotime($currentMonth['month'])) - 1, 2, '0', STR_PAD_LEFT)."-01"));
+        $tempYear = $currentMonth['month'] == 'January' ? $currentYear['year'] - 1 : $currentYear['year'];
+        $tempYear = $tempMonth == 'December' ? $currentYear['year'] - 1 : $tempYear;
+
+        $getSLCarryOverSql = "select COALESCE(total_days_earned_deducted, 0) as CARRIED_OVER_FROM_LAST_MONTH
+        from tblmonthly_credit_transaction
+        where emp_id = :emp_id
+        and month = :month
+        and year = :year
+        and credit_id = 'SL'";
+
+        $getSLCarryOverQuery = $connection->createCommand($getSLCarryOverSql)
+                ->bindValues([
+                    ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
+                    ':month' => $tempMonth,
+                    ':year' => $tempYear,
+                ])
+                ->queryAll();
+
+        $getSLCarryOver = $getSLCarryOverQuery[0];
+
+        $getSLJustEarnedSql = "select COALESCE(days_added, 0) as EARNED_FOR_THE_MONTH
+            from tblmonthly_credit_transaction
+            where emp_id = :emp_id
+            and month = :month
+            and year = :year
+            and credit_id = 'SL'";
+
+        $getSLJustEarnedQuery = $connection->createCommand($getSLJustEarnedSql)
+                ->bindValues([
+                    ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
+                    ':month' => $currentMonth['month'],
+                    ':year' => $currentYear['year'],
+                ])
+                ->queryAll();
+
+        $getSLJustEarned = $getSLJustEarnedQuery[0];
+
+        $getSLDeductedHrsNotUt = "select COALESCE(sum(deduction), 0) as deducted_days_not_ut
+        from tblcredit_deduction
+        where (reason <> 'UT'
+        and emp_id = :emp_id
+        and month = :month
+        and year = :year
+        and credit_id = 'SL')
+        or(reason = 'UT'
+            and emp_id = :emp_id
+            and month = :month
+            and year = :year
+            and credit_id = 'SL'
+            and DATE_ADD(week_lower_limit,INTERVAL 7 DAY) <= curdate()
+        )
+        or(reason <> 'UT'
+            and emp_id = :emp_id
+            and month = :next_month
+            and year = :next_year
+            and credit_id = 'SL'
+        )";
+
+        $getSLDeductedHrsNotUtQuery = $connection->createCommand($getSLDeductedHrsNotUt)
+            ->bindValues([
+                ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
+                ':month' => $currentMonth['month'],
+                ':next_month' => $nextMonth['month'],
+                ':year' => $currentYear['year'],
+                ':next_year' => $nextYear['year'],
+            ])
+            ->queryAll();
+
+        $getSLDeductedHrsNotUt = $getSLDeductedHrsNotUtQuery[0];
+
+        $totalRunningSL = $getSLCarryOver['CARRIED_OVER_FROM_LAST_MONTH'] + $getSLJustEarned['EARNED_FOR_THE_MONTH'] - $getSLDeductedHrsNotUt['deducted_days_not_ut'];
+
+        if($getSLJustEarned['EARNED_FOR_THE_MONTH'] > 0)
+        {
+            $getSLAllotedSql = "select COALESCE(alloted_days, 0) as alloted_days from tblcredit where credit_id = 'SL'";
+            $getSLAllotedQuery = $connection->createCommand($getSLAllotedSql)
+            ->queryAll();
+
+            $getSLAlloted = $getSLAllotedQuery[0];
+
+            $totalRunningSL -= $getSLAlloted['alloted_days'];
+        }
+
+        $getAdjustedSLSql = "select COALESCE(sl_diff, 0) as sl_diff from tblemp_credits_audited where emp_id = :emp_id";
+        $getAdjustedSLQuery = $connection->createCommand($getAdjustedSLSql)
+            ->bindValues([
+                ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
+            ])
+            ->queryAll();
+        
+        $getAdjustedSL = $getAdjustedSLQuery[0];
+     
+        $totalRunningSL += ($getAdjustedSL['sl_diff']);
+
+        return $this->renderAjax('_sl-credits',[
+            'totalRunningSL' => $totalRunningSL
+        ]);
+    }
+
+    public function actionWlCredits()
+    {
+        $connection = Yii::$app->ipms;
+
+        $currentMonthSql =  "select distinct(month) as month from tblweekly_dtr_summary 
+        where week_lower_limit <= curdate() 
+        and date_add(week_upper_limit, interval 2 day) >= curdate()";
+
+        $currentMonthQuery = $connection->createCommand($currentMonthSql)
+            ->queryAll();
+
+        $currentMonth = $currentMonthQuery[0];
+
+        $currentYearSql =  "select distinct(year) as year from tblweekly_dtr_summary
+        where week_lower_limit <= curdate()
+        and date_add(week_upper_limit, interval 2 day) >= curdate()";
+
+        $currentYearQuery = $connection->createCommand($currentYearSql)
+            ->queryAll();
+
+        $currentYear = $currentYearQuery[0];
+
+        $nextMonthSql = "SELECT monthname(DATE_ADD('".$currentYear['year']."-".date("m", strtotime($currentMonth['month']))."-01', INTERVAL 1 Month)) as month";
+
+        $nextMonthQuery = $connection->createCommand($nextMonthSql)
+            ->queryAll();
+        
+        $nextMonth = $nextMonthQuery[0];
+
+        $nextYearSql = "SELECT year(DATE_ADD('".$currentYear['year']."-".date("m", strtotime($currentMonth['month']))."-01', INTERVAL 1 Month)) as year";
+
+        $nextYearQuery = $connection->createCommand($nextYearSql)
+            ->queryAll();
+        
+        $nextYear = $nextYearQuery[0];
+
+        $getWLCarryOverSql = "select COALESCE(total_days_earned_orig, 0) as CARRIED_OVER_FROM_LAST_MONTH
+                            from tblmonthly_credit_transaction
+                            where emp_id = :emp_id
+                            and month = :month
+                            and year = :year
+                            and credit_id = 'WL'";
+        $getWLCarryOverQuery = $connection->createCommand($getWLCarryOverSql)
+                ->bindValues([
+                    ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
+                    ':month' => $currentMonth['month'],
+                    ':year' => $currentYear['year'],
+                ])
+                ->queryAll();
+
+        $getWLCarryOver = $getWLCarryOverQuery[0];
+
+        $getWLDeductedHoursNotUtSql = "select COALESCE(sum(deduction), 0) as deducted_days_not_ut
+        from tblcredit_deduction
+        where (reason <> 'UT'
+        and emp_id = :emp_id
+        and month = :month
+        and year = :year
+        and credit_id = 'WL')
+        or(reason = 'UT'
+            and emp_id = :emp_id
+            and month = :month
+            and year = :year
+            and credit_id = 'WL'
+            and DATE_ADD(week_lower_limit,INTERVAL 7 DAY) <= curdate()
+        )
+        or(reason <> 'UT'
+            and emp_id = :emp_id
+            and month = :next_month
+            and year = :next_year
+            and credit_id = 'WL'
+        )";
+
+        $getWLDeductedHoursNotUtQuery = $connection->createCommand($getWLDeductedHoursNotUtSql)
+                ->bindValues([
+                    ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
+                    ':month' => $currentMonth['month'],
+                    ':next_month' => $nextMonth['month'],
+                    ':year' => $currentYear['year'],
+                    ':next_year' => $nextYear['year'],
+                ])
+                ->queryAll();
+
+        $getWLDeductedHoursNotUt = $getWLDeductedHoursNotUtQuery[0];
+
+        $totalRunningWL = $getWLCarryOver['CARRIED_OVER_FROM_LAST_MONTH'] - $getWLDeductedHoursNotUt['deducted_days_not_ut'];
+
+        return $this->renderAjax('_wl-credits',[
+            'totalRunningWL' => $totalRunningWL
+        ]);
+    }
+
+    public function actionBirthdayCelebrants()
+    {
+        $celebrants = Employee::find()
+        ->where([
+            'MONTH(birth_date)' => date("m"),
+            'work_status' => 'Active'
+        ])
+        ->orderBy(['DAY(birth_date)' => SORT_ASC])
+        ->all();
+
+        return $this->renderAjax('_birthday-celebrants',[
+            'celebrants' => $celebrants
+        ]);
+    }
+
+    public function actionWeeklyDtr()
+    {
         $connection = Yii::$app->ipms;
 
         $currentDateSql = "select curdate() as date, dayname(curdate()) as day, date_format(concat(curdate(),' ', curtime()),'%p') as meridian";
@@ -283,298 +645,12 @@ class DefaultController extends Controller
                       should stay in the office during the core working hours (9:30:00 AM to 4:00:00 PM).
                       ";
 
-            }
-            else
-            {
-             $recommendation = "To achieve this you should time out at not earlier than <b><font color = red>".$recommendedTimeOut['first']."</font></b> today.";
+            }else{
+                $recommendation = "To achieve this you should time out at not earlier than <b><font color = red>".$recommendedTimeOut['first']."</font></b> today.";
             }
         }
 
-        $currentMonthSql =  "select distinct(month) as month from tblweekly_dtr_summary 
-        where week_lower_limit <= curdate() 
-        and date_add(week_upper_limit, interval 2 day) >= curdate()";
-
-        $currentMonthQuery = $connection->createCommand($currentMonthSql)
-            ->queryAll();
-
-        $currentMonth = $currentMonthQuery[0];
-
-        $currentYearSql =  "select distinct(year) as year from tblweekly_dtr_summary
-        where week_lower_limit <= curdate()
-        and date_add(week_upper_limit, interval 2 day) >= curdate()";
-
-        $currentYearQuery = $connection->createCommand($currentYearSql)
-            ->queryAll();
-
-        $currentYear = $currentYearQuery[0];
-
-        $nextMonthSql = "SELECT monthname(DATE_ADD('".$currentYear['year']."-".date("m", strtotime($currentMonth['month']))."-01', INTERVAL 1 Month)) as month";
-
-        $nextMonthQuery = $connection->createCommand($nextMonthSql)
-            ->queryAll();
-        
-        $nextMonth = $nextMonthQuery[0];
-
-        $nextYearSql = "SELECT year(DATE_ADD('".$currentYear['year']."-".date("m", strtotime($currentMonth['month']))."-01', INTERVAL 1 Month)) as year";
-
-        $nextYearQuery = $connection->createCommand($nextYearSql)
-            ->queryAll();
-        
-        $nextYear = $nextYearQuery[0];
-
-        $getWLCarryOverSql = "select COALESCE(total_days_earned_orig, 0) as CARRIED_OVER_FROM_LAST_MONTH
-                            from tblmonthly_credit_transaction
-                            where emp_id = :emp_id
-                            and month = :month
-                            and year = :year
-                            and credit_id = 'WL'";
-        $getWLCarryOverQuery = $connection->createCommand($getWLCarryOverSql)
-                ->bindValues([
-                    ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
-                    ':month' => $currentMonth['month'],
-                    ':year' => $currentYear['year'],
-                ])
-                ->queryAll();
-
-        $getWLCarryOver = $getWLCarryOverQuery[0];
-
-        $getWLDeductedHoursNotUtSql = "select COALESCE(sum(deduction), 0) as deducted_days_not_ut
-        from tblcredit_deduction
-        where (reason <> 'UT'
-        and emp_id = :emp_id
-        and month = :month
-        and year = :year
-        and credit_id = 'WL')
-        or(reason = 'UT'
-            and emp_id = :emp_id
-            and month = :month
-            and year = :year
-            and credit_id = 'WL'
-            and DATE_ADD(week_lower_limit,INTERVAL 7 DAY) <= curdate()
-        )
-        or(reason <> 'UT'
-            and emp_id = :emp_id
-            and month = :next_month
-            and year = :next_year
-            and credit_id = 'WL'
-        )";
-
-        $getWLDeductedHoursNotUtQuery = $connection->createCommand($getWLDeductedHoursNotUtSql)
-                ->bindValues([
-                    ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
-                    ':month' => $currentMonth['month'],
-                    ':next_month' => $nextMonth['month'],
-                    ':year' => $currentYear['year'],
-                    ':next_year' => $nextYear['year'],
-                ])
-                ->queryAll();
-
-        $getWLDeductedHoursNotUt = $getWLDeductedHoursNotUtQuery[0];
-
-        $totalRunningWL = $getWLCarryOver['CARRIED_OVER_FROM_LAST_MONTH'] - $getWLDeductedHoursNotUt['deducted_days_not_ut'];
-
-        $tempMonth = $currentMonth['month'] == 'January' ? 'December' : date("F", strtotime("2000-".str_pad(date("n", strtotime($currentMonth['month'])) - 1, 2, '0', STR_PAD_LEFT)."-01"));
-        $tempYear = $currentMonth['month'] == 'January' ? $currentYear['year'] - 1 : $currentYear['year'];
-        $tempYear = $tempMonth == 'December' ? $currentYear['year'] - 1 : $tempYear;
-
-        $getVLCarryOverSql = "select COALESCE(total_days_earned_deducted, 0) as CARRIED_OVER_FROM_LAST_MONTH
-        from tblmonthly_credit_transaction
-        where emp_id = :emp_id
-        and month = :month
-        and year = :year
-        and credit_id = 'VL'";
-
-        $getVLCarryOverQuery = $connection->createCommand($getVLCarryOverSql)
-                ->bindValues([
-                    ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
-                    ':month' => $tempMonth,
-                    ':year' => $tempYear,
-                ])
-                ->queryAll();
-
-        $getVLCarryOver = $getVLCarryOverQuery[0];
-
-        $getSLCarryOverSql = "select COALESCE(total_days_earned_deducted, 0) as CARRIED_OVER_FROM_LAST_MONTH
-        from tblmonthly_credit_transaction
-        where emp_id = :emp_id
-        and month = :month
-        and year = :year
-        and credit_id = 'SL'";
-
-        $getSLCarryOverQuery = $connection->createCommand($getSLCarryOverSql)
-                ->bindValues([
-                    ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
-                    ':month' => $tempMonth,
-                    ':year' => $tempYear,
-                ])
-                ->queryAll();
-
-        $getSLCarryOver = $getSLCarryOverQuery[0];
-
-        $getVLJustEarnedSql = "select COALESCE(days_added, 0) as EARNED_FOR_THE_MONTH
-            from tblmonthly_credit_transaction
-            where emp_id = :emp_id
-            and month = :month
-            and year = :year
-            and credit_id = 'VL'";
-
-        $getVLJustEarnedQuery = $connection->createCommand($getVLJustEarnedSql)
-                ->bindValues([
-                    ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
-                    ':month' => $currentMonth['month'],
-                    ':year' => $currentYear['year'],
-                ])
-                ->queryAll();
-
-        $getVLJustEarned = $getVLJustEarnedQuery[0];
-
-        $getSLJustEarnedSql = "select COALESCE(days_added, 0) as EARNED_FOR_THE_MONTH
-            from tblmonthly_credit_transaction
-            where emp_id = :emp_id
-            and month = :month
-            and year = :year
-            and credit_id = 'SL'";
-
-        $getSLJustEarnedQuery = $connection->createCommand($getSLJustEarnedSql)
-                ->bindValues([
-                    ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
-                    ':month' => $currentMonth['month'],
-                    ':year' => $currentYear['year'],
-                ])
-                ->queryAll();
-
-        $getSLJustEarned = $getSLJustEarnedQuery[0];
-
-        $getVLDeductedHrsNotUt = "select COALESCE(sum(deduction), 0) as deducted_days_not_ut
-        from tblcredit_deduction
-        where (reason <> 'UT'
-        and emp_id = :emp_id
-        and month = :month
-        and year = :year
-        and credit_id = 'VL')
-        or(reason = 'UT'
-            and emp_id = :emp_id
-            and month = :month
-            and year = :year
-            and credit_id = 'VL'
-            and DATE_ADD(week_lower_limit,INTERVAL 7 DAY) <= curdate()
-        )
-        or(reason <> 'UT'
-            and emp_id = :emp_id
-            and month = :next_month
-            and year = :next_year
-            and credit_id = 'VL'
-        )";
-
-        $getVLDeductedHrsNotUtQuery = $connection->createCommand($getVLDeductedHrsNotUt)
-            ->bindValues([
-                ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
-                ':month' => $currentMonth['month'],
-                ':next_month' => $nextMonth['month'],
-                ':year' => $currentYear['year'],
-                ':next_year' => $nextYear['year'],
-            ])
-            ->queryAll();
-
-        $getVLDeductedHrsNotUt = $getVLDeductedHrsNotUtQuery[0];
-
-        $getSLDeductedHrsNotUt = "select COALESCE(sum(deduction), 0) as deducted_days_not_ut
-        from tblcredit_deduction
-        where (reason <> 'UT'
-        and emp_id = :emp_id
-        and month = :month
-        and year = :year
-        and credit_id = 'SL')
-        or(reason = 'UT'
-            and emp_id = :emp_id
-            and month = :month
-            and year = :year
-            and credit_id = 'SL'
-            and DATE_ADD(week_lower_limit,INTERVAL 7 DAY) <= curdate()
-        )
-        or(reason <> 'UT'
-            and emp_id = :emp_id
-            and month = :next_month
-            and year = :next_year
-            and credit_id = 'SL'
-        )";
-
-        $getSLDeductedHrsNotUtQuery = $connection->createCommand($getSLDeductedHrsNotUt)
-            ->bindValues([
-                ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
-                ':month' => $currentMonth['month'],
-                ':next_month' => $nextMonth['month'],
-                ':year' => $currentYear['year'],
-                ':next_year' => $nextYear['year'],
-            ])
-            ->queryAll();
-
-        $getSLDeductedHrsNotUt = $getSLDeductedHrsNotUtQuery[0];
-
-        $totalRunningVL = $getVLCarryOver['CARRIED_OVER_FROM_LAST_MONTH'] + $getVLJustEarned['EARNED_FOR_THE_MONTH'] - $getVLDeductedHrsNotUt['deducted_days_not_ut'];
-        $totalRunningSL = $getSLCarryOver['CARRIED_OVER_FROM_LAST_MONTH'] + $getSLJustEarned['EARNED_FOR_THE_MONTH'] - $getSLDeductedHrsNotUt['deducted_days_not_ut'];
-
-        if($getVLJustEarned['EARNED_FOR_THE_MONTH'] > 0)
-        {
-            $getVLAllotedSql = "select COALESCE(alloted_days, 0) as alloted_days from tblcredit where credit_id = 'VL'";
-            $getVLAllotedQuery = $connection->createCommand($getVLAllotedSql)
-            ->queryAll();
-
-            $getVLAlloted = $getVLAllotedQuery[0];
-
-            $totalRunningVL -= $getVLAlloted['alloted_days'];
-        }
-
-        if($getSLJustEarned['EARNED_FOR_THE_MONTH'] > 0)
-        {
-            $getSLAllotedSql = "select COALESCE(alloted_days, 0) as alloted_days from tblcredit where credit_id = 'SL'";
-            $getSLAllotedQuery = $connection->createCommand($getSLAllotedSql)
-            ->queryAll();
-
-            $getSLAlloted = $getSLAllotedQuery[0];
-
-            $totalRunningSL -= $getSLAlloted['alloted_days'];
-        }
-
-        $getAdjustedVLSql = "select COALESCE(vl_diff, 0) as vl_diff from tblemp_credits_audited where emp_id = :emp_id";
-        $getAdjustedVLQuery = $connection->createCommand($getAdjustedVLSql)
-            ->bindValues([
-                ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
-            ])
-            ->queryAll();
-        
-        $getAdjustedVL = $getAdjustedVLQuery[0];
-
-        $getAdjustedSLSql = "select COALESCE(sl_diff, 0) as sl_diff from tblemp_credits_audited where emp_id = :emp_id";
-        $getAdjustedSLQuery = $connection->createCommand($getAdjustedSLSql)
-            ->bindValues([
-                ':emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
-            ])
-            ->queryAll();
-        
-        $getAdjustedSL = $getAdjustedSLQuery[0];
-     
-        $totalRunningVL += ($getAdjustedVL['vl_diff']); 
-        $totalRunningSL += ($getAdjustedSL['sl_diff']); 
-
-        /* echo "<pre>"; 
-        print_r('currentMonth: '.$currentMonth['month'].'<br>');
-        print_r('currentYear: '.$currentYear['year'].'<br>');
-        print_r('nextMonth: '.$nextMonth['month'].'<br>');
-        print_r('nextYear: '.$nextYear['year'].'<br>');
-        print_r('tempMonth: '.$tempMonth.'<br>');
-        print_r('tempYear: '.$tempYear.'<br>');
-        print_r('getVLCarryOver: '.$getVLCarryOver['CARRIED_OVER_FROM_LAST_MONTH'].'<br>');
-        print_r('getVLJustEarned: '.$getVLJustEarned['EARNED_FOR_THE_MONTH'].'<br>');
-        print_r('getVLDeductedHrsNotUt: '.$getVLDeductedHrsNotUt['deducted_days_not_ut'].'<br>');
-        print_r('getAdjustedVL: '.$getAdjustedVL['vl_diff'].'<br>');
-        exit; */
-
-        return $this->render('index', [
-            'am' => $am,
-            'pm' => $pm,
-            'celebrants' => $celebrants,
-            'holidays' => $holidays,
+        return $this->renderAjax('_weekly-dtr', [
             'weeklyDtrs' => $weeklyDtrs,
             'hrsToRender' => $hrsToRender,
             'hrsToRenderInHrs' => $hrsToRenderInHrs,
@@ -585,9 +661,6 @@ class DefaultController extends Controller
             'atLeast' => $atLeast,
             'recommendation' => $recommendation,
             'currentDate' => $currentDate,
-            'totalRunningVL' => $totalRunningVL,
-            'totalRunningSL' => $totalRunningSL,
-            'totalRunningWL' => $totalRunningWL,
         ]);
     }
 }

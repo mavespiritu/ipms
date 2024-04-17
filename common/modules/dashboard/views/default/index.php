@@ -29,9 +29,7 @@ $asset = AppAsset::register($this);
                     <div class="box box-solid">
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                             <p style="font-size: 0.9em;"><b>Total VL</b>
-                                <h1><?= $totalRunningVL > 0 ? number_format($totalRunningVL, 3) : 0 ?>
-                                    <small style="font-size: 12px;">days remaining</small>
-                                </h1>
+                                <div id="vl-credits"></div>
                             </p>
                         </div>
                     </div>
@@ -40,9 +38,7 @@ $asset = AppAsset::register($this);
                     <div class="box box-solid">
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                             <p style="font-size: 0.9em;"><b>Total SL</b>
-                                <h1><?= $totalRunningSL > 0 ? number_format($totalRunningSL, 3) : 0 ?>
-                                    <small style="font-size: 12px;">days remaining</small>
-                                </h1>
+                                <div id="sl-credits"></div>
                             </p>
                         </div>
                     </div>
@@ -51,9 +47,7 @@ $asset = AppAsset::register($this);
                     <div class="box box-solid">
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                             <p style="font-size: 0.9em;"><b>Total SPL</b>
-                                <h1><?= $totalRunningWL > 0 ? number_format($totalRunningWL, 3) : 0 ?>
-                                    <small style="font-size: 12px;">days remaining</small>
-                                </h1>
+                                <div id="wl-credits"></div>
                             </p>
                         </div>
                     </div>
@@ -72,32 +66,7 @@ $asset = AppAsset::register($this);
                     <div class="box box-solid">
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                             <p style="font-size: 1.1em;"><b>Birthday Celebrants</b></p>
-                            <div style="min-height: calc(100vh - 500px); max-height: 34vh; overflow-y: auto; padding-right: 20px;">
-                            <?php if($celebrants){ ?>
-                                <ul class="products-list product-list-in-box">
-                                <?php foreach($celebrants as $celebrant){ ?>
-                                    <?php $base64Image = base64_encode($celebrant->picture); ?>
-                                    <li class="item">
-                                        <div class="product-img" style="position: relative;">
-                                            <?= '<img src="data:image/jpeg;base64,' . $base64Image . '" alt="Image" class="direct-chat-img "style="border-radius: 50%; width: 40px; height: 40px;">' ?>
-                                            <?php if(date("d") == date("d", strtotime($celebrant->birth_date))){ ?>
-                                                <img src="<?= $asset->baseUrl.'/images/birthday-hat.png' ?>" alt="Birthday Hat" style="position: absolute; top: -20px; left: 50%; transform: translateX(-50%); width: 20px; height: auto;">
-                                            <?php } ?>
-                                        </div>
-                                        <div class="product-info">
-                                            <?= $celebrant->fname.' '.$celebrant->lname ?>
-                                            <?= date("F j", strtotime($celebrant->birth_date)) == date("F j") ? '<span class="label label-success pull-right">Today</span>' : '<span class="pull-right">'.date("F j", strtotime($celebrant->birth_date)).'</span>' ?>
-                                            <span class="product-description">
-                                                <?= $celebrant->position_id ?>
-                                            </span>
-                                        </div>
-                                    </li>
-                                <?php } ?>
-                                </ul>
-                            <?php }else{ ?>
-                                <p class="text-center">No birthday celebrants found.</p>
-                            <?php } ?>
-                            </div>
+                            <div id="birthday-celebrants"></div>
                         </div>
                     </div>
                 </div>
@@ -119,48 +88,7 @@ $asset = AppAsset::register($this);
                                     <?= Html::a('View More', ['#'], ['class' => 'btn btn-xs bg-navy text-bold']) ?>
                                 </span>
                             </p>
-                            <div style="min-height: calc(100vh - 500px); max-height: 34vh; overflow-y: auto; font-size: 11px;">
-                                <table id="dtr-table" class="table table-responsive table-bordered table-condensed">
-                                    <thead>
-                                        <tr>
-                                            <th>DATE</th>
-                                            <th>AM IN</th>
-                                            <th>AM OUT</th>
-                                            <th>PM IN</th>
-                                            <th>PM OUT</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                    <?php if(!empty($weeklyDtrs)){ ?>
-                                        <?php foreach($weeklyDtrs as $dtr){ ?>
-                                            <tr>
-                                                <td><b><?= date("F j", strtotime($dtr['date'])) ?></b></td>
-                                                <td align=center><?= $dtr['am_in'] ?></td>
-                                                <td align=center><?= $dtr['am_out'] ?></td>
-                                                <td align=center><?= $dtr['pm_in'] ?></td>
-                                                <td align=center><?= $dtr['pm_out'] ?></td>
-                                            </tr>
-                                        <?php } ?>
-                                    <?php } ?>
-                                    </tbody>
-                                </table>
-                                <table id="dtr-table" class="table table-responsive table-bordered table-condensed">
-                                    <tr>
-                                        <th style="width: 50%; background-color: #F4F4F5; font-weight: bolder;">HRS TO RENDER:</th>
-                                        <td align=center><?= $hrsToRender[0]['total_hours'].' ('.$hrsToRenderInHrs.')' ?></td>
-                                    </tr>
-                                    <tr>
-                                        <th style="width: 50%; background-color: #F4F4F5; font-weight: bolder;">HRS RENDERED:</th>
-                                        <td align=center><?= $total.' ('.$totalInHrs.')' ?></td>
-                                    </tr>
-                                    <tr>
-                                        <th style="width: 50%; background-color: #F4F4F5; font-weight: bolder;">HRS TO GO:</th>
-                                        <td align=center><?= $hrsToGo.' ('.$hrsToGoInHours.')' ?></td>
-                                    </tr>
-                                </table>
-                                <p style="padding-right: 20px;">Today is <b><font color = red><?= $currentDate[0]['day'] ?></font></b>, it is expected that
-                                    at the end of the day you should have at least rendered <b><font color = red><?= $atLeast ?> hours</font></b>. <?= $recommendation ?></p>
-                            </div>
+                            <div id="weekly-dtr"></div>
                         </div>
                     </div>
                 </div>
@@ -172,6 +100,7 @@ $asset = AppAsset::register($this);
                     <div class="calendar" id="calendar"></div>
                     <br>
                     <p style="font-size: 1.1em;"><b>Upcoming Holidays</b></p>
+                    <div id="holidays"></div>
                     <div style="min-height: calc(100vh - 533px); max-height: 40vh; overflow-y: auto; padding-right: 20px;">
                     <?php if($holidays){ ?>
                         <ul class="products-list product-list-in-box">
@@ -309,4 +238,112 @@ document.addEventListener('DOMContentLoaded', function() {
     setInterval(updateClock, 1000);
 });
 ", View::POS_END);
+?>
+<?php
+    $script = '
+        $(document).ready(function(){
+            viewVlCredits();
+            viewSlCredits();
+            viewWlCredits();
+            viewBirthdayCelebrants();
+            viewWeeklyDtr();
+        });
+
+        function viewVlCredits()
+        {
+            $.ajax({
+                url: "'.Url::to(['/dashboard/default/vl-credits']).'",
+                beforeSend: function(){
+                    $("#vl-credits").html("<div class=\"text-center\" style=\"height: auto; display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
+                },
+                success: function (data) {
+                    $("#vl-credits").empty();
+                    $("#vl-credits").hide();
+                    $("#vl-credits").fadeIn("slow");
+                    $("#vl-credits").html(data);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        function viewSlCredits()
+        {
+            $.ajax({
+                url: "'.Url::to(['/dashboard/default/sl-credits']).'",
+                beforeSend: function(){
+                    $("#sl-credits").html("<div class=\"text-center\" style=\"height: auto; display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
+                },
+                success: function (data) {
+                    $("#sl-credits").empty();
+                    $("#sl-credits").hide();
+                    $("#sl-credits").fadeIn("slow");
+                    $("#sl-credits").html(data);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        function viewWlCredits()
+        {
+            $.ajax({
+                url: "'.Url::to(['/dashboard/default/wl-credits']).'",
+                beforeSend: function(){
+                    $("#wl-credits").html("<div class=\"text-center\" style=\"height: auto; display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
+                },
+                success: function (data) {
+                    $("#wl-credits").empty();
+                    $("#wl-credits").hide();
+                    $("#wl-credits").fadeIn("slow");
+                    $("#wl-credits").html(data);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        function viewBirthdayCelebrants()
+        {
+            $.ajax({
+                url: "'.Url::to(['/dashboard/default/birthday-celebrants']).'",
+                beforeSend: function(){
+                    $("#birthday-celebrants").html("<div class=\"text-center\" style=\"height: calc(100vh - 500px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
+                },
+                success: function (data) {
+                    $("#birthday-celebrants").empty();
+                    $("#birthday-celebrants").hide();
+                    $("#birthday-celebrants").fadeIn("slow");
+                    $("#birthday-celebrants").html(data);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        function viewWeeklyDtr()
+        {
+            $.ajax({
+                url: "'.Url::to(['/dashboard/default/weekly-dtr']).'",
+                beforeSend: function(){
+                    $("#weekly-dtr").html("<div class=\"text-center\" style=\"height: calc(100vh - 500px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
+                },
+                success: function (data) {
+                    $("#weekly-dtr").empty();
+                    $("#weekly-dtr").hide();
+                    $("#weekly-dtr").fadeIn("slow");
+                    $("#weekly-dtr").html(data);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+    ';
+
+    $this->registerJs($script, View::POS_END);
 ?>
