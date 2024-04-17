@@ -39,8 +39,11 @@ $asset = AppAsset::register($this);
                 <div class="col-md-3 col-xs-12">
                     <div class="box box-solid">
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
-                            <p style="font-size: 0.9em;"><b>Total SL</b></p>
-                            <h1>-</h1>
+                            <p style="font-size: 0.9em;"><b>Total SL</b>
+                                <h1><?= $totalRunningSL > 0 ? number_format($totalRunningSL, 3) : 0 ?>
+                                    <small style="font-size: 12px;">days remaining</small>
+                                </h1>
+                            </p>
                         </div>
                     </div>
                 </div>
