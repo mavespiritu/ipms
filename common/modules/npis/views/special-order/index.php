@@ -279,5 +279,6 @@ tr{
 #special-order-table > thead > tr > th
 {
     border: 2px solid white;
+    font-weight: bolder;
 }
 </style>

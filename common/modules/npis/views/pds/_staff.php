@@ -16,7 +16,8 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="box-header with-border"><h3 class="box-title"><?= $model->fname.' '.$model->mname.' '.$model->lname ?></h3></div>
             <div class="box-body">
                 <div class="user-block">
-                    <?= $model->picture != '' ? '<img src="data:image/jpeg;base64,' . base64_encode($model->picture) . '" alt="Image" style="height: 10%; width: 10%; border: 1px solid #6699CC; border-radius: 10px; margin-right: 10px;">' : '' ?>
+                    <?php $base64Image = base64_encode($model->picture); ?>
+                    <?= '<img src="data:image/jpeg;base64,' . $base64Image . '" alt="Image" style="height: auto; width: 130px; border: 1px solid #6699CC; border-radius: 10px; margin-right: 10px;">' ?>
                     <span class="username">
                         <span class="pull-right" style="vertical-align: top;">
                             <?= Html::a('Generate PDS', ['/npis/pds/excel', 'id' => $model->emp_id],['class' => 'btn btn-info']) ?>

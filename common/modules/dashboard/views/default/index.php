@@ -16,7 +16,7 @@ $asset = AppAsset::register($this);
 ?>
 <div class="pds-view">
     <div class="row">
-        <div class="col-md-9 col-xs-12">
+        <div class="col-md-12 col-lg-9 col-xs-12">
             <div class="box box-solid">
                 <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                     <h4><b>Good <?= date("A") == 'AM' ? 'morning' : 'afternoon' ?>, <?= ucwords(strtolower(Yii::$app->user->identity->userinfo->FIRST_M)) ?>!</b><br>
@@ -25,7 +25,7 @@ $asset = AppAsset::register($this);
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-3 col-xs-12">
+                <div class="col-md-12 col-xs-12 col-lg-3">
                     <div class="box box-solid">
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                             <p style="font-size: 0.9em;"><b>Total VL</b>
@@ -34,7 +34,7 @@ $asset = AppAsset::register($this);
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 col-xs-12">
+                <div class="col-md-12 col-xs-12 col-lg-3">
                     <div class="box box-solid">
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                             <p style="font-size: 0.9em;"><b>Total SL</b>
@@ -43,7 +43,7 @@ $asset = AppAsset::register($this);
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 col-xs-12">
+                <div class="col-md-12 col-xs-12 col-lg-3">
                     <div class="box box-solid">
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                             <p style="font-size: 0.9em;"><b>Total SPL</b>
@@ -52,17 +52,18 @@ $asset = AppAsset::register($this);
                         </div>
                     </div>
                 </div>
-                <div class="col-md-3 col-xs-12">
+                <div class="col-md-12 col-xs-12 col-lg-3">
                     <div class="box box-solid">
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
-                            <p style="font-size: 0.9em;"><b>Leave Credits Monetary Amount</b></p>
+                            <p style="font-size: 0.9em;"><b>Monetary Amount</b>
                                 <div id="monetary-amount"></div>
+                            </p>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row">
-                <div class="col-md-4 col-xs-12">
+                <div class="col-md-12 col-xs-12 col-lg-4">
                     <div class="box box-solid">
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                             <p style="font-size: 1.1em;"><b>Birthday Celebrants</b></p>
@@ -70,17 +71,17 @@ $asset = AppAsset::register($this);
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 col-xs-12">
+                <div class="col-md-12 col-xs-12 col-lg-4">
                     <div class="box box-solid">
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                             <p style="font-size: 1.1em;"><b>Who's out</b></p>
-                            <div style="min-height: calc(100vh - 500px); max-height: 34vh; overflow-y: auto; padding-right: 20px;">
+                            <div style="min-height: calc(100vh - 500px); overflow-y: auto; padding-right: 20px;">
                                 <p class="text-center">Coming soon.</p>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-md-4 col-xs-12">
+                <div class="col-md-12 col-xs-12 col-lg-4">
                     <div class="box box-solid">
                         <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                             <p style="font-size: 1.1em;"><b>My Weekly DTR</b> 
@@ -94,7 +95,7 @@ $asset = AppAsset::register($this);
                 </div>
             </div>
         </div>
-        <div class="col-md-3 col-xs-12">
+        <div class="col-md-12 col-lg-3 col-xs-12">
             <div class="box box-solid">
                 <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
                     <div class="calendar" id="calendar"></div>

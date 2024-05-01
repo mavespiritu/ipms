@@ -30,5 +30,6 @@
 	}
 ?>
 
-<h1><?= $money > 0 ? number_format_short($money) : 0 ?>
+<h1 style="line-height: 10px;"><?= $money > 0 ? number_format_short($money) : 0 ?>
 </h1>
+<small class="hidden-sm" style="font-size: 12px;">worth of leave credits earned</small>

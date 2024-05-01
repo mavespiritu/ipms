@@ -921,7 +921,7 @@ class DefaultController extends Controller
                 ])
                 ->queryAll();
 
-            $salary = $salaryQuery[0]['salary'];
+            $salary = isset($salaryQuery[0]['salary']) ? $salaryQuery[0]['salary'] : 0;
         }else{
             $dailyRateSql = select_info_1D("select COALESCE(daily_rate, 0) as daily_rate from tblprl_rdc_casual_daily_rate
                                         where effectivity_date_start = (
