@@ -1,3 +1,9 @@
+<?php
+use frontend\assets\AppAsset;
+
+$asset = AppAsset::register($this);
+?>
+
 <div style="min-height: calc(100vh - 500px); max-height: 34vh; overflow-y: auto; padding-right: 20px;">
 <?php if($celebrants){ ?>
     <ul class="products-list product-list-in-box">

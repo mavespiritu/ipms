@@ -58,15 +58,18 @@
                         'label' => 'CGA',
                         'icon' => 'folder',
                         'url' => '#',
-                        'visible' => Yii::$app->user->can('Staff'),
+                        'visible' => Yii::$app->user->can('HR'),
                         'items' => [
-                            ['label' => 'My CGA', 'icon' => 'folder', 'url' => ['npis/cga/view'], 'visible' => Yii::$app->user->can('Staff')],
-                            ['label' => 'Staff CGA', 'icon' => 'folder', 'url' => ['npis/cga/'], 'visible' => Yii::$app->user->can('HR')],
-                            ['label' => 'Setup', 'icon' => 'folder', 'url' => ['npis/cga/setup'], 'visible' => Yii::$app->user->can('HR')],
+                            //['label' => 'My CGA', 'icon' => 'folder', 'url' => ['npis/cga/view'], 'visible' => Yii::$app->user->can('Staff')],
+                            //['label' => 'Staff CGA', 'icon' => 'folder', 'url' => ['npis/cga/'], 'visible' => Yii::$app->user->can('HR')],
+                            //['label' => 'Setup', 'icon' => 'folder', 'url' => ['npis/cga/setup'], 'visible' => Yii::$app->user->can('HR')],
+                            ['label' => 'LSP', 'icon' => 'folder', 'url' => ['/npis/lsp/'], 'visible' => Yii::$app->user->can('HR')],
+                            ['label' => 'Trainings', 'icon' => 'folder', 'url' => ['/npis/training/'], 'visible' => Yii::$app->user->can('HR')],
                         ],
                         
                     ],
-                    ['label' => 'Administrator', 'options' => ['class' => 'header'], 'visible' => Yii::$app->user->can('SuperAdministrator')],
+                    
+                    ['label' => 'Administrator', 'options' => ['class' => 'header'], Yii::$app->user->can('SuperAdministrator')],
                     ['label' => 'User Management', 'icon' => 'users', 'url' => ['/user/admin'], 'visible' => Yii::$app->user->can('SuperAdministrator')],
                 ],
             ]
