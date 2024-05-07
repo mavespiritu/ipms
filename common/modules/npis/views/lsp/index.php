@@ -66,6 +66,9 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
                     [
                         'attribute' => 'specialization',
                         'header' => 'SPECIALIZATION',
+                        'headerOptions' => [
+                            'style' => 'width: 20%;'
+                        ],
                         'contentOptions' => [
                             'style' => 'text-align: center;'
                         ],
@@ -213,5 +216,6 @@ tr{
 #lsp-table > thead > tr > th
 {
     border: 2px solid white;
+    font-weight: bolder;
 }
 </style>

@@ -76,6 +76,6 @@ class Position extends \yii\db\ActiveRecord
      */
     public function getEmployees()
     {
-        return $this->hasMany(Tblemployee::className(), ['position_id' => 'position_id']);
+        return $this->hasMany(Employee::className(), ['position_id' => 'position_id']);
     }
 }

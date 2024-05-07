@@ -80,6 +80,16 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
                         ],
                     ],
                     [
+                        'header' => 'COST',
+                        'format' => 'raw',
+                        'contentOptions' => [
+                            'style' => 'text-align: right;'
+                        ],
+                        'value' => function($model){
+                            return number_format($model->cost, 2);
+                        }
+                    ],
+                    [
                         'attribute' => 'competencies',
                         'header' => 'COMPETENCIES',
                         'headerOptions' => [
@@ -236,5 +246,6 @@ tr{
 #training-table > thead > tr > th
 {
     border: 2px solid white;
+    font-weight: bolder;
 }
 </style>

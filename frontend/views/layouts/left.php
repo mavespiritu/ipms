@@ -14,7 +14,7 @@
                         'visible' => Yii::$app->user->can('Staff'),
                         'items' => [
                             ['label' => 'My PDS', 'icon' => 'folder', 'url' => ['/npis/pds/view'], 'visible' => '@'],
-                            ['label' => 'Staff PDS', 'icon' => 'folder', 'url' => ['/npis/pds/'], 'visible' => Yii::$app->user->can('HR')],
+                            ['label' => 'Staff PDS', 'icon' => 'folder', 'url' => ['/npis/pds'], 'visible' => Yii::$app->user->can('HR')],
                             ['label' => 'Staff Profile', 'icon' => 'folder', 'url' => ['/npis/staff-profile'], 'visible' => Yii::$app->user->can('HR')],
                             [
                                 'label' => Yii::$app->user->can('HR') ? 'Staff 201' : 'My 201',
@@ -62,9 +62,9 @@
                         'items' => [
                             //['label' => 'My CGA', 'icon' => 'folder', 'url' => ['npis/cga/view'], 'visible' => Yii::$app->user->can('Staff')],
                             //['label' => 'Staff CGA', 'icon' => 'folder', 'url' => ['npis/cga/'], 'visible' => Yii::$app->user->can('HR')],
-                            //['label' => 'Setup', 'icon' => 'folder', 'url' => ['npis/cga/setup'], 'visible' => Yii::$app->user->can('HR')],
-                            ['label' => 'LSP', 'icon' => 'folder', 'url' => ['/npis/lsp/'], 'visible' => Yii::$app->user->can('HR')],
-                            ['label' => 'Trainings', 'icon' => 'folder', 'url' => ['/npis/training/'], 'visible' => Yii::$app->user->can('HR')],
+                            ['label' => 'LSP', 'icon' => 'folder', 'url' => ['/npis/lsp'], 'visible' => Yii::$app->user->can('HR')],
+                            ['label' => 'Trainings', 'icon' => 'folder', 'url' => ['/npis/training'], 'visible' => Yii::$app->user->can('HR')],
+                            ['label' => 'Positions', 'icon' => 'folder', 'url' => ['/npis/position'], 'visible' => Yii::$app->user->can('HR')],
                         ],
                         
                     ],
