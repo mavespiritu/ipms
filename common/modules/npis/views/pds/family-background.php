@@ -44,7 +44,7 @@ use yii\web\View;
                 <?= Yii::$app->session->getFlash('error') ?>
             </div>
         <?php endif;
-        ?>
+    ?>
     <div class="row">
         <div class="col-md-6 col-xs-12">
             <table class="table table-condensed table-responsive table-bordered inverted-table">
@@ -125,9 +125,9 @@ use yii\web\View;
         <div class="col-md-6 col-xs-12">
             <table class="table table-condensed table-responsive table-bordered">
                 <tr>
-                    <th style="text-align: center;">#</th>
-                    <th style="text-align: center;">NAME OF CHILDREN (Write full and list all)</th>
-                    <th style="text-align: center;">DATE OF BIRTH (mm/dd/yyyy)</th>
+                    <th style="text-align: center; font-weight: bolder;">#</th>
+                    <th style="text-align: center; font-weight: bolder;">NAME OF CHILDREN (Write full and list all)</th>
+                    <th style="text-align: center; font-weight: bolder;">DATE OF BIRTH (mm/dd/yyyy)</th>
                     <th>&nbsp;</th>
                 </tr>
                 <?php if($model->children){ ?>

@@ -111,6 +111,7 @@ $asset = AppAsset::register($this);
                                     <?= $holiday->holiday_name ?>
                                     <span class="product-description">
                                         <?= date("F j", strtotime($holiday->holiday_date)) ?>
+                                        <?= date("F j", strtotime($holiday->holiday_date)) == date("F j") ? '<span class="label label-success pull-right">Today</span>' : '' ?>
                                     </span>
                                 </div>
                             </li>
