@@ -24,13 +24,6 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
     <div class="box box-solid">
         <div class="box-header with-border"><h3 class="box-title">Position Records</h3></div>
         <div class="box-body">
-            <div class="pull-right">
-                <?= Yii::$app->user->can('position-item-create') ? Html::a('Add New Record', ['create'], ['class' => 'btn btn-success']) : '' ?>
-            </div>
-            <div class="clearfix"></div>
-
-            <br>
-
             <?= GridView::widget([
                 'options' => [
                     'class' => 'table-responsive',
