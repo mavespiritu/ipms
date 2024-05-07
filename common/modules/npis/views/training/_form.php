@@ -61,7 +61,7 @@ DisableButtonAsset::register($this);
             ])->label('Cost') ?>
 
     <?= $form->field($model, 'modality')->widget(Select2::classname(), [
-            'data' => ['Hybrid' => 'Hybrid', 'F2F' => 'F2F', 'Virtual' => 'Virtual'],
+            'data' => ['Hybrid' => 'Hybrid', 'F2F' => 'F2F', 'Virtual' => 'Virtual', 'Synchronous' => 'Synchronous'],
             'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'modality-select'],
             'pluginOptions' => [
                 'allowClear' =>  true,

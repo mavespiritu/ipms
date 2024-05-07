@@ -27,7 +27,7 @@ class TrainingCompetency extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['competency_id'], 'required'],
+            //[['competency_id'], 'required'],
             [['competency_id', 'training_id'], 'integer'],
         ];
     }
