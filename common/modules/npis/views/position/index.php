@@ -24,6 +24,12 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
     <div class="box box-solid">
         <div class="box-header with-border"><h3 class="box-title">Position Records</h3></div>
         <div class="box-body">
+            <div class="pull-right">
+                <?= Yii::$app->user->can('position-item-create') ? Html::a('Add New Record', ['create'], ['class' => 'btn btn-success']) : '' ?>
+            </div>
+            <div class="clearfix"></div>
+            <br>
+
             <?= GridView::widget([
                 'options' => [
                     'class' => 'table-responsive',
@@ -73,6 +79,16 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
                         ],
                     ],
                     [
+                        'attribute' => 'status',
+                        'header' => 'STATUS',
+                        'contentOptions' => [
+                            'style' => 'text-align: center;'
+                        ],
+                        'value' => function($model){
+                            return $model->status == 1 ? 'Active' : 'Inactive';
+                        }
+                    ],
+                    [
                         'class' => 'yii\grid\ActionColumn',
                         'header' => '&nbsp;',
                         'headerOptions' => [
@@ -83,6 +99,21 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
                             'view' => function($url, $model, $key){
                                 return Yii::$app->user->can('position-item-view') ? Html::a('Set Competency', ['view', 'id' => $model->item_no], [
                                     'class' => 'btn btn-primary btn-xs'
+                                ]) : '';
+                            }
+                        ],
+                    ],
+                    [
+                        'class' => 'yii\grid\ActionColumn',
+                        'header' => '&nbsp;',
+                        'headerOptions' => [
+                            'style' => 'width: 40px;'
+                        ],
+                        'template' => '<center>{update}</center>',
+                        'buttons' => [
+                            'update' => function($url, $model, $key){
+                                return Yii::$app->user->can('position-item-update') ? Html::a('<i class="fa fa-pencil"></i>', ['update', 'id' => $model->item_no], [
+                                    'class' => 'btn btn-link'
                                 ]) : '';
                             }
                         ],

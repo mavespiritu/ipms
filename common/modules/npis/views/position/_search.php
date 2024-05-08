@@ -48,11 +48,24 @@ use yii\widgets\MaskedInput;
                 </div>
 
                 <div class="col-md-2 col-xs-12">
-                    <label for="" style="margin-bottom: 20px;"></label>
-                    <br>
-                    <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
-                    &nbsp;&nbsp;
-                    <?= Html::a('Reset', ['/npis/position'],['class' => 'btn btn-default']) ?>
+                    <?= $form->field($model, 'status')->widget(Select2::classname(), [
+                        'data' => ['1' => 'Active', '0' => 'Inactive'],
+                        'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'status-select'],
+                        'pluginOptions' => [
+                            'allowClear' =>  true,
+                        ],
+                    ])
+                    ?>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12 col-xs-12">
+                    <div class="form-group pull-right">
+                        <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
+                        &nbsp;&nbsp;
+                        <?= Html::a('Reset', ['/npis/position'],['class' => 'btn btn-default']) ?>
+                    </div>
+                    <div class="clearfix"></div>
                 </div>
             </div>
         </div>

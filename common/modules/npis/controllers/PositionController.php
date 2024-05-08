@@ -73,6 +73,8 @@ class PositionController extends Controller
     public function actionIndex()
     {
         $searchModel = new EmployeePositionItemSearch();
+        $searchModel->status = 1;
+        
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $divisions = Division::find()->where(['is not', 'item_no', null])->all();
@@ -335,42 +337,24 @@ class PositionController extends Controller
      */
     public function actionCreate()
     {
-        $model = new Training();
+        $model = new EmployeePositionItem();
 
-        $competencyModel = new TrainingCompetency();
+        $positions = Position::find()->all();
+        $positions = ArrayHelper::map($positions, 'position_id', 'position_id');
 
-        $lsps = LearningServiceProvider::find()->all();
-        $lsps = ArrayHelper::map($lsps, 'id', 'lsp_name');
+        $divisions = Division::find()->where(['is not', 'item_no', null])->all();
+        $divisions = ArrayHelper::map($divisions, 'division_id', 'division_id');
 
-        $competencies = Competency::find()->all();
-        $competencies = ArrayHelper::map($competencies, 'comp_id', 'competency');
-
-        if ($model->load(Yii::$app->request->post()) &&
-            $competencyModel->load(Yii::$app->request->post())) {
+        if ($model->load(Yii::$app->request->post())) {
             
             $transaction = \Yii::$app->db->beginTransaction();
             try {
-                if ($flag = $model->save(false)) {
+                if ($model->save()) {
 
-                    if(!empty($competencyModel->competency_id))
-                    {
-                        foreach($competencyModel->competency_id as $id)
-                        {
-                            $competency = new TrainingCompetency();
-                            $competency->training_id = $model->id;
-                            $competency->competency_id = $id;
-                            if (! ($flag = $competency->save())) {
-                                $transaction->rollBack();
-                                break;
-                            }
-                        }
-                    }
+                    $transaction->commit();
+                    \Yii::$app->getSession()->setFlash('success', 'Record Saved');
+                    return $this->redirect(['/npis/position/']);
 
-                    if ($flag) {
-                        $transaction->commit();
-                        \Yii::$app->getSession()->setFlash('success', 'Record Saved');
-                        return $this->redirect(['/npis/training/']);
-                    }
                 }
             } catch (Exception $e) {
                 $transaction->rollBack();
@@ -379,9 +363,8 @@ class PositionController extends Controller
 
         return $this->render('create', [
             'model' => $model,
-            'competencyModel' => $competencyModel,
-            'lsps' => $lsps,
-            'competencies' => $competencies
+            'positions' => $positions,
+            'divisions' => $divisions
         ]);
     }
 
@@ -396,50 +379,22 @@ class PositionController extends Controller
     {
         $model = $this->findModel($id);
 
-        $competencyModel = new TrainingCompetency();
-        $oldCompetencies = $model->competencies;
-        $competencyModel->competency_id = array_values(ArrayHelper::map($oldCompetencies, 'competency_id', 'competency_id'));
+        $positions = Position::find()->all();
+        $positions = ArrayHelper::map($positions, 'position_id', 'position_id');
 
-        $lsps = LearningServiceProvider::find()->all();
-        $lsps = ArrayHelper::map($lsps, 'id', 'lsp_name');
+        $divisions = Division::find()->where(['is not', 'item_no', null])->all();
+        $divisions = ArrayHelper::map($divisions, 'division_id', 'division_id');
 
-        $competencies = Competency::find()->all();
-        $competencies = ArrayHelper::map($competencies, 'comp_id', 'competency');
-
-        if ($model->load(Yii::$app->request->post()) &&
-            $competencyModel->load(Yii::$app->request->post())) {
-
-            $oldCompetencyIDs = array_values(ArrayHelper::map($oldCompetencies, 'competency_id', 'competency_id'));
-            $deletedCompetencyIDs = $competencyModel->competency_id != '' ? array_diff($oldCompetencyIDs, array_filter($competencyModel->competency_id)) : array_diff($oldCompetencyIDs, []);
+        if ($model->load(Yii::$app->request->post())) {
 
             $transaction = \Yii::$app->db->beginTransaction();
             try {
-                if ($flag = $model->save(false)) {
-                    if(!empty($deletedCompetencyIDs))
-                    {
-                        TrainingCompetency::deleteAll(['training_id' => $model->id, 'competency_id' => $deletedCompetencyIDs]);
-                    }
+                if ($model->save()) {
 
-                    if(!empty($competencyModel->competency_id))
-                    {
-                        foreach($competencyModel->competency_id as $id)
-                        {
-                            $competency = TrainingCompetency::findOne(['training_id' => $model->id, 'competency_id' => $id]) ?
-                            TrainingCompetency::findOne(['training_id' => $model->id, 'competency_id' => $id]) : new TrainingCompetency();
-                            $competency->training_id = $model->id;
-                            $competency->competency_id = $id;
-                            if (! ($flag = $competency->save())) {
-                                $transaction->rollBack();
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if ($flag) {
                     $transaction->commit();
                     \Yii::$app->getSession()->setFlash('success', 'Record Updated');
-                    return $this->redirect(['/npis/training/']);
+                    return $this->redirect(['/npis/position/']);
+
                 }
                 
             } catch (Exception $e) {
@@ -449,9 +404,8 @@ class PositionController extends Controller
 
         return $this->render('update', [
             'model' => $model,
-            'competencyModel' => $competencyModel,
-            'lsps' => $lsps,
-            'competencies' => $competencies
+            'positions' => $positions,
+            'divisions' => $divisions
         ]);
     }
 

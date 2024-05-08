@@ -35,8 +35,8 @@ class EmployeePositionItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['item_no'], 'required'],
-            [['grade', 'step'], 'integer'],
+            [['item_no', 'position_id', 'division_id', 'grade', 'step', 'status'], 'required'],
+            [['grade', 'step', 'status'], 'integer'],
             [['item_no', 'position_id'], 'string', 'max' => 50],
             [['division_id'], 'string', 'max' => 20],
             [['item_no'], 'unique'],
@@ -56,6 +56,7 @@ class EmployeePositionItem extends \yii\db\ActiveRecord
             'division_id' => 'Division',
             'grade' => 'Grade',
             'step' => 'Step',
+            'status' => 'Status'
         ];
     }
 
