@@ -62,22 +62,22 @@ DisableButtonAsset::register($this);
 
     <?= $form->field($model, 'prescribed_eligibility')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
-        'preset' => 'basic'
+        'preset' => 'full'
     ]) ?>
 
     <?= $form->field($model, 'prescribed_education')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
-        'preset' => 'basic'
+        'preset' => 'full'
     ]) ?>
 
     <?= $form->field($model, 'prescribed_experience')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
-        'preset' => 'basic'
+        'preset' => 'full'
     ]) ?>
 
     <?= $form->field($model, 'prescribed_training')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
-        'preset' => 'basic'
+        'preset' => 'full'
     ]) ?>
 
     <h5 style="margin-left: 14%;"><b>Preferred Qualifications</b></h5>
@@ -85,44 +85,44 @@ DisableButtonAsset::register($this);
 
     <?= $form->field($model, 'preferred_eligibility')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
-        'preset' => 'basic'
+        'preset' => 'full'
     ]) ?>
 
     <?= $form->field($model, 'preferred_education')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
-        'preset' => 'basic'
+        'preset' => 'full'
     ]) ?>
 
     <?= $form->field($model, 'preferred_experience')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
-        'preset' => 'basic'
+        'preset' => 'full'
     ]) ?>
 
     <?= $form->field($model, 'preferred_training')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
-        'preset' => 'basic'
+        'preset' => 'full'
     ]) ?>
 
     <?= $form->field($model, 'examination')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
-        'preset' => 'basic'
+        'preset' => 'full'
     ]) ?>
 
     <br>
 
     <?= $form->field($model, 'summary')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
-        'preset' => 'basic'
+        'preset' => 'full'
     ])->label('B. Job Summary') ?>
 
     <?= $form->field($model, 'output')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
-        'preset' => 'basic'
+        'preset' => 'full'
     ])->label('C. Job Output') ?>
 
     <?= $form->field($model, 'responsibility')->widget(CKEditor::className(), [
         'options' => ['rows' => 6],
-        'preset' => 'basic'
+        'preset' => 'full'
     ])->label('D. Duties and Responsibilities') ?>
 
     <div class="row">
