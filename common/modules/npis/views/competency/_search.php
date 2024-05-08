@@ -8,7 +8,7 @@ use kartik\select2\Select2;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="lsp-search">
+<div class="competency-search">
 
     <?php $form = ActiveForm::begin([
         'action' => ['index'],
@@ -20,23 +20,27 @@ use kartik\select2\Select2;
         <div class="panel-body">
             <div class="row">
                 <div class="col-md-2 col-xs-12">
-                    <?= $form->field($model, 'lsp_name') ?>
+                    <?= $form->field($model, 'competency') ?>
                 </div>
                 <div class="col-md-2 col-xs-12">
-                    <?= $form->field($model, 'address') ?>
+                    <?= $form->field($model, 'comp_type')->widget(Select2::classname(), [
+                        'data' => $competencyTypes,
+                        'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'comp-type-select'],
+                        'pluginOptions' => [
+                            'allowClear' =>  true,
+                        ],
+                    ])->label('Type')
+                    ?>
                 </div>
                 <div class="col-md-2 col-xs-12">
-                    <?= $form->field($model, 'contact_no') ?>
-                </div>
-                <div class="col-md-2 col-xs-12">
-                    <?= $form->field($model, 'specialization') ?>
+                    <?= $form->field($model, 'description') ?>
                 </div>
                 <div class="col-md-2 col-xs-12">
                     <label for="" style="margin-bottom: 20px;"></label>
                     <br>
                     <?= Html::submitButton('Search', ['class' => 'btn btn-primary']) ?>
                     &nbsp;&nbsp;
-                    <?= Html::a('Reset', ['/npis/lsp'],['class' => 'btn btn-default']) ?>
+                    <?= Html::a('Reset', ['/npis/competency'],['class' => 'btn btn-default']) ?>
                 </div>
             </div>
         </div>

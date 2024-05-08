@@ -32,6 +32,7 @@ class Competency extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['competency', 'comp_type'], 'required'],
             [['description'], 'string'],
             [['competency'], 'string', 'max' => 255],
             [['comp_type'], 'string', 'max' => 50],
@@ -57,7 +58,7 @@ class Competency extends \yii\db\ActiveRecord
         return [
             'comp_id' => 'Comp ID',
             'competency' => 'Competency',
-            'comp_type' => 'Comp Type',
+            'comp_type' => 'Type',
             'description' => 'Description',
         ];
     }
