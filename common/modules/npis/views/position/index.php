@@ -79,13 +79,25 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
                         ],
                     ],
                     [
-                        'attribute' => 'status',
-                        'header' => 'STATUS',
+                        'attribute' => 'jobDescription',
+                        'header' => 'HAS JOB DESCRIPTION?',
                         'contentOptions' => [
                             'style' => 'text-align: center;'
                         ],
+                        'format' => 'raw',
                         'value' => function($model){
-                            return $model->status == 1 ? 'Active' : 'Inactive';
+                            return $model->jobDescription ? '<span class="badge bg-green">Yes</span>' : '<span class="badge bg-red">No</span>';
+                        }
+                    ],
+                    [
+                        'attribute' => 'competencyIndicators',
+                        'header' => 'HAS COMPETENCIES?',
+                        'contentOptions' => [
+                            'style' => 'text-align: center;'
+                        ],
+                        'format' => 'raw',
+                        'value' => function($model){
+                            return $model->competencyIndicators ? '<span class="badge bg-green">Yes</span>' : '<span class="badge bg-red">No</span>';
                         }
                     ],
                     [
@@ -97,9 +109,15 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
                         'template' => '<center>{view}</center>',
                         'buttons' => [
                             'view' => function($url, $model, $key){
-                                return Yii::$app->user->can('position-item-view') ? Html::a('Set Competency', ['view', 'id' => $model->item_no], [
-                                    'class' => 'btn btn-primary btn-xs'
+                                $buttons = '';
+                                $buttons .= Yii::$app->user->can('position-item-view') ? Html::a('Set Competency', ['view', 'id' => $model->item_no], [
+                                    'class' => 'btn bg-navy btn-xs btn-block'
                                 ]) : '';
+                                $buttons .= Yii::$app->user->can('position-item-view') ? Html::a('Set Job Description', ['job-description', 'id' => $model->item_no], [
+                                    'class' => 'btn bg-maroon btn-xs btn-block'
+                                ]) : '';
+
+                                return $buttons;
                             }
                         ],
                     ],

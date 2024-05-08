@@ -12,6 +12,7 @@ use yii\web\View;
 $this->title = $model->item_no;
 $this->params['breadcrumbs'][] = ['label' => 'CGA'];
 $this->params['breadcrumbs'][] = ['label' => 'Positions', 'url' => ['index']];
+$this->params['breadcrumbs'][] = ['label' => 'Set Competency'];
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 
