@@ -60,7 +60,7 @@
                         'url' => '#',
                         'visible' => Yii::$app->user->can('HR'),
                         'items' => [
-                            //['label' => 'My CGA', 'icon' => 'folder', 'url' => ['npis/cga/view'], 'visible' => Yii::$app->user->can('Staff')],
+                            ['label' => 'My CGA', 'icon' => 'folder', 'url' => ['/npis/cga/view'], 'visible' => Yii::$app->user->can('Staff')],
                             //['label' => 'Staff CGA', 'icon' => 'folder', 'url' => ['npis/cga/'], 'visible' => Yii::$app->user->can('HR')],
                             ['label' => 'LSP', 'icon' => 'folder', 'url' => ['/npis/lsp'], 'visible' => Yii::$app->user->can('HR')],
                             ['label' => 'Trainings', 'icon' => 'folder', 'url' => ['/npis/training'], 'visible' => Yii::$app->user->can('HR')],
