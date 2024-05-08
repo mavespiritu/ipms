@@ -17,7 +17,7 @@ class EmployeePositionItemSearch extends EmployeePositionItem
     public function rules()
     {
         return [
-            [['item_no', 'position_id', 'division_id', 'grade', 'step'], 'safe'],
+            [['item_no', 'position_id', 'division_id', 'grade', 'step', 'status'], 'safe'],
         ];
     }
 
@@ -61,7 +61,8 @@ class EmployeePositionItemSearch extends EmployeePositionItem
             ->andFilterWhere(['like', 'position_id', $this->position_id])
             ->andFilterWhere(['like', 'division_id', $this->division_id])
             ->andFilterWhere(['like', 'grade', $this->grade])
-            ->andFilterWhere(['like', 'step', $this->step]);
+            ->andFilterWhere(['like', 'step', $this->step])
+            ->andFilterWhere(['like', 'status', $this->status]);
 
         return $dataProvider;
     }
