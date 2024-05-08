@@ -207,6 +207,7 @@ class PositionController extends Controller
         ->select([
             'competency.comp_id as id',
             'competency.competency as competency',
+            'max(proficiency) as proficiency',
             'type' => new \yii\db\Expression('CASE 
                     WHEN competency.comp_type = "org" THEN "Organizational"
                     WHEN competency.comp_type = "mnt" THEN "Managerial"
@@ -218,6 +219,7 @@ class PositionController extends Controller
         ->where([
             'position_id' => $model->item_no
         ])
+        ->groupBy(['competency.comp_id'])
         ->orderBy([
             'type' => SORT_ASC,
             'competency' => SORT_ASC,
@@ -238,7 +240,7 @@ class PositionController extends Controller
             foreach($descriptors as $i => $descriptor){
                 $item = [];
 
-                $item['label'] = '<span style="font-size: 14px;" onclick="viewSelectedCompetency(\''.$model->item_no.'\', '.$descriptor['id'].')">'.$descriptor['competency'].'</span>';
+                $item['label'] = '<span style="font-size: 14px;" onclick="viewSelectedCompetency(\''.$model->item_no.'\', '.$descriptor['id'].')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</span>';
                 $item['content'] = '<div id="selected-competency-'.$descriptor['id'].'-information"></div>';
                 $item['options'] = ['class' => 'panel panel-default'];
 
