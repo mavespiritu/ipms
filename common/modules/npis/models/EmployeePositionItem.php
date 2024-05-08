@@ -94,4 +94,24 @@ class EmployeePositionItem extends \yii\db\ActiveRecord
     {
         return $this->hasOne(Division::className(), ['division_id' => 'division_id']);
     }
+
+    /**
+     * Gets query for [[JobDescription]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getJobDescription()
+    {
+        return $this->hasOne(JobDescription::className(), ['item_no' => 'item_no']);
+    }
+
+    /**
+     * Gets query for [[Competencies]].
+     *
+     * @return \yii\db\ActiveQuery
+     */
+    public function getCompetencyIndicators()
+    {
+        return $this->hasMany(PositionCompetencyIndicator::className(), ['position_id' => 'item_no']);
+    }
 }

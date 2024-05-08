@@ -10,6 +10,7 @@ use common\modules\npis\models\CompetencyIndicator;
 use common\modules\npis\models\PositionCompetencyIndicator;
 use common\modules\npis\models\EmployeePositionItem;
 use common\modules\npis\models\EmployeePositionItemSearch;
+use common\modules\npis\models\JobDescription;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -57,7 +58,7 @@ class PositionController extends Controller
                         'roles' => ['position-item-delete'],
                     ],
                     [
-                        'actions' => ['view', 'select-competency', 'view-competency', 'view-selected-competency'],
+                        'actions' => ['view', 'select-competency', 'view-competency', 'view-selected-competency', 'job-description'],
                         'allow' => true,
                         'roles' => ['position-item-view'],
                     ],
@@ -74,7 +75,7 @@ class PositionController extends Controller
     {
         $searchModel = new EmployeePositionItemSearch();
         $searchModel->status = 1;
-        
+
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $divisions = Division::find()->where(['is not', 'item_no', null])->all();
@@ -406,6 +407,37 @@ class PositionController extends Controller
             'model' => $model,
             'positions' => $positions,
             'divisions' => $divisions
+        ]);
+    }
+
+    /**
+     * Creates a new Training model.
+     * If creation is successful, the browser will be redirected to the 'view' page.
+     * @return mixed
+     */
+    public function actionJobDescription($id)
+    {
+        $model = JobDescription::findOne(['item_no' => $id]) ? JobDescription::findOne(['item_no' => $id]) : new JobDescription();
+        $model->item_no = $id;
+
+        if ($model->load(Yii::$app->request->post())) {
+            
+            $transaction = \Yii::$app->db->beginTransaction();
+            try {
+                if ($model->save()) {
+
+                    $transaction->commit();
+                    \Yii::$app->getSession()->setFlash('success', 'Record Saved');
+                    return $this->redirect(['/npis/position/']);
+
+                }
+            } catch (Exception $e) {
+                $transaction->rollBack();
+            }
+        }
+
+        return $this->render('job-description', [
+            'model' => $model,
         ]);
     }
 
