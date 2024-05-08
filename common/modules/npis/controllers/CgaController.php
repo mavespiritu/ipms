@@ -158,10 +158,24 @@ class CgaController extends Controller
         ->asArray()
         ->all() : [];
 
-        echo "<pre>"; print_r($descriptors); exit;
+        $availableDescriptors = [];
+
+        usort($descriptors, function($a, $b) {
+            $order = ['Organizational', 'Managerial', 'Technical/Functional'];
+            $index_a = array_search($a['type'], $order);
+            $index_b = array_search($b['type'], $order);
+            return $index_a - $index_b;
+        });
+
+        if(!empty($descriptors)){
+            foreach($descriptors as $i => $descriptor){
+                $availableDescriptors[$descriptor['type']][$descriptor['competency']][$descriptor['proficiency']][] = $descriptor;
+            }
+        }
 
         return $this->render('view', [
-            'model' => $model
+            'model' => $model,
+            'availableDescriptors' => $availableDescriptors,
         ]);
     }
 }

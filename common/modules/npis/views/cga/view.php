@@ -44,7 +44,44 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
                     </div>
                 </div>
                 <div class="col-md-9 col-lg-10 col-xs-12">
-                    <h5>Required Competencies</h5>
+                    <div class="row">
+                        <div class="col-md-6 col-lg-6 col-xs-12">
+                        <h4>Required Competencies</h4>
+                        <?php if(!empty($availableDescriptors)){ ?>
+                            <?php foreach($availableDescriptors as $type => $competencies){ ?>
+                                <?php $i = 1; ?>
+                                <h5><?= $type ?></h5>
+                                <?php if(!empty($competencies)){ ?>
+                                    <?php foreach($competencies as $competency => $proficiencies){ ?>
+                                        <h5><?= $i.'. '.$competency ?></h5>
+                                        <?php if(!empty($proficiencies)){ ?>
+                                            <?php foreach($proficiencies as $proficiency => $descriptors){ ?>
+                                                <table class="table table-responsive table-condensed table-bordered table-hover">
+                                                    <thead>
+                                                        <tr>
+                                                            <th colspan=2>LEVEL <?= $proficiency ?></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                    <?php if(!empty($descriptors)){ ?>
+                                                        <?php foreach($descriptors as $idx => $descriptor){ ?>
+                                                            <tr>
+                                                                <td><?= $idx + 1 ?></td>
+                                                                <td><?= $descriptor['indicator'] ?></td>
+                                                            </tr>
+                                                        <?php } ?>
+                                                    <?php } ?>
+                                                    </tbody>
+                                                </table>
+                                            <?php } ?>
+                                        <?php } ?>
+                                        <?php $i++ ?>
+                                    <?php } ?>
+                                <?php } ?>
+                            <?php } ?>
+                        <?php } ?>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
