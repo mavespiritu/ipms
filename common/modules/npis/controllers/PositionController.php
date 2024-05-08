@@ -73,7 +73,8 @@ class PositionController extends Controller
     public function actionIndex()
     {
         $searchModel = new EmployeePositionItemSearch();
-     
+        $searchModel->status = 1;
+        
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
         $divisions = Division::find()->where(['is not', 'item_no', null])->all();
