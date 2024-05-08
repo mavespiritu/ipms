@@ -4,6 +4,8 @@ namespace common\modules\npis\controllers;
 
 use Yii;
 use common\modules\npis\models\LearningServiceProvider;
+use common\modules\npis\models\EmployeeItem;
+use common\modules\npis\models\EmployeePositionItem;
 use common\modules\npis\models\Training;
 use common\modules\npis\models\TrainingCompetency;
 use common\modules\npis\models\Competency;
@@ -120,6 +122,46 @@ class CgaController extends Controller
      */
     public function actionView()
     {
-        
+        $model = EmployeeItem::find()
+            ->andWhere([
+                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+            ])
+            ->andWhere([
+                'is', 'to_date', null
+            ])
+            ->orderBy([
+                'from_date' => SORT_DESC
+            ])
+            ->one();
+
+        $descriptors = $model ? PositionCompetencyIndicator::find()
+        ->select([
+            'competency_indicator.id as id',
+            'competency.competency as competency',
+            'competency_indicator.indicator as indicator',
+            'competency_indicator.proficiency as proficiency',
+            'type' => new \yii\db\Expression('CASE 
+                    WHEN competency.comp_type = "org" THEN "Organizational"
+                    WHEN competency.comp_type = "mnt" THEN "Managerial"
+                    ELSE "Technical/Functional"
+                END')
+        ])
+        ->leftJoin('competency_indicator', 'competency_indicator.id = position_competency_indicator.indicator_id')
+        ->leftJoin('competency', 'competency.comp_id = competency_indicator.competency_id')
+        ->where([
+            'position_id' => $model->item_no
+        ])
+        ->orderBy([
+            'type' => SORT_ASC,
+            'competency' => SORT_ASC,
+        ])
+        ->asArray()
+        ->all() : [];
+
+        echo "<pre>"; print_r($descriptors); exit;
+
+        return $this->render('view', [
+            'model' => $model
+        ]);
     }
 }

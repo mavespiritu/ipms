@@ -28,6 +28,7 @@ DisableButtonAsset::register($this);
 ]); ?>
 
 <div style="height: 100%;">
+    <p><?= $competency->description ?></p>
     <p class="text-right" style="margin-right: 5px;">Select All&nbsp;&nbsp;&nbsp;<input type="checkbox" name="items" class="check-selected-competency-<?= $competency->comp_id ?>-items" /></p>
     <?php if(!empty($availableDescriptors)){ ?>
         <?php foreach($availableDescriptors as $proficiency => $descriptors){ ?>
