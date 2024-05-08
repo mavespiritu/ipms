@@ -10,7 +10,7 @@ $this->params['breadcrumbs'][] = 'CGA';
 $this->params['breadcrumbs'][] = ['label' => 'LSP', 'url' => ['index']];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
-<div class="ipcr-update">
+<div class="lsp-update">
     <div class="box box-solid">
         <div class="box-header with-border"><h3 class="box-title">Record Entry Form</h3></div>
         <div class="box-body">

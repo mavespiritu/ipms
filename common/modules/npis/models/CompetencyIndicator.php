@@ -43,8 +43,8 @@ class CompetencyIndicator extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'competency_id' => 'Competency ID',
-            'proficiency' => 'Proficiency',
+            'competency_id' => 'Competency',
+            'proficiency' => 'Proficiency Level',
             'indicator' => 'Indicator',
         ];
     }
