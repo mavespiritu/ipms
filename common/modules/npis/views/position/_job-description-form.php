@@ -15,6 +15,7 @@ use \file\components\AttachmentsInput;
 use yii\web\JsExpression;
 use buttflatteryormwizard\FormWizard;
 use dosamigos\switchery\Switchery;
+use dosamigos\ckeditor\CKEditor;
 use faryshta\disableSubmitButtons\Asset as DisableButtonAsset;
 DisableButtonAsset::register($this);
 
@@ -37,15 +38,92 @@ DisableButtonAsset::register($this);
 
     <?= $form->field($model, 'item_no')->textInput(['value' => $model->item_no, 'disabled' => true]) ?>
 
-    <?= $form->field($model, 'eligibility')->textArea(['rows' => 3]) ?>
+    <?= $form->field($model, 'reports_to')->textInput(['maxlength' => true]) ?>
 
-    <?= $form->field($model, 'education')->textArea(['rows' => 3]) ?>
+    <?= $form->field($model, 'classification')->widget(Select2::classname(), [
+        'data' => [
+            'Executive' => 'Executive',
+            'Middle Management' => 'Middle Management',
+            'Professional & Supervisory & Technical' => 'Professional & Supervisory & Technical',
+            'Clerical & General Staff' => 'Clerical & General Staff',
+        ],
+        'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'classification-select'],
+        'pluginOptions' => [
+            'allowClear' =>  true,
+        ],
+    ])
+    ?>
 
-    <?= $form->field($model, 'experience')->textArea(['rows' => 3]) ?>
+    <h5 style="margin-left: 15%;"><b>A. Qualification Guide</b></h5>
+    <br>
 
-    <?= $form->field($model, 'training')->textArea(['rows' => 3]) ?>
+    <h5 style="margin-left: 16%;"><b>CSC-Prescribed QS</b></h5>
+    <br>
 
-    <?= $form->field($model, 'examination')->textArea(['rows' => 3]) ?>
+    <?= $form->field($model, 'prescribed_eligibility')->widget(CKEditor::className(), [
+        'options' => ['rows' => 6],
+        'preset' => 'basic'
+    ]) ?>
+
+    <?= $form->field($model, 'prescribed_education')->widget(CKEditor::className(), [
+        'options' => ['rows' => 6],
+        'preset' => 'basic'
+    ]) ?>
+
+    <?= $form->field($model, 'prescribed_experience')->widget(CKEditor::className(), [
+        'options' => ['rows' => 6],
+        'preset' => 'basic'
+    ]) ?>
+
+    <?= $form->field($model, 'prescribed_training')->widget(CKEditor::className(), [
+        'options' => ['rows' => 6],
+        'preset' => 'basic'
+    ]) ?>
+
+    <h5 style="margin-left: 14%;"><b>Preferred Qualifications</b></h5>
+    <br>
+
+    <?= $form->field($model, 'preferred_eligibility')->widget(CKEditor::className(), [
+        'options' => ['rows' => 6],
+        'preset' => 'basic'
+    ]) ?>
+
+    <?= $form->field($model, 'preferred_education')->widget(CKEditor::className(), [
+        'options' => ['rows' => 6],
+        'preset' => 'basic'
+    ]) ?>
+
+    <?= $form->field($model, 'preferred_experience')->widget(CKEditor::className(), [
+        'options' => ['rows' => 6],
+        'preset' => 'basic'
+    ]) ?>
+
+    <?= $form->field($model, 'preferred_training')->widget(CKEditor::className(), [
+        'options' => ['rows' => 6],
+        'preset' => 'basic'
+    ]) ?>
+
+    <?= $form->field($model, 'examination')->widget(CKEditor::className(), [
+        'options' => ['rows' => 6],
+        'preset' => 'basic'
+    ]) ?>
+
+    <br>
+
+    <?= $form->field($model, 'summary')->widget(CKEditor::className(), [
+        'options' => ['rows' => 6],
+        'preset' => 'basic'
+    ])->label('B. Job Summary') ?>
+
+    <?= $form->field($model, 'output')->widget(CKEditor::className(), [
+        'options' => ['rows' => 6],
+        'preset' => 'basic'
+    ])->label('C. Job Output') ?>
+
+    <?= $form->field($model, 'responsibility')->widget(CKEditor::className(), [
+        'options' => ['rows' => 6],
+        'preset' => 'basic'
+    ])->label('D. Duties and Responsibilities') ?>
 
     <div class="row">
         <div class="col-md-12 col-xs-12">

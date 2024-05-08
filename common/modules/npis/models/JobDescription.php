@@ -31,9 +31,39 @@ class JobDescription extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['eligibility', 'education', 'experience', 'training', 'examination'], 'required'],
-            [['eligibility', 'education', 'experience', 'training', 'examination'], 'string'],
+            [[
+                'reports_to',
+                'classification',
+                'prescribed_eligibility', 
+                'prescribed_education', 
+                'prescribed_experience', 
+                'prescribed_training', 
+                'preferred_eligibility', 
+                'preferred_education', 
+                'preferred_experience', 
+                'preferred_training', 
+                'examination',
+                'summary',
+                'output',
+                'responsibility'
+            ], 'required'],
+            [[
+                'reports_to',
+                'prescribed_eligibility', 
+                'prescribed_education', 
+                'prescribed_experience', 
+                'prescribed_training', 
+                'preferred_eligibility', 
+                'preferred_education', 
+                'preferred_experience', 
+                'preferred_training', 
+                'examination',
+                'summary',
+                'output',
+                'responsibility'
+            ], 'string'],
             [['item_no'], 'string', 'max' => 50],
+            [['classification'], 'string', 'max' => 100],
         ];
     }
 
@@ -45,11 +75,18 @@ class JobDescription extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'item_no' => 'Item No',
-            'eligibility' => 'Eligibility',
-            'education' => 'Education',
-            'experience' => 'Experience',
-            'training' => 'Training',
-            'examination' => 'Examination',
+            'prescribed_eligibility' => 'Eligibility',
+            'prescribed_education' => 'Education',
+            'prescribed_experience' => 'Experience',
+            'prescribed_training' => 'Training',
+            'preferred_eligibility' => 'Eligibility',
+            'preferred_education' => 'Education',
+            'preferred_experience' => 'Experience',
+            'preferred_training' => 'Training',
+            'examination' => 'NEDA Exam',
+            'summary' => 'Job Summary',
+            'output' => 'Job Output',
+            'responsibility' => 'Duties and Responsibilities',
         ];
     }
 }
