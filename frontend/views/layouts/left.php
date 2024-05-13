@@ -58,7 +58,7 @@
                         'label' => 'CGA',
                         'icon' => 'folder',
                         'url' => '#',
-                        'visible' => Yii::$app->user->can('HR'),
+                        'visible' => Yii::$app->user->can('Staff'),
                         'items' => [
                             ['label' => 'My CGA', 'icon' => 'folder', 'url' => ['/npis/cga/view'], 'visible' => Yii::$app->user->can('Staff')],
                             //['label' => 'Staff CGA', 'icon' => 'folder', 'url' => ['npis/cga/'], 'visible' => Yii::$app->user->can('HR')],
