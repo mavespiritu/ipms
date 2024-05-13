@@ -17,7 +17,7 @@ $asset = AppAsset::register($this);
                 <?php } ?>
             </div>
             <div class="product-info">
-                <?= $celebrant->fname.' '.$celebrant->lname ?>
+                <b><?= $celebrant->fname.' '.$celebrant->lname ?></b>
                 <?= date("F j", strtotime($celebrant->birth_date)) == date("F j") ? '<span class="label label-success pull-right">Today</span>' : '<span class="pull-right">'.date("F j", strtotime($celebrant->birth_date)).'</span>' ?>
                 <span class="product-description">
                     <?= $celebrant->position_id ?>

@@ -16,6 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
         <br>
         <span style="font-weight: normal; font-size: 14px;">PDS Page 3 of 4</span>
     </h4>
+    <div class="nav-tabs-custom">
     <?= Tabs::widget([
         'id' => 'other-information-tabs',
         'items' => [
@@ -35,7 +36,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 'headerOptions' => ['onclick' => 'viewOrganizations("'.$model->emp_id.'")'],
             ],
         ],
-    ]); ?>  
+    ]); ?>
+    </div>
 </div>
 <style>
     table.inverted-table th{

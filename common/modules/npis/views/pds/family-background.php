@@ -124,12 +124,15 @@ use yii\web\View;
         </div>
         <div class="col-md-6 col-xs-12">
             <table class="table table-condensed table-responsive table-bordered">
-                <tr>
-                    <th style="text-align: center; font-weight: bolder;">#</th>
-                    <th style="text-align: center; font-weight: bolder;">NAME OF CHILDREN (Write full and list all)</th>
-                    <th style="text-align: center; font-weight: bolder;">DATE OF BIRTH (mm/dd/yyyy)</th>
-                    <th>&nbsp;</th>
-                </tr>
+                <thead>
+                    <tr>
+                        <th style="text-align: center; font-weight: bolder;">#</th>
+                        <th style="text-align: center; font-weight: bolder;">NAME OF CHILDREN (Write full and list all)</th>
+                        <th style="text-align: center; font-weight: bolder;">DATE OF BIRTH (mm/dd/yyyy)</th>
+                        <th>&nbsp;</th>
+                    </tr>
+                </thead>
+                <tbody>
                 <?php if($model->children){ ?>
                     <?php foreach($model->children as $i => $child){ ?>
                         <tr>
@@ -160,6 +163,7 @@ use yii\web\View;
                         <td colspan=4 align=center style="font-weight: normal !important;">No child found.</td>
                     </tr>
                 <?php } ?>
+                </tbody>
             </table>
         </div>
     </div>

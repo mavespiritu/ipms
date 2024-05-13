@@ -33,73 +33,74 @@ $this->params['breadcrumbs'][] = $this->title;
                 </div>
                 <br>
                 <br>
-                <?= Tabs::widget([
-                    'id' => 'pds-tabs',
-                    'items' => [
-                        [
-                            'label' => 'Personal Information',
-                            'content' => '<div id="personal-information"></div>',
-                            'headerOptions' => ['onclick' => 'viewPersonalInformation("'.$model->emp_id.'")'],
+                <div class="nav-tabs-custom">
+                    <?= Tabs::widget([
+                        'id' => 'pds-tabs',
+                        'items' => [
+                            [
+                                'label' => 'Personal Information',
+                                'content' => '<div id="personal-information"></div>',
+                                'headerOptions' => ['onclick' => 'viewPersonalInformation("'.$model->emp_id.'")'],
+                            ],
+                            [
+                                'label' => 'Family Background',
+                                'content' => '<div id="family-background"></div>',
+                                'headerOptions' => ['onclick' => 'viewFamilyBackground("'.$model->emp_id.'")'],
+                            ],
+                            [
+                                'label' => 'Educational Background',
+                                'content' => '<div id="educational-background"></div>',
+                                'headerOptions' => ['onclick' => 'viewEducationalBackground("'.$model->emp_id.'")'],
+                            ],
+                            [
+                                'label' => 'Civil Service Eligibility',
+                                'content' => '<div id="eligibility"></div>',
+                                'headerOptions' => ['onclick' => 'viewEligibility("'.$model->emp_id.'")'],
+                            ],
+                            [
+                                'label' => 'Work Experience',
+                                'content' => '<div id="work-experience"></div>',
+                                'headerOptions' => ['onclick' => 'viewWorkExperience("'.$model->emp_id.'")'],
+                            ],
+                            [
+                                'label' => 'Voluntary Work',
+                                'content' => '<div id="voluntary-work"></div>',
+                                'headerOptions' => ['onclick' => 'viewVoluntaryWork("'.$model->emp_id.'")'],
+                            ],
+                            [
+                                'label' => 'Learning & Development',
+                                'content' => '<div id="training"></div>',
+                                'headerOptions' => ['onclick' => 'viewTraining("'.$model->emp_id.'")'],
+                            ],
+                            [
+                                'label' => 'Other Information',
+                                'content' => '<div id="other-information"></div>',
+                                'headerOptions' => ['onclick' => 'viewOtherInformation("'.$model->emp_id.'")'],
+                            ],
+                            [
+                                'label' => 'Questions',
+                                'content' => '<div id="questions"></div>',
+                                'headerOptions' => ['onclick' => 'viewQuestions("'.$model->emp_id.'")'],
+                            ],
+                            [
+                                'label' => 'References',
+                                'content' => '<div id="references"></div>',
+                                'headerOptions' => ['onclick' => 'viewReferences("'.$model->emp_id.'")'],
+                            ],
                         ],
-                        [
-                            'label' => 'Family Background',
-                            'content' => '<div id="family-background"></div>',
-                            'headerOptions' => ['onclick' => 'viewFamilyBackground("'.$model->emp_id.'")'],
-                        ],
-                        [
-                            'label' => 'Educational Background',
-                            'content' => '<div id="educational-background"></div>',
-                            'headerOptions' => ['onclick' => 'viewEducationalBackground("'.$model->emp_id.'")'],
-                        ],
-                        [
-                            'label' => 'Civil Service Eligibility',
-                            'content' => '<div id="eligibility"></div>',
-                            'headerOptions' => ['onclick' => 'viewEligibility("'.$model->emp_id.'")'],
-                        ],
-                        [
-                            'label' => 'Work Experience',
-                            'content' => '<div id="work-experience"></div>',
-                            'headerOptions' => ['onclick' => 'viewWorkExperience("'.$model->emp_id.'")'],
-                        ],
-                        [
-                            'label' => 'Voluntary Work',
-                            'content' => '<div id="voluntary-work"></div>',
-                            'headerOptions' => ['onclick' => 'viewVoluntaryWork("'.$model->emp_id.'")'],
-                        ],
-                        [
-                            'label' => 'Learning & Development',
-                            'content' => '<div id="training"></div>',
-                            'headerOptions' => ['onclick' => 'viewTraining("'.$model->emp_id.'")'],
-                        ],
-                        [
-                            'label' => 'Other Information',
-                            'content' => '<div id="other-information"></div>',
-                            'headerOptions' => ['onclick' => 'viewOtherInformation("'.$model->emp_id.'")'],
-                        ],
-                        [
-                            'label' => 'Questions',
-                            'content' => '<div id="questions"></div>',
-                            'headerOptions' => ['onclick' => 'viewQuestions("'.$model->emp_id.'")'],
-                        ],
-                        [
-                            'label' => 'References',
-                            'content' => '<div id="references"></div>',
-                            'headerOptions' => ['onclick' => 'viewReferences("'.$model->emp_id.'")'],
-                        ],
-                    ],
-                ]); ?>
+                    ]); ?>
+                </div>
             </div>
     </div>
 </div>
 <style>
     table.inverted-table th{
-        background-color: #F4F4F5;  
-        font-weight: normal; 
+        background-color: #CCE6F4;  
+        font-weight: bolder; 
         border: 1px solid #ECF0F5 !important;
         text-align: right;
     }
     table.inverted-table td{
-        font-weight: bolder !important;
         border: 1px solid #ECF0F5 !important;
     }
 </style>

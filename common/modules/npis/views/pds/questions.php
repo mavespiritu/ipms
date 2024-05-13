@@ -168,7 +168,7 @@ $options = ['true' => 'YES', 'false' => 'NO'];
 </div>
 <style>
     table.question-table th{
-        background-color: #F4F4F5;  
+        background-color: #CCE6F4;  
         font-weight: normal; 
         border: 1px solid #ECF0F5 !important;
         width: 50% !important;

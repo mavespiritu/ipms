@@ -9,6 +9,41 @@ body {
     font-family: "Inter", sans-serif;
 }
 
+.box,
+.panel{
+  border-radius: 10px !important;
+  overflow: hidden;
+}
+
+.btn{
+  border-radius: 6px !important;
+}
+
+.content-wrapper{
+  background-color: #F5F6FA !important;
+}
+
+.main-sidebar{
+  background-color: white !important;
+}
+
+.panel-heading{
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+}
+
+input[type="text"],
+input[type="number"],
+input[type="file"],
+.file-caption
+{
+  border-radius: 4px !important;
+}
+
+table{
+  border-radius: 4px !important;
+}
+
 .box-body {
   min-height: calc(100vh - 235px);
 }
@@ -39,18 +74,66 @@ hr{
 li.user-header,
 a.logo,
 nav{
-  background-color: #00766A !important;
+  background-color: #175676 !important;
   text-align: left !important;
+}
+
+a.btn-info,
+button.btn-info{
+  background-color: #4BA3C3 !important;
+  border: none;
 }
 
 a.btn-primary,
 button.btn-primary{
-  background-color: #00766A !important;
+  background-color: #17BEBB !important;
+  border: none;
 }
 
 a.btn-success,
 button.btn-success{
-  background-color: #047857 !important;
+  background-color: #17BEBB !important;
+  border: none;
+}
+
+a.btn-default,
+button.btn-default{
+  background-color: #CCE6F4 !important;
+  border: none;
+}
+
+a.btn-danger,
+button.btn-danger{
+  background-color: #D62839 !important;
+  border: none;
+}
+
+.form-group.has-error label,
+.form-group.has-error .help-block
+{
+  color: #BA324F !important;
+}
+
+.form-group.has-success label,
+.form-group.has-success .help-block
+{
+  color: #17BEBB !important;
+}
+
+.form-group.has-error .form-control,
+.form-group.has-error .input-group-addon
+{
+ border-color: #BA324F !important;
+}
+
+.form-group.has-success .form-control,
+.form-group.has-success .input-group-addon
+{
+ border-color: #17BEBB !important;
+}
+
+.direct-chat-img{
+ border: 2px solid #CCE6F4;
 }
 
 label{
@@ -67,17 +150,18 @@ h6{
   font-weight: 500;
 }
 
-.box{
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
+.box,
+#calendar{
+  box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06) !important;
 }
 
 div.positive{
-  background-color: #064E3B;
+  background-color: #17BEBB;
   color: white;
 }
 
 div.negative{
-  background-color: #7F1D1D;
+  background-color: #D62839;
   color: white;
 }
 
@@ -455,7 +539,7 @@ a.desc:after {
 }
 
 table.table > thead > tr{
-  background-color: #F4F4F5; 
+  background-color: #CCE6F4 !important; 
   color: black; 
   font-weight: bolder; 
 }
@@ -471,4 +555,8 @@ label.control-label{
 }
 hr{
   opacity: 0.10;
+}
+
+.nav-tabs-custom>.nav-tabs>li.active {
+  border-top-color: #4BA3C3 !important;
 }
