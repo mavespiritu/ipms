@@ -96,19 +96,19 @@ $asset = AppAsset::register($this);
             </div>
         </div>
         <div class="col-md-12 col-lg-3 col-xs-12">
+            <div class="calendar" id="calendar"></div>
+            <br>
             <div class="box box-solid">
-                <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px 20px 20px 20px;">
-                    <div class="calendar" id="calendar"></div>
-                    <br>
+                <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 20px">
                     <p style="font-size: 1.1em;"><b>Upcoming Holidays</b></p>
                     <div id="holidays"></div>
-                    <div style="min-height: calc(100vh - 533px); max-height: 40vh; overflow-y: auto; padding-right: 20px;">
+                    <div style="min-height: calc(100vh - 555px); max-height: 39.5vh; overflow-y: auto; padding-right: 20px;">
                     <?php if($holidays){ ?>
                         <ul class="products-list product-list-in-box">
                         <?php foreach($holidays as $holiday){ ?>
                             <li class="item">
                                 <div class="product-info" style="margin-left: 0;">
-                                    <?= $holiday->holiday_name ?>
+                                    <b><?= $holiday->holiday_name ?></b>
                                     <span class="product-description">
                                         <?= date("F j", strtotime($holiday->holiday_date)) ?>
                                         <?= date("F j", strtotime($holiday->holiday_date)) == date("F j") ? '<span class="label label-success pull-right">Today</span>' : '' ?>
@@ -140,7 +140,8 @@ $asset = AppAsset::register($this);
     #calendar {
       max-width: 100%;
       margin: 0 auto;
-      background-color: #F9F8FE;
+      background-color: #CCE6F4;
+      border-radius: 8px;
     }
 
     #calendar-table {
@@ -149,7 +150,7 @@ $asset = AppAsset::register($this);
     }
 
     #calendar-table > tbody > tr > th {
-        background-color: #00766A;
+        background-color: #175676;
         color: white;
         padding: 10px 0;
         text-align: center;
@@ -161,12 +162,8 @@ $asset = AppAsset::register($this);
       font-weight: bolder;
     }
 
-    #calendar-table > tbody > tr > td:hover {
-      background-color: #f0f0f0;
-    }
-
     #calendar-table > tbody > tr > td.empty-cell {
-      background-color: #f9f9f9;
+      background-color: #CCE6F4;
     }
 
     #calendar-table > tbody > tr > td.current-date {
@@ -174,7 +171,7 @@ $asset = AppAsset::register($this);
     }
 
     #calendar-table > tbody > tr > td.current-date span {
-      background-color: #FB5C58;
+      background-color: #BA324F;
       border-radius: 50%;
       width: 35px;
       padding: 7px;
@@ -194,7 +191,7 @@ $asset = AppAsset::register($this);
       const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
 
       let calendarHTML = '<table id="calendar-table">';
-      calendarHTML += '<tr><th colspan="7" style="font-weight: bolder;">' + new Date(currentYear, currentMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) + '</th></tr>';
+      calendarHTML += '<tr><th colspan="7" style="font-weight: bolder; border-top-left-radius: 8px; border-top-right-radius: 8px; text-transform: uppercase;">' + new Date(currentYear, currentMonth).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }) + '</th></tr>';
       calendarHTML += '<tr><th style="width: 14.28%;">S</th><th style="width: 14.28%;">M</th><th style="width: 14.28%;">T</th><th style="width: 14.28%;">W</th><th style="width: 14.28%;">T</th><th style="width: 14.28%;">F</th><th style="width: 14.28%;">S</th></tr>';
 
       let dayCounter = 1;

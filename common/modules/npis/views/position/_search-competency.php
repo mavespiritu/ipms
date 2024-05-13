@@ -9,7 +9,7 @@ use yii\widgets\MaskedInput;
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="Competency-search">
+<div class="competency-search">
 
     <?= Select2::widget([
         'name' => 'comp_id',

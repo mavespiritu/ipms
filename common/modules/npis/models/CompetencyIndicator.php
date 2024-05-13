@@ -30,6 +30,7 @@ class CompetencyIndicator extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['competency_id', 'proficiency', 'indicator'], 'required'],
             [['competency_id', 'proficiency'], 'integer'],
             [['indicator'], 'string'],
             [['competency_id'], 'exist', 'skipOnError' => true, 'targetClass' => Competency::className(), 'targetAttribute' => ['competency_id' => 'comp_id']],

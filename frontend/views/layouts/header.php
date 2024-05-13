@@ -7,7 +7,7 @@ use yii\helpers\Html;
 
 <header class="main-header">
     <?php if(!Yii::$app->user->isGuest){ ?>
-        <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button" style="background-color: #00766A; color: white;">
+        <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button" style="background-color: #175676; color: white;">
             <span class="sr-only">Toggle navigation</span>
         </a>
     <?php } ?>

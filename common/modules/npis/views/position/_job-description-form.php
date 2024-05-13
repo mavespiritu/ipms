@@ -60,51 +60,51 @@ DisableButtonAsset::register($this);
     <h5 style="margin-left: 16%;"><b>CSC-Prescribed QS</b></h5>
     <br>
 
-    <?= $form->field($model, 'prescribed_eligibility')->widget(CKEditor::className(), [
-        'options' => ['rows' => 6],
-        'preset' => 'full'
-    ]) ?>
-
     <?= $form->field($model, 'prescribed_education')->widget(CKEditor::className(), [
-        'options' => ['rows' => 6],
+        'options' => ['rows' => 3],
         'preset' => 'full'
     ]) ?>
 
     <?= $form->field($model, 'prescribed_experience')->widget(CKEditor::className(), [
-        'options' => ['rows' => 6],
+        'options' => ['rows' => 3],
         'preset' => 'full'
     ]) ?>
 
     <?= $form->field($model, 'prescribed_training')->widget(CKEditor::className(), [
-        'options' => ['rows' => 6],
+        'options' => ['rows' => 3],
+        'preset' => 'full'
+    ]) ?>
+
+    <?= $form->field($model, 'prescribed_eligibility')->widget(CKEditor::className(), [
+        'options' => ['rows' => 3],
         'preset' => 'full'
     ]) ?>
 
     <h5 style="margin-left: 14%;"><b>Preferred Qualifications</b></h5>
     <br>
 
-    <?= $form->field($model, 'preferred_eligibility')->widget(CKEditor::className(), [
-        'options' => ['rows' => 6],
-        'preset' => 'full'
-    ]) ?>
-
     <?= $form->field($model, 'preferred_education')->widget(CKEditor::className(), [
-        'options' => ['rows' => 6],
+        'options' => ['rows' => 3],
         'preset' => 'full'
     ]) ?>
 
     <?= $form->field($model, 'preferred_experience')->widget(CKEditor::className(), [
-        'options' => ['rows' => 6],
+        'options' => ['rows' => 3],
         'preset' => 'full'
     ]) ?>
 
     <?= $form->field($model, 'preferred_training')->widget(CKEditor::className(), [
-        'options' => ['rows' => 6],
+        'options' => ['rows' => 3],
+        'preset' => 'full'
+    ]) ?>
+
+    <?= $form->field($model, 'preferred_eligibility')->widget(CKEditor::className(), [
+        'options' => ['rows' => 3],
         'preset' => 'full'
     ]) ?>
 
     <?= $form->field($model, 'examination')->widget(CKEditor::className(), [
-        'options' => ['rows' => 6],
+        'options' => ['rows' => 3],
         'preset' => 'full'
     ]) ?>
 

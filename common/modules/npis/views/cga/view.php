@@ -5,6 +5,7 @@ use yii\helpers\Url;
 use yii\widgets\DetailView;
 use yii\bootstrap\Collapse;
 use yii\web\View;
+use yii\bootstrap\Tabs;
 
 /* @var $this yii\web\View */
 /* @var $model common\modules\npis\models\Ipcr */
@@ -15,74 +16,33 @@ $this->params['breadcrumbs'][] = $this->title;
 
 $successMessage = \Yii::$app->getSession()->getFlash('success');
 ?>
-<?php
-    if(Yii::$app->session->hasFlash('success')):?>
-        <div class="alert alert-success" role="alert">
-            <?= Yii::$app->session->getFlash('success') ?>
-        </div>
-    <?php endif;
-    if(Yii::$app->session->hasFlash('error')):?>
-        <div class="alert alert-danger" role="alert">
-            <?= Yii::$app->session->getFlash('error') ?>
-        </div>
-    <?php endif;
-?>
 <div id="alert" class="alert" role="alert" style="display: none;"></div>
 <div class="ipcr-view">
     <div class="box box-solid">
-        <div class="box-header with-border"><h3 class="box-title">Competency Gap Analysis Form</h3></div>
+        <div class="box-header with-border"><h3 class="box-title">Competency Gap Analysis</h3></div>
         <div class="box-body">
-            <div class="row">
-                <div class="col-md-3 col-lg-2 col-xs-12">
-                    <div class="user-block">
-                        <span class="description" style="margin-left: 0 !important;">
-                            Item No.: <?= $model->item_no ?><br>
-                            Position: <?= $model->positionItem->position_id ?><br>
-                            Division: <?= $model->positionItem->division_id ?><br>
-                            SG and Step: <?= $model->positionItem->grade.'-'.$model->positionItem->step ?>
-                        </span>
-                    </div>
-                </div>
-                <div class="col-md-9 col-lg-10 col-xs-12">
-                    <div class="row">
-                        <div class="col-md-6 col-lg-6 col-xs-12">
-                        <h4>Required Competencies</h4>
-                        <?php if(!empty($availableDescriptors)){ ?>
-                            <?php foreach($availableDescriptors as $type => $competencies){ ?>
-                                <?php $i = 1; ?>
-                                <h5><?= $type ?></h5>
-                                <?php if(!empty($competencies)){ ?>
-                                    <?php foreach($competencies as $competency => $proficiencies){ ?>
-                                        <h5><?= $i.'. '.$competency ?></h5>
-                                        <?php if(!empty($proficiencies)){ ?>
-                                            <?php foreach($proficiencies as $proficiency => $descriptors){ ?>
-                                                <table class="table table-responsive table-condensed table-bordered table-hover">
-                                                    <thead>
-                                                        <tr>
-                                                            <th colspan=2>LEVEL <?= $proficiency ?></th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody>
-                                                    <?php if(!empty($descriptors)){ ?>
-                                                        <?php foreach($descriptors as $idx => $descriptor){ ?>
-                                                            <tr>
-                                                                <td><?= $idx + 1 ?></td>
-                                                                <td><?= $descriptor['indicator'] ?></td>
-                                                            </tr>
-                                                        <?php } ?>
-                                                    <?php } ?>
-                                                    </tbody>
-                                                </table>
-                                            <?php } ?>
-                                        <?php } ?>
-                                        <?php $i++ ?>
-                                    <?php } ?>
-                                <?php } ?>
-                            <?php } ?>
-                        <?php } ?>
-                        </div>
-                    </div>
-                </div>
+            <div class="nav-tabs-custom">
+                <?= Tabs::widget([
+                    'id' => 'my-cga-tabs',
+                    'class' => 'nav-tabs-custom',
+                    'items' => [
+                        [
+                            'label' => 'My Current Position',
+                            'content' => '<div id="my-current-position"></div>',
+                            'headerOptions' => ['onclick' => 'viewMyCurrentPosition()'],
+                        ],
+                        [
+                            'label' => 'My Career Path',
+                            'content' => '<div id="my-career-path"></div>',
+                            'headerOptions' => ['onclick' => 'viewMyCareerPath()'],
+                        ],
+                        [
+                            'label' => 'My Competencies',
+                            'content' => '<div id="my-competency"></div>',
+                            'headerOptions' => ['onclick' => 'viewMyCompetency()'],
+                        ],
+                    ],
+                ]); ?>
             </div>
         </div>
     </div>
@@ -102,4 +62,34 @@ if ($successMessage) {
         });
     ");
 }
+?>
+
+<?php
+    $script = '
+        function viewMyCurrentPosition()
+        {
+            $.ajax({
+                url: "'.Url::to(['/npis/cga/my-current-position']).'",
+                beforeSend: function(){
+                    $("#my-current-position").html("<div class=\"text-center\" style=\"height: calc(100vh - 297px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
+                },
+                success: function (data) {
+                    console.log(this.data);
+                    $("#my-current-position").empty();
+                    $("#my-current-position").hide();
+                    $("#my-current-position").fadeIn("slow");
+                    $("#my-current-position").html(data);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        $(document).ready(function(){
+            viewMyCurrentPosition();
+        });
+    ';
+
+    $this->registerJs($script, View::POS_END);
 ?>
