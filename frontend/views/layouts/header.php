@@ -6,18 +6,18 @@ use yii\helpers\Html;
 ?>
 
 <header class="main-header">
-    <?php if(!Yii::$app->user->isGuest){ ?>
-        <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button" style="background-color: #175676; color: white;">
-            <span class="sr-only">Toggle navigation</span>
-        </a>
-    <?php } ?>
-    <?= !Yii::$app->user->isGuest ? Html::a('<span class="logo-mini">IPMSv2</span><span class="logo-lg">' . Yii::$app->name . '</span>', Yii::$app->homeUrl, ['class' => 'logo']) : '' ?>
+    <?= !Yii::$app->user->isGuest ? Html::a('<span class="logo-mini">IPMS</span><span class="logo-lg">' . Yii::$app->name . '</span>', Yii::$app->homeUrl, ['class' => 'logo']) : '' ?>
 
     <nav class="navbar navbar-static-top" role="navigation">
         <?php if(Yii::$app->user->isGuest){ ?>
             <div class="navbar-header">
-                <a href="#" class="navbar-brand">eRPMES</a>
+                <a href="#" class="navbar-brand">IPMS</a>
             </div>
+        <?php } ?>
+        <?php if(!Yii::$app->user->isGuest){ ?>
+            <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button" style="background-color: #175676; color: white;">
+                <span class="sr-only">Toggle navigation</span>
+            </a>
         <?php } ?>
         <div class="navbar-custom-menu">
             <ul class="nav navbar-nav">

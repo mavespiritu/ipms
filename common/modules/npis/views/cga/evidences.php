@@ -7,8 +7,10 @@ use yii\bootstrap\Modal;
 use yii\bootstrap\Tabs;
 use yii\web\View;
 use yii\grid\GridView;
+use yii\widgets\ListView;
 use yii\widgets\Pjax;
 use yii\widgets\ActiveForm;
+use yii\bootstrap\ButtonDropdown;
 ?>
 <?php 
     $cloneDataProvider = clone $dataProvider;
@@ -17,189 +19,155 @@ use yii\widgets\ActiveForm;
         foreach($cloneDataProvider->models as $idx => $model){
 
             Modal::begin([
-                'id' => 'update-evidence-modal-'.($idx + 1),
+                'id' => 'update-evidence-modal-'.$model->id,
                 'size' => 'modal-lg',
-                'header' => '<div id="update-evidence-modal-'.($idx + 1).'-header"><h4>Edit Record</h4></div>',
+                'header' => '<div id="update-evidence-modal-'.$model->id.'-header"><h4>Edit Evidence</h4></div>',
                 'options' => ['tabindex' => false],
             ]);
-            echo '<div id="update-evidence-modal-'.($idx + 1).'-content"></div>';
+            echo '<div id="update-evidence-modal-'.$model->id.'-content"></div>';
             Modal::end();
         }    
     } 
 ?>
 <div class="evidences-information">
+    <h4>Evidences
+    <span class="pull-right">
+        <?= ButtonDropdown::widget([
+        'label' => 'Add Evidence',
+        'options' => ['class' => 'btn btn-success btn-sm'],
+        'dropdown' => [
+            'items' => [
+                ['label' => 'Training', 'url' => '#', 'options' => ['id' => 'create-training-button', 'data-url' => Url::to(['/npis/cga/create-training', 'id' => $indicator->id, 'reference' => 'Training'])]],
+                ['label' => 'Award', 'url' => '#', 'options' => ['id' => 'create-award-button', 'data-url' => Url::to(['/npis/cga/select-award', 'id' => $indicator->id, 'reference' => 'Award'])]],
+                ['label' => 'Performance', 'url' => '#', 'options' => ['id' => 'create-performance-button', 'data-url' => Url::to(['/npis/cga/create-others', 'id' => $indicator->id, 'reference' => 'Performance'])]],
+                ['label' => 'Others', 'url' => '#', 'options' => ['id' => 'create-others-button', 'data-url' => Url::to(['/npis/cga/create-others', 'id' => $indicator->id, 'reference' => 'Others'])]],
+            ],
+        ],
+    ]); ?>
+    </span>
+    </h4>
     <br>
-    <div class="pull-right">
-        <?= Html::button('Add Record', ['value' => Url::to(['/npis/cga/create-evidence', 'id' => $indicator->id]), 'class' => 'btn btn-success btn-sm', 'id' => 'create-evidence-button']) ?>
-    </div>
     <div class="clearfix"></div>
-
     <?php $form = ActiveForm::begin([
         'options' => ['id' => 'evidence-check-form'],
     ]); ?>
 
-    <?php Pjax::begin([
+    <?php  Pjax::begin([
         'id' => 'evidence-grid-pjax', 
         'enablePushState' => false, 
         'enableReplaceState' => false,
-    ]); ?>
+    ]);  ?>
 
-    <?= GridView::widget([
+    <div style="max-height: calc(100vh - 395px); overflow-y: auto; padding: 10px;">
+
+    <div id="alert" class="alert" role="alert" style="display: none;"></div>
+    <?php
+        if(Yii::$app->session->hasFlash('success')):?>
+            <div class="alert alert-success" role="alert">
+                <?= Yii::$app->session->getFlash('success') ?>
+            </div>
+        <?php endif;
+        if(Yii::$app->session->hasFlash('error')):?>
+            <div class="alert alert-danger" role="alert">
+                <?= Yii::$app->session->getFlash('error') ?>
+            </div>
+        <?php endif;
+    ?>
+
+    <?= ListView::widget([
         'dataProvider' => $dataProvider,
-        'options' => [
-            'class' => 'table-responsive'
-        ],
-        'tableOptions' => [
-            'class' => 'table table-bordered table-condensed table-hover',
-            'id' => 'evidence-table'
-        ],
-        'columns' => [
-            [
-                'class' => 'yii\grid\SerialColumn',
-                'headerOptions' => [
-                    'style' => 'width: 40px;'
-                ],
-                'contentOptions' => [
-                    'style' => 'text-align: center;'
-                ],
-            ],
-            [
-                'attribute' => 'start_date',
-                'header' => 'DATE',
-                'headerOptions' => [
-                    'style' => 'font-weight: bolder !important; width: 20%;'
-                ],
-                'contentOptions' => [
-                    'style' => 'text-align: center;'
-                ],
-                'format' => 'raw',
-                'value' => function($model){
-                    return $model->start_date != $model->end_date ? date("F j, Y", strtotime($model->start_date)).' - '.date("F j, Y", strtotime($model->end_date)) : date("F j, Y", strtotime($model->start_date));
+        'itemView' => function($model){
+        $attachments = [];
+        if($model->reference == 'Training'){
+            if($model->evidenceTraining){
+                if($model->evidenceTraining->training){
+                    $attachments[] = $model->evidenceTraining->training->filePath;
                 }
-            ],
-            [
-                'attribute' => 'justification',
-                'header' => 'JUSTIFICATION',
-                'headerOptions' => [
-                    'style' => 'font-weight: bolder !important;'
-                ],
-            ],
-            [
-                'attribute' => 'attachment',
-                'header' => 'ATTACHMENT',
-                'headerOptions' => [
-                    'style' => 'width: 10%; font-weight: bolder !important; text-align: center'
-                ],
-                'contentOptions' => [
-                    'style' => 'text-align: center;'
-                ],
-                'format' => 'raw',
-                'value' => function($model){
-                    $file = '';
-                    if($model->files){ 
-                        foreach($model->files as $file){ 
-                            $file .= Html::a($file->name.'.'.$file->type, ['/file/file/download', 'id' => $file->id]);
-                        }
-                    }
-                    return $file;
+            }
+        }else if($model->reference == 'Award'){
+            if($model->evidenceAward){
+                if($model->evidenceAward->award){
+                    $attachments[] = $model->evidenceAward->award->filePath;
                 }
-            ],
-            [
-                'attribute' => 'approver',
-                'header' => 'VERIFIED BY',
-                'headerOptions' => [
-                    'style' => 'font-weight: bolder !important; width: 10%;'
-                ],
-                'contentOptions' => [
-                    'style' => 'text-align: center;'
-                ],
-            ],
-            [
-                'header' => '&nbsp;',
-                'headerOptions' => [
-                    'style' => 'width: 40px;'
-                ],
-                'contentOptions' => [
-                    'style' => 'text-align: center;'
-                ],
-                'format' => 'raw',
-                'value' => function($model, $key, $index) use ($dataProvider){
-                    $pagination = $dataProvider->getPagination();
-                    if ($pagination !== false) {
-                        // Calculate the index based on the current page and page size
-                        $index = $pagination->getPage() * $pagination->pageSize + $index + 1;
-                    } else {
-                        // If pagination is disabled, just use the $index directly
-                        $index += 1;
-                    }
+            }
+        }else if($model->reference == 'Performance' || $model->reference == 'Others'){
+            if($model->files){
+                foreach($model->files as $file){
+                    $attachments[] = Html::a($file->name.'.'.$file->type, ['/file/file/download', 'id' => $file->id], ['download' => true, 'data-pjax' => 0]);
+                }
+            }
+        }
 
-                    return Html::a('<i class="fa fa-pencil"></i>', '#', [
-                        'class' => 'update-evidence-button',
-                        'data-toggle' => 'modal',
-                        'data-target' => '#update-evidence-modal-'.$index,
-                        'data-url' => Url::to(['/npis/cga/update-evidence', 'id' => $model->id]),
-                    ]);
-                }
-            ],
-            [
-                'header' => '<input type=checkbox name="items" class="check-evidence-items" />',
-                'headerOptions' => [
-                    'style' => 'width: 40px;'
-                ],
-                'contentOptions' => [
-                    'style' => 'text-align: center;'
-                ],
-                'format' => 'raw',
-                'value' => function($model, $key, $index) use ($dataProvider, $form, $evidenceModels){
-                    $pagination = $dataProvider->getPagination();
-                    if ($pagination !== false) {
-                        // Calculate the index based on the current page and page size
-                        $index = $pagination->getPage() * $pagination->pageSize + $index + 1;
-                    } else {
-                        // If pagination is disabled, just use the $index directly
-                        $index += 1;
-                    }
+        $date = '';
 
-                    return $form->field($evidenceModels[$index], "[$index]id")->checkbox([
-                        'value' => $index,
-                        'class' => 'check-evidence-item', 
-                        'label' => ''
-                    ]);
-                }
+        if($model->reference == 'Training' || $model->reference == 'Performance' || $model->reference == 'Others'){
+            $date = $model->start_date != $model->end_date ? 
+                date("Y", strtotime($model->start_date)) == date("Y", strtotime($model->end_date)) ?
+                    date("F", strtotime($model->start_date)) == date("F", strtotime($model->end_date)) ?
+                        date("F j", strtotime($model->start_date)).'-'.date("j, Y", strtotime($model->end_date)) : 
+                        date("F j", strtotime($model->start_date)).'-'.date("F j, Y", strtotime($model->end_date)) : 
+                date("F j, Y", strtotime($model->start_date)).'<br>-</br>'.date("F j, Y", strtotime($model->end_date)) : 
+            date("F j, Y", strtotime($model->start_date));
+        }else if($model->reference == 'Award'){
+            $date = date("Y", strtotime($model->start_date));
+        }
+
+        return '
+            <br>
+            <div class="box box-solid">
+                <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 10px 20px;">
+                    <ul class="products-list product-list-in-box">
+                        <li class="item">
+                            <div class="product-img" style="position: relative;">
+                                <div class="'.$model->reference.'-logo-container">
+                                    <div class="evidence-logo">'.substr($model->reference, 0, 1).'</div>
+                                </div>
+                            </div>
+                            <div class="product-info">
+                                <span class="pull-right text-right">
+                                    '.$date.'<br>
+                                    <br>
+                                    <div class="text-right">
+                                        <span class="edit-icon">'.Html::a('<i class="fa fa-pencil"></i>', '#', [
+                                            'class' => 'update-evidence-button btn btn-xs btn-info',
+                                            'data-toggle' => 'modal',
+                                            'data-target' => '#update-evidence-modal-'.$model->id,
+                                            'data-url' => Url::to(['/npis/cga/update-'.strtolower($model->reference), 'id' => $model->id]),
+                                        ]).'</span>
+                                        <span class="delete-icon">'.Html::a('<i class="fa fa-trash"></i>', 'javascript:void(0)', [
+                                            'onClick' => 'deleteEvidence('.$model->id.')',
+                                            'class' => 'btn btn-danger btn-xs',
+                                        ]).'</span>
+                                    </div>
+                                </span>
+                                <div style="width: 80%; text-align: justify;"><b>'.$model->description.'</b></div>
+                                <span class="product-description" style="width: 80%;">
+                                '.(!empty($attachments) ? '<small><i class="fa fa-file-text-o"></i> Attachments: <br></small>' : '').'
+                                '.(!empty($attachments) ? implode("<br>", $attachments) : '').'
+                                </span>
+                                
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        ';
+        },
+        'layout' => "<div class='text-info'>{summary}</div>\n{items}\n{pager}",
+        'pager' => [
+                'firstPageLabel' => 'First',
+                'lastPageLabel'  => 'Last',
+                'prevPageLabel' => '<i class="fa fa-backward"></i>',
+                'nextPageLabel' => '<i class="fa fa-forward"></i>',
             ],
-        ],
     ]); ?>
+    </div>
 
     <?php
         $this->registerJs('
             $(document).ready(function(){
-                $(".check-evidence-item").removeAttr("checked");
-                enableRemoveButton();
-
                 function initModal(modalId, contentUrl) {
                     $(modalId).modal("show").find(modalId + "-content").load(contentUrl);
-                }
-
-                function toggleBoldStyle() {
-                    $("#evidence-table tr").removeClass("bold-style"); // Remove bold style from all rows
-                    $("#evidence-table tr").each(function() {
-                        var checkbox = $(this).find(".check-evidence-item");
-                        if (checkbox.length > 0) {
-                            if(checkbox.is(":checked")){
-                                $(this).addClass("isChecked");
-                                $(this).addClass("bold-style");
-                            }else{
-                                $(this).removeClass("isChecked");
-                                $(this).removeClass("bold-style");
-                            }
-                        }
-                    });
-                }
-
-                function enableRemoveButton()
-                {
-                    $("#evidence-check-form input:checkbox:checked").length > 0 ? $("#delete-selected-evidence-button").attr("disabled", false) : $("#delete-selected-evidence-button").attr("disabled", true);
-                    $("#evidence-check-form input:checkbox:checked").length > 0 ? $("#approve-selected-evidence-button").attr("disabled", false) : $("#approve-selected-evidence-button").attr("disabled", true);
                 }
 
                 $(".update-evidence-button").click(function(e){
@@ -211,30 +179,7 @@ use yii\widgets\ActiveForm;
                     return false;
                 });
 
-                $(".check-evidence-items").change(function() {
-                    $(".check-evidence-item").prop("checked", $(this).prop("checked"));
-                    var inp = $(this).find(".check-evidence-item");
-                    var tr = $(this).closest("tr");
-                    inp.prop("checked", !inp.is(":checked"));
-                    
-                    tr.toggleClass("isChecked", inp.is(":checked"));
-                    toggleBoldStyle();
-                    enableRemoveButton();
-                });
-    
-                $("tr").click(function() {
-                    var inp = $(this).find(".check-evidence-item");
-                    var tr = $(this).closest("tr");
-                    inp.prop("checked", !inp.is(":checked"));
-                 
-                    tr.toggleClass("isChecked", inp.is(":checked"));
-                    toggleBoldStyle();
-                    enableRemoveButton();
-                });
-
                 $(document).on("pjax:success", function() {
-                    
-                    $(".check-evidence-item").removeAttr("checked");
 
                     if (!$("#evidence-grid-pjax").data("first-load")) {
                         return;
@@ -247,27 +192,6 @@ use yii\widgets\ActiveForm;
                     });
                     // Mark that the first load has completed
                     $("#evidence-grid-pjax").data("first-load", false);
-
-                    $(".check-evidence-items").change(function() {
-                        $(".check-evidence-item").prop("checked", $(this).prop("checked"));
-                        var inp = $(this).find(".check-evidence-item");
-                        var tr = $(this).closest("tr");
-                        inp.prop("checked", !inp.is(":checked"));
-                     
-                        tr.toggleClass("isChecked", inp.is(":checked"));
-                        toggleBoldStyle();
-                        enableRemoveButton();
-                    });
-        
-                    $("tr").click(function() {
-                        var inp = $(this).find(".check-evidence-item");
-                        var tr = $(this).closest("tr");
-                        inp.prop("checked", !inp.is(":checked"));
-                     
-                        tr.toggleClass("isChecked", inp.is(":checked"));
-                        toggleBoldStyle();
-                        enableRemoveButton();
-                    });
                 });
             });
         ');
@@ -275,130 +199,66 @@ use yii\widgets\ActiveForm;
 
     <?php Pjax::end(); ?>
 
-    <div class="form-group pull-right"> 
-        <?php //Html::button('Approve Selected', ['class' => 'btn btn-success btn-sm', 'id' => 'approve-selected-evidence-button', 'disabled' => true]) ?>
-
-        <?= Html::submitButton('Delete Selected', ['class' => 'btn btn-danger btn-sm', 'id' => 'delete-selected-evidence-button', 'data' => ['disabled-text' => 'Please Wait', 'method' => 'post', 'confirm' => 'Are you sure you want to delete selected evidence information?'], 'disabled' => true]) ?>
-    </div>
-    <div class="clearfix"></div>
-
     <?php ActiveForm::end(); ?>
 </div>
 <?php
     Modal::begin([
-        'id' => 'create-evidence-modal',
+        'id' => 'create-training-modal',
         'size' => "modal-lg",
-        'header' => '<div id="create-evidence-modal-header"><h4>Add Record</h4></div>',
+        'header' => '<div id="create-training-modal-header"><h4>Add Evidence</h4></div>',
         'options' => ['tabindex' => false],
     ]);
-    echo '<div id="create-evidence-modal-content"></div>';
+    echo '<div id="create-training-modal-content"></div>';
     Modal::end();
 ?>
 <?php
-    $script = '
-    function enableRemoveButton()
-    {
-        $("#evidence-check-form input:checkbox:checked").length > 0 ? $("#delete-selected-evidence-button").attr("disabled", false) : $("#delete-selected-evidence-button").attr("disabled", true);
-        $("#evidence-check-form input:checkbox:checked").length > 0 ? $("#approve-selected-evidence-button").attr("disabled", false) : $("#approve-selected-evidence-button").attr("disabled", true);
-    }
-
-    $("#evidence-check-form").on("beforeSubmit", function(e) {
-        e.preventDefault();
-        var form = $(this);
-        var formData = form.serialize();
-
-        var indexes = [];
-        $("#evidence-table tbody tr.isChecked").each(function() {
-            indexes.push($(this).index()); // Push the index of each selected row
-        });
-
-        var selector = indexes.map(function(value) {
-            return "tr:eq(" + value + ")";
-        }).join(",");
-
-        $.ajax({
-            url: form.attr("action"),
-            type: form.attr("method"),
-            data: formData,
-            success: function (data) {
-                $("#education-table tbody").find(selector).remove();
-                enableRemoveButton();
-                $("#alert").removeClass("alert-danger").addClass("alert-success").html(data.success).show();
-                setTimeout(function(){
-                    $("#alert").fadeOut("slow");
-                }, 3000);
-            },
-            error: function (err) {
-                console.log(err);
-                $("#alert").removeClass("alert-success").addClass("alert-danger").html("Error occurred while processing the request.").show();
-                setTimeout(function(){
-                    $("#alert").fadeOut("slow");
-                }, 3000);
-            }
-        }); 
-        
-        return false;
-    });
-
-    $("#approve-selected-evidence-button").on("click", function (e) {
-        e.preventDefault();
-
-        var con = confirm("Are you sure you want to approve selected evidence information?");
-
-        if(con){
-            var form = $("#evidence-check-form");
-            var formData = form.serialize();
-            
-            $.ajax({
-            type: "POST",
-            url: "'.Url::to(['/npis/pds/approve-evidence', 'id' => $indicator->id]).'",
-            data: formData,
-            success: function (data) {
-                viewEvidences('.$indicator->id.');
-            },
-            error: function (err) {
-                console.log(err);
-            }
-            }); 
-        }     
-
-        return false;
-    });
-
-    $("#notify-evidence-button").on("click", function (e) {
-        e.preventDefault();
-
-        var con = confirm("Are you sure you want to notify your DC or the HR to review and approve your entries in this competency indicator?");
-
-        if(con){
-            var form = $("#evidence-check-form");
-            var formData = form.serialize();
-            
-            $.ajax({
-            type: "POST",
-            url: "'.Url::to(['/npis/cga/notify', 'id' => $indicator->id]).'",
-            data: formData,
-            success: function (data) {
-                viewEvidences('.$indicator->id.');
-            },
-            error: function (err) {
-                console.log(err);
-            }
-            }); 
-        }     
-
-        return false;
-    });
-    ';
-
-    $this->registerJs($script, View::POS_END);
+    Modal::begin([
+        'id' => 'create-award-modal',
+        'size' => "modal-lg",
+        'header' => '<div id="create-award-modal-header"><h4>Add Evidence</h4></div>',
+        'options' => ['tabindex' => false],
+    ]);
+    echo '<div id="create-award-modal-content"></div>';
+    Modal::end();
+?>
+<?php
+    Modal::begin([
+        'id' => 'create-performance-modal',
+        'size' => "modal-lg",
+        'header' => '<div id="create-performance-modal-header"><h4>Add Evidence</h4></div>',
+        'options' => ['tabindex' => false],
+    ]);
+    echo '<div id="create-performance-modal-content"></div>';
+    Modal::end();
+?>
+<?php
+    Modal::begin([
+        'id' => 'create-others-modal',
+        'size' => "modal-lg",
+        'header' => '<div id="create-others-modal-header"><h4>Add Evidence</h4></div>',
+        'options' => ['tabindex' => false],
+    ]);
+    echo '<div id="create-others-modal-content"></div>';
+    Modal::end();
 ?>
 
 <?php
     $script = '
         $(document).ready(function(){
-            $("#create-evidence-button").click(function(){
-                $("#create-evidence-modal").modal("show").find("#create-evidence-modal-content").load($(this).attr("value"));
+            $("#create-training-button").click(function(){
+                $("#create-training-modal").modal("show").find("#create-training-modal-content").load($(this).data("url"));
+            });
+
+            $("#create-award-button").click(function(){
+                $("#create-award-modal").modal("show").find("#create-award-modal-content").load($(this).data("url"));
+            });
+
+            $("#create-performance-button").click(function(){
+                $("#create-performance-modal").modal("show").find("#create-performance-modal-content").load($(this).data("url"));
+            });
+
+            $("#create-others-button").click(function(){
+                $("#create-others-modal").modal("show").find("#create-others-modal-content").load($(this).data("url"));
             });
 
             $(".check-evidence-item").removeAttr("checked");
@@ -407,6 +267,32 @@ use yii\widgets\ActiveForm;
 
     $this->registerJs($script, View::POS_END);
 ?>
+
+<?php
+    $script = '
+    function deleteEvidence(id){
+        var con = confirm("Are you sure you want to delete this item?");
+
+        if(con){
+            $.ajax({
+                url: "'.Url::to(['/npis/cga/delete-evidence']).'?id=" + id,
+                type: "POST",
+                data: {id: id},
+                success: function (data) {
+                    viewEvidences('.$indicator->id.');
+                    $("#evidence-badge-'.$indicator->id.'").html(parseInt($("#evidence-badge-'.$indicator->id.'").html()) - 1);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        } 
+    }
+    ';
+
+    $this->registerJs($script, View::POS_END);
+?>
+
 <?php
 $this->registerJs("
     $(document).ready(function(){
@@ -416,31 +302,51 @@ $this->registerJs("
     });
 ");
 ?>
+
 <style>
-.isChecked {
-  background-color: #F5F5F5 !important;
-}
-.bold-style {
-    font-weight: bolder !important;
-}
-/* click-through element */
-.check-evidence-item {
-  pointer-events: none !important;
-}
-
-#evidence-table > tbody > tr{
-    background-color: white;
+.Training-logo-container {
+  width: 40px; /* Adjust as needed */
+  height: 40px; /* Adjust as needed */
+  border-radius: 50%; /* Makes the container circular */
+  background-color: #D56AA0; /* Background color of the container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-#evidence-table > thead > tr{
-    background-color: #F4F4F5; 
-    color: black; 
-    font-weight: bolder; 
+.Award-logo-container {
+  width: 40px; /* Adjust as needed */
+  height: 40px; /* Adjust as needed */
+  border-radius: 50%; /* Makes the container circular */
+  background-color: #861657; /* Background color of the container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-#evidence-table > thead > tr > td,
-#evidence-table > thead > tr > th
-{
-    border: 2px solid white;
+.Performance-logo-container {
+  width: 40px; /* Adjust as needed */
+  height: 40px; /* Adjust as needed */
+  border-radius: 50%; /* Makes the container circular */
+  background-color: #BBDBB4; /* Background color of the container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Others-logo-container {
+  width: 40px; /* Adjust as needed */
+  height: 40px; /* Adjust as needed */
+  border-radius: 50%; /* Makes the container circular */
+  background-color: #A64253; /* Background color of the container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.evidence-logo {
+  font-size: 20px; /* Adjust as needed */
+  color: white; /* Color of the character */
+  font-weight: bold; /* Adjust as needed */
 }
 </style>

@@ -7,29 +7,36 @@ use yii\bootstrap\Tabs;
 use yii\web\View;
 ?>
 
-<div class="competency-information">
+<div class="indicator-information">
     <h4>Competency Indicator Information</h4>
     <small>
-        Competency: <b><?= $indicator->competency->competency ?></b><br>
-        Proficiency Level: <b><?= $indicator->proficiency ?></b><br>
-        Indicator: <b><?= $indicator->indicator ?></b>
+        <table class="table table-condensed table-responsive">
+            <tr>
+                <td>Competency:</td>
+                <td><b><?= $indicator->competency->competency ?></b></td>
+                <td>Proficiency Level:</td>
+                <td><b><?= $indicator->proficiency ?></b></td>
+                <td>Indicator:</td>
+                <td><b><?= $indicator->indicator ?></b></td>
+            </tr>
+        </table>
     </small>
-    <br>
-    <br>
+
     <div class="nav-tabs-custom">
     <?= Tabs::widget([
-        'id' => 'competency-tabs',
+        'id' => 'indicator-tabs',
         'class' => 'nav-tabs-custom',
+        'encodeLabels' => false,
         'items' => [
             [
-                'label' => 'Evidences',
+                'label' => 'Evidences <span class="badge bg-green" id="evidence-badge-'.$indicator->id.'">'.$staffIndicatorModel->getStaffCompetencyIndicatorEvidences()->count().'</span>',
                 'content' => '<div id="evidences"></div>',
-                'headerOptions' => ['onclick' => 'viewEvidences("'.$indicator->id.'")'],
+                'headerOptions' => ['onClick' => 'viewEvidences("'.$indicator->id.'")'],
             ],
             [
-                'label' => 'Proposed Trainings',
+                'label' => 'Proposed Trainings <span class="badge bg-green" id="training-badge-'.$indicator->id.'">0</span>',
                 'content' => '<div id="trainings"></div>',
-                'headerOptions' => ['onclick' => 'viewTrainings("'.$indicator->id.'")'],
+                'headerOptions' => ['onClick' => 'viewTrainings("'.$indicator->id.'")'],
             ],
         ],
     ]); ?>
