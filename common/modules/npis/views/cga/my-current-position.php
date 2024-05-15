@@ -33,12 +33,21 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
     <div class="col-sm-4 col-md-4 col-lg-4 col-xs-12">
         <h4>My Current Position</h4>
         <small>
-            Item No.: <b><?= $model->item_no ?></b><br>
-            Position: <b><?= $model->positionItem->position_id ?></b><br>
-            Division: <b><?= $model->positionItem->division_id ?></b><br>
-            SG and Step: <b><?= $model->positionItem->grade.'-'.$model->positionItem->step ?></b>
+            <table class="table table-condensed table-responsive">
+                <tr>
+                    <td>Item No.:</td>
+                    <td><b><?= $model->item_no ?></b></td>
+                    <td>Position:</td>
+                    <td><b><?= $model->positionItem->position_id ?></b></td>
+                </tr>
+                <tr>
+                    <td>Division:</td>
+                    <td><b><?= $model->positionItem->division_id ?></b></td>
+                    <td>SG and Step:</td>
+                    <td><b><?= $model->positionItem->grade.'-'.$model->positionItem->step ?></b></td>
+                </tr>
+            </table>
         </small>
-        <br>
         <h4>Required Competencies</h4>
         <div id="competencies"></div>
     </div>

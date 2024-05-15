@@ -24,7 +24,7 @@ DisableButtonAsset::register($this);
 ?>
 
 <?php $form = ActiveForm::begin([
-    'options' => ['id' => 'selected-competency-check-form'],
+    'options' => ['id' => 'selected-competency-'.$competency->comp_id.'-check-form'],
 ]); ?>
 
 <div style="height: 100%;">
@@ -100,7 +100,7 @@ DisableButtonAsset::register($this);
     <?php } ?>
     <br>
     <div class="pull-right">
-        <?= !empty($availableDescriptors) ? Html::submitButton('Remove Selected Indicators', ['class' => 'btn btn-danger', 'id' => 'remove-selected-competency-button', 'data' => ['disabled-text' => 'Please Wait', 'method' => 'post', 'confirm' => 'Are you sure you want to remove selected competency indicators?'], 'disabled' => true]) : '' ?>
+        <?= !empty($availableDescriptors) ? Html::submitButton('Remove Selected Indicators', ['class' => 'btn btn-danger', 'id' => 'remove-selected-competency-'.$competency->comp_id.'-button', 'data' => ['disabled-text' => 'Please Wait', 'method' => 'post', 'confirm' => 'Are you sure you want to remove selected competency indicators?'], 'disabled' => true]) : '' ?>
     </div>
     <div class="clearfix"></div>
 </div>
@@ -133,10 +133,10 @@ tr{
     $script = '
     function enableRemoveButton()
     {
-        $("#selected-competency-check-form input:checkbox:checked").length > 0 ? $("#remove-selected-competency-button").attr("disabled", false) : $("#remove-selected-competency-button").attr("disabled", true);
+        $("#selected-competency-'.$competency->comp_id.'-check-form input:checkbox:checked").length > 0 ? $("#remove-selected-competency-'.$competency->comp_id.'-button").attr("disabled", false) : $("#remove-selected-competency-'.$competency->comp_id.'-button").attr("disabled", true);
     }
 
-    $("#selected-competency-check-form").on("beforeSubmit", function(e) {
+    $("#selected-competency-'.$competency->comp_id.'-check-form").on("beforeSubmit", function(e) {
         e.preventDefault();
         var form = $(this);
         var formData = form.serialize();

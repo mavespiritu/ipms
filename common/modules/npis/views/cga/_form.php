@@ -29,9 +29,14 @@ DisableButtonAsset::register($this);
         'options' => ['enctype' => 'multipart/form-data'],
     ]); ?>
 
-    <?= $form->field($evidenceModel, 'isTraining')->widget(Select2::classname(), [
-            'data' => ['0' => 'No', '1' => 'Yes'],
-            'options' => ['multiple' => false, 'placeholder' => 'Select one', 'onchange' => 'selectEvidenceForm(this.value, '.$indicator->id.')', 'class'=>'position-select'],
+    <?= $form->field($evidenceModel, 'reference')->widget(Select2::classname(), [
+            'data' => [
+                'Training' => 'Training', 
+                'Award' => 'Award',
+                'Performance' => 'Performance',
+                'Others' => 'Others',
+            ],
+            'options' => ['multiple' => false, 'placeholder' => 'Select one', 'onchange' => 'selectEvidenceForm(this.value, '.$indicator->id.')', 'class'=>'reference-select'],
             'pluginOptions' => [
                 'allowClear' =>  false,
             ],
@@ -40,51 +45,4 @@ DisableButtonAsset::register($this);
 
     <?php ActiveForm::end(); ?>
 
-    <div id="evidence-form"></div>
-
 </div>
-
-<?php
-    $script = '
-        function selectEvidenceForm(id, indicator_id)
-        {
-            if(id == 0){
-                $.ajax({
-                    url: "'.Url::to(['/npis/cga/evidence-form']).'?id=" + id + "&indicator_id=" + indicator_id,
-                    beforeSend: function(){
-                        $("#evidence-form").html("<div class=\"text-center\"><svg class=\"spinner\" width=\"20px\" height=\"20px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
-                    },
-                    success: function (data) {
-                        console.log(this.data);
-                        $("#evidence-form").empty();
-                        $("#evidence-form").hide();
-                        $("#evidence-form").fadeIn("slow");
-                        $("#evidence-form").html(data);
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                });
-            }else{
-                $.ajax({
-                    url: "'.Url::to(['/npis/cga/training-form']).'?id=" + id + "&indicator_id=" + indicator_id,
-                    beforeSend: function(){
-                        $("#evidence-form").html("<div class=\"text-center\"><svg class=\"spinner\" width=\"20px\" height=\"20px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
-                    },
-                    success: function (data) {
-                        console.log(this.data);
-                        $("#evidence-form").empty();
-                        $("#evidence-form").hide();
-                        $("#evidence-form").fadeIn("slow");
-                        $("#evidence-form").html(data);
-                    },
-                    error: function (err) {
-                        console.log(err);
-                    }
-                });
-            }
-        }
-    ';
-
-    $this->registerJs($script, View::POS_END);
-?>

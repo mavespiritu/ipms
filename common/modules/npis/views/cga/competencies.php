@@ -31,9 +31,12 @@ use yii\bootstrap\Collapse;
     <br>
     <div style="height: calc(100vh - 350px); overflow-y: auto; padding: 10px;">
         <?php if(!empty($availableDescriptors)){ ?>
+            <?php $i = 0; ?>
             <?php foreach($availableDescriptors as $type => $competencies){ ?>
                 <h5><?= strtoupper($type) ?></h5>
-                <?= !empty($competencies) ? Collapse::widget(['items' => $competencies, 'encodeLabels' => false, 'autoCloseItems' => true]) : '' ?>
+                <?= !empty($competencies) ? Collapse::widget(['items' => $competencies, 'encodeLabels' => false, 'autoCloseItems' => true, 'options' => ['id' => 'collapsible-'.$i]]) : '' ?>
+
+                <?php $i++; ?>
             <?php } ?>
         <?php } ?>
     </div>

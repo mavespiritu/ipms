@@ -28,10 +28,6 @@ use yii\web\View;
     <h4>Family Background
         <br>
         <span style="font-weight: normal; font-size: 14px;">PDS Page 1 of 4</span>
-        <div class="pull-right">
-            <?= Html::button('Add Child', ['value' => Url::to(['/npis/pds/create-child', 'id' => $model->emp_id]), 'class' => 'btn btn-success', 'id' => 'create-child-button']) ?>
-        </div>
-        <div class="clearfix"></div>
     </h4>
     <?php
         if(Yii::$app->session->hasFlash('success')):?>
@@ -121,8 +117,14 @@ use yii\web\View;
                 <?= Html::button('Edit Information', ['value' => Url::to(['/npis/pds/update-family-background', 'id' => $model->emp_id]), 'class' => 'btn btn-success', 'id' => 'family-background-button']) ?>
             </div>
             <div class="clearfix"></div>
+            <br>
         </div>
         <div class="col-md-6 col-xs-12">
+            <div class="pull-right">
+                <?= Html::button('Add Child', ['value' => Url::to(['/npis/pds/create-child', 'id' => $model->emp_id]), 'class' => 'btn btn-success', 'id' => 'create-child-button']) ?>
+            </div>
+            <div class="clearfix"></div>
+            <br>
             <table class="table table-condensed table-responsive table-bordered">
                 <thead>
                     <tr>
