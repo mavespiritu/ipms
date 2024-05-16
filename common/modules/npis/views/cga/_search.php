@@ -53,6 +53,7 @@ $selectedStaffCgaProfile = '<script>localStorage.getItem("selectedStaffCgaProfil
                     $("#staff-cga-profile").html("<div class=\"text-center\" style=\"height: calc(100vh - 297px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
                 },
                 success: function (data) {
+                    $("#indicator-information").empty();
                     $("#staff-cga-profile").empty();
                     $("#staff-cga-profile").hide();
                     $("#staff-cga-profile").fadeIn("slow");
