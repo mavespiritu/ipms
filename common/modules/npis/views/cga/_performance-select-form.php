@@ -37,7 +37,7 @@ DisableButtonAsset::register($this);
             'pluginOptions' => [
                 'allowClear' =>  true,
             ],
-        ])->label('Select award')
+        ])->label('Select IPCR')
     ?>
 
     <?= $form->field($evidenceModel, 'description')->widget(CKEditor::className(), [    
