@@ -29,7 +29,7 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
                         [
                             'label' => 'My Current Position',
                             'content' => '<div id="my-current-position"></div>',
-                            'headerOptions' => ['onclick' => 'viewMyCurrentPosition()'],
+                            'headerOptions' => ['onclick' => 'viewMyCurrentPosition("'.$model->emp_id.'")'],
                         ],
                         [
                             'label' => 'My Career Path',
@@ -66,10 +66,10 @@ if ($successMessage) {
 
 <?php
     $script = '
-        function viewMyCurrentPosition()
+        function viewMyCurrentPosition(emp_id)
         {
             $.ajax({
-                url: "'.Url::to(['/npis/cga/my-current-position']).'",
+                url: "'.Url::to(['/npis/cga/my-current-position']).'?emp_id=" + emp_id,
                 beforeSend: function(){
                     $("#my-current-position").html("<div class=\"text-center\" style=\"height: calc(100vh - 297px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
                 },
@@ -87,7 +87,7 @@ if ($successMessage) {
         }
 
         $(document).ready(function(){
-            viewMyCurrentPosition();
+            viewMyCurrentPosition("'.$model->emp_id.'");
         });
     ';
 

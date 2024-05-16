@@ -3,10 +3,12 @@
 namespace common\modules\npis\controllers;
 
 use Yii;
+use common\models\Employee;
 use common\modules\npis\models\LearningServiceProvider;
 use common\modules\npis\models\EmployeeItem;
 use common\modules\npis\models\EmployeePositionItem;
 use common\modules\npis\models\Training;
+use common\modules\npis\models\Ipcr;
 use common\modules\npis\models\TrainingCompetency;
 use common\modules\npis\models\Competency;
 use common\modules\npis\models\CompetencyIndicator;
@@ -22,6 +24,7 @@ use common\modules\npis\models\TrainingDiscipline;
 use common\modules\npis\models\TrainingCategory;
 use common\modules\npis\models\EvidenceTraining;
 use common\modules\npis\models\EvidenceAward;
+use common\modules\npis\models\EvidencePerformance;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -49,7 +52,7 @@ class CgaController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index'],
+                        'actions' => ['index', 'view-staff-cga-profile'],
                         'allow' => true,
                         'roles' => ['cga-index'],
                     ],
@@ -70,6 +73,7 @@ class CgaController extends Controller
                             'update-training',
                             'select-award', 
                             'update-award', 
+                            'select-performance',
                             'update-performance',
                             'create-others', 
                             'update-others',
@@ -87,7 +91,7 @@ class CgaController extends Controller
      * Lists all Training models.
      * @return mixed
      */
-    public function actionIndex()
+    /* public function actionIndex()
     {
         $searchModel = new TrainingSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
@@ -142,6 +146,42 @@ class CgaController extends Controller
             'lsps' => $lsps,
             'competencies' => $competencies,
         ]);
+    } */
+    public function actionIndex()
+    {
+        $model = new Employee();
+
+        return $this->render('index', [
+            'model' => $model
+        ]);
+    }
+
+    public function actionViewStaffCgaProfile($id)
+    {
+        $employee = Employee::findOne(['emp_id' => $id]);
+
+        $model = EmployeeItem::find()
+            ->andWhere([
+                'emp_id' => $employee->emp_id
+            ])
+            ->andWhere([
+                'is', 'to_date', null
+            ])
+            ->orderBy([
+                'from_date' => SORT_DESC
+            ])
+            ->one();
+
+        Yii::$app->session->remove('selectedCgaStaffProfile');
+
+        if(!Yii::$app->user->can('HR')){
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+
+        return $this->renderAjax('_staff', [
+            'model' => $model,
+            'employee' => $employee,
+        ]);
     }
 
     /**
@@ -169,11 +209,11 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionMyCurrentPosition()
+    public function actionMyCurrentPosition($emp_id)
     {
         $model = EmployeeItem::find()
             ->andWhere([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+                'emp_id' => $emp_id
             ])
             ->andWhere([
                 'is', 'to_date', null
@@ -188,11 +228,11 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionViewCompetencies()
+    public function actionViewCompetencies($emp_id)
     {
         $model = EmployeeItem::find()
             ->andWhere([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+                'emp_id' => $emp_id
             ])
             ->andWhere([
                 'is', 'to_date', null
@@ -242,13 +282,13 @@ class CgaController extends Controller
 
                 if($percent > 0 && $percent < 100){
                     $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important; background:
-                    linear-gradient(90deg, rgba(164,212,180,1) '.$percent.'%, #F5F5F5 '.$percent.'%) !important;"><tr><td style="padding: 10px;" onClick="viewSelectedCompetency('.$descriptor['id'].')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td>
+                    linear-gradient(90deg, rgba(164,212,180,1) '.$percent.'%, #F5F5F5 '.$percent.'%) !important;"><tr><td style="padding: 10px;" onClick="viewSelectedCompetency('.$descriptor['id'].',\''.$model->emp_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td>
                     <td align=right style="padding: 10px;">'.number_format($percent, 2).'%</td></tr></table>';
                 }else if($percent == 100){
-                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important; background: rgba(164,212,180,1) !important;"><tr><td style="padding: 10px;" onClick="viewSelectedCompetency('.$descriptor['id'].')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td>
+                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important; background: rgba(164,212,180,1) !important;"><tr><td style="padding: 10px;" onClick="viewSelectedCompetency('.$descriptor['id'].',\''.$model->emp_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td>
                     <td align=right style="padding: 10px;">'.$percent.'%</td></tr></table>';
                 }else{
-                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important;"><tr><td style="padding: 10px;" onClick="viewSelectedCompetency('.$descriptor['id'].')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td></tr></table>';
+                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important;"><tr><td style="padding: 10px;" onClick="viewSelectedCompetency('.$descriptor['id'].',\''.$model->emp_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td></tr></table>';
                 }
                 $item['content'] = '<div id="my-selected-competency-'.$descriptor['id'].'-information"></div>';
                 $item['options'] = ['class' => 'panel panel-default'];
@@ -264,11 +304,11 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionViewSelectedCompetency($competency_id)
+    public function actionViewSelectedCompetency($competency_id, $emp_id)
     {
         $model = EmployeeItem::find()
             ->andWhere([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+                'emp_id' => $emp_id
             ])
             ->andWhere([
                 'is', 'to_date', null
@@ -356,13 +396,13 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionViewIndicator($id)
+    public function actionViewIndicator($id, $emp_id)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
         $model = EmployeeItem::find()
             ->andWhere([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+                'emp_id' => $emp_id
             ])
             ->andWhere([
                 'is', 'to_date', null
@@ -374,7 +414,7 @@ class CgaController extends Controller
 
         $staffIndicatorModel = $model ? StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]) ? StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]) : new StaffCompetencyIndicator() : new StaffCompetencyIndicator();
 
-        $staffIndicatorModel->emp_id = Yii::$app->user->identity->userinfo->EMP_N;
+        $staffIndicatorModel->emp_id = $emp_id;
         $staffIndicatorModel->position_id = $model ? $model->item_no : '';
         $staffIndicatorModel->indicator_id = $indicator->id;
 
@@ -387,13 +427,13 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionViewEvidences($id)
+    public function actionViewEvidences($id, $emp_id)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
         $model = EmployeeItem::find()
             ->andWhere([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+                'emp_id' => $emp_id
             ])
             ->andWhere([
                 'is', 'to_date', null
@@ -501,7 +541,10 @@ class CgaController extends Controller
 
         $evidenceTrainingModel = new EvidenceTraining();
 
-        if($evidenceTrainingModel->load(Yii::$app->request->post())){
+        if(
+            $evidenceTrainingModel->load(Yii::$app->request->post()) &&
+            $evidenceModel->load(Yii::$app->request->post())
+        ){
 
             $transaction = Yii::$app->ipms->beginTransaction();
 
@@ -514,7 +557,7 @@ class CgaController extends Controller
                 'approval' => 'yes'
             ]);
 
-            $evidenceModel->description = "Attendance to ".$selectedTraining->seminar_title;
+            $evidenceModel->title = "Attendance to ".$selectedTraining->seminar_title;
             $evidenceModel->start_date = $selectedTraining->from_date;
             $evidenceModel->end_date = $selectedTraining->to_date;
             try {
@@ -584,14 +627,17 @@ class CgaController extends Controller
         $categories = TrainingCategory::find()->all();
         $categories = ArrayHelper::map($categories, 'category', 'category');
 
-        if($trainingModel->load(Yii::$app->request->post())){
+        if(
+            $trainingModel->load(Yii::$app->request->post()) &&
+            $evidenceModel->load(Yii::$app->request->post())
+        ){
 
             $transaction = Yii::$app->ipms->beginTransaction();
 
             try {
                 if($trainingModel->save())
                 {
-                    $evidenceModel->description = "Attendance to ".$trainingModel->seminar_title;
+                    $evidenceModel->title = "Attendance to ".$trainingModel->seminar_title;
                     $evidenceModel->start_date = $trainingModel->from_date;
                     $evidenceModel->end_date = $trainingModel->to_date;
 
@@ -671,7 +717,10 @@ class CgaController extends Controller
 
         $evidenceAwardModel = new EvidenceAward();
 
-        if($evidenceAwardModel->load(Yii::$app->request->post())){
+        if(
+            $evidenceAwardModel->load(Yii::$app->request->post()) &&
+            $evidenceModel->load(Yii::$app->request->post())
+        ){
 
             $transaction = Yii::$app->ipms->beginTransaction();
 
@@ -682,7 +731,7 @@ class CgaController extends Controller
                 'approval' => 'yes'
             ]);
 
-            $evidenceModel->description = "Awarded with ".$selectedAward->description;
+            $evidenceModel->title = "Awarded with ".$selectedAward->description;
             $evidenceModel->start_date = $selectedAward->year.'-01-01';
             $evidenceModel->end_date = $selectedAward->year.'-01-01';
             try {
@@ -715,7 +764,7 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionCreatePerformance($id, $reference)
+    public function actionSelectPerformance($id, $reference)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
@@ -733,16 +782,45 @@ class CgaController extends Controller
 
         $staffIndicator = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]);
 
+        $performances = Ipcr::find()
+            ->select([
+                'id',
+                'concat("IPCR for ", IF(semester = 1, "1st", "2nd") ," Semester ", year) as title',
+            ])
+            ->andWhere(['emp_id' => $model->emp_id])
+            ->andWhere(['is not', 'verified_by', null])
+            ->orderBy(['year' => SORT_DESC, 'semester' => SORT_DESC])
+            ->asArray()
+            ->all();
+
+        $performances = ArrayHelper::map($performances, 'id', 'title');
+
         $evidenceModel = new StaffCompetencyIndicatorEvidence();
         $evidenceModel->staff_competency_indicator_id = $staffIndicator->id;
         $evidenceModel->reference = $reference;
 
-        if($evidenceModel->load(Yii::$app->request->post())){
+        $evidencePerformanceModel = new EvidencePerformance();
+
+        if(
+            $evidencePerformanceModel->load(Yii::$app->request->post()) &&
+            $evidenceModel->load(Yii::$app->request->post())
+        ){
 
             $transaction = Yii::$app->ipms->beginTransaction();
 
+            $selectedPerformance = Ipcr::findOne([
+                'id' => $evidencePerformanceModel->ipcr_id,
+            ]);
+
+            $evidenceModel->title = "IPCR for ".($selectedPerformance->semester == 1 ? '1st' : '2nd')." Semester ".$selectedPerformance->year;
+            $evidenceModel->start_date = $selectedPerformance->year.'-01-01';
+            $evidenceModel->end_date = $selectedPerformance->year.'-01-01';
+
             try {
                 if($evidenceModel->save()){
+
+                    $evidencePerformanceModel->evidence_id = $evidenceModel->id;
+                    $evidencePerformanceModel->save();
     
                     $transaction->commit();
                     \Yii::$app->getSession()->setFlash('success', 'Evidence has been saved successfully');
@@ -753,11 +831,13 @@ class CgaController extends Controller
             }
         }
 
-        return $this->renderAjax('_performance-form.php', [
+        return $this->renderAjax('_performance-select-form.php', [
             'indicator' => $indicator,
             'model' => $model,
             'staffIndicator' => $staffIndicator,
             'evidenceModel' => $evidenceModel,
+            'evidencePerformanceModel' => $evidencePerformanceModel,
+            'performances' => $performances,
             'reference' => $reference,
             'idx' => 0,
             'action' => 'create'
@@ -783,6 +863,7 @@ class CgaController extends Controller
         $staffIndicator = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]);
 
         $evidenceModel = new StaffCompetencyIndicatorEvidence();
+        $evidenceModel->scenario = 'otherEvidence';
         $evidenceModel->staff_competency_indicator_id = $staffIndicator->id;
         $evidenceModel->reference = $reference;
 
@@ -868,8 +949,9 @@ class CgaController extends Controller
         $categories = ArrayHelper::map($categories, 'category', 'category');
 
         if(
+            $evidenceModel->load(Yii::$app->request->post()) && (
             $evidenceTrainingModel->load(Yii::$app->request->post()) ||
-            $trainingModel->load(Yii::$app->request->post())
+            $trainingModel->load(Yii::$app->request->post()))
         ){
 
             $transaction = Yii::$app->ipms->beginTransaction();
@@ -885,7 +967,7 @@ class CgaController extends Controller
                         'approval' => 'yes'
                     ]);
 
-                    $evidenceModel->description = "Attendance to ".$selectedTraining->seminar_title;
+                    $evidenceModel->title = "Attendance to ".$selectedTraining->seminar_title;
                     $evidenceModel->start_date = $selectedTraining->from_date;
                     $evidenceModel->end_date = $selectedTraining->to_date;
 
@@ -906,7 +988,7 @@ class CgaController extends Controller
                 }else{
                     if($trainingModel->save())
                     {
-                        $evidenceModel->description = "Attendance to ".$trainingModel->seminar_title;
+                        $evidenceModel->title = "Attendance to ".$trainingModel->seminar_title;
                         $evidenceModel->start_date = $trainingModel->from_date;
                         $evidenceModel->end_date = $trainingModel->to_date;
 
@@ -1003,7 +1085,10 @@ class CgaController extends Controller
 
         $evidenceAwardModel = $evidenceModel->evidenceAward;
 
-        if($evidenceAwardModel->load(Yii::$app->request->post())){
+        if(
+            $evidenceAwardModel->load(Yii::$app->request->post()) &&
+            $evidenceModel->load(Yii::$app->request->post())
+        ){
 
             $transaction = Yii::$app->ipms->beginTransaction();
 
@@ -1014,7 +1099,7 @@ class CgaController extends Controller
                 'approval' => 'yes'
             ]);
 
-            $evidenceModel->description = "Awarded with ".$selectedAward->description;
+            $evidenceModel->title = "Awarded with ".$selectedAward->description;
             $evidenceModel->start_date = $selectedAward->year.'-01-01';
             $evidenceModel->end_date = $selectedAward->year.'-01-01';
             try {
@@ -1067,9 +1152,35 @@ class CgaController extends Controller
 
         $staffIndicator = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]);
 
-        if($evidenceModel->load(Yii::$app->request->post())){
+        $performances = Ipcr::find()
+            ->select([
+                'id',
+                'concat("IPCR for ", IF(semester = 1, "1st", "2nd") ," Semester ", year) as title',
+            ])
+            ->andWhere(['emp_id' => $model->emp_id])
+            ->andWhere(['is not', 'verified_by', null])
+            ->orderBy(['year' => SORT_DESC, 'semester' => SORT_DESC])
+            ->asArray()
+            ->all();
+
+        $performances = ArrayHelper::map($performances, 'id', 'title');
+
+        $evidencePerformanceModel = $evidenceModel->evidencePerformance;
+
+        if(
+            $evidencePerformanceModel->load(Yii::$app->request->post()) &&
+            $evidenceModel->load(Yii::$app->request->post())
+        ){
 
             $transaction = Yii::$app->ipms->beginTransaction();
+
+            $selectedPerformance = Ipcr::findOne([
+                'id' => $evidencePerformanceModel->ipcr_id,
+            ]);
+
+            $evidenceModel->title = "IPCR for ".($selectedPerformance->semester == 1 ? '1st' : '2nd')." Semester ".$selectedPerformance->year;
+            $evidenceModel->start_date = $selectedPerformance->year.'-01-01';
+            $evidenceModel->end_date = $selectedPerformance->year.'-01-01';
 
             try {
                 if($evidenceModel->save()){
@@ -1083,11 +1194,13 @@ class CgaController extends Controller
             }
         }
 
-        return $this->renderAjax('_others-form.php', [
+        return $this->renderAjax('_performance-select-form.php', [
             'indicator' => $indicator,
             'model' => $model,
             'staffIndicator' => $staffIndicator,
             'evidenceModel' => $evidenceModel,
+            'evidencePerformanceModel' => $evidencePerformanceModel,
+            'performances' => $performances,
             'reference' => $evidenceModel->reference,
             'idx' => $evidenceModel->id,
             'action' => 'update'
@@ -1097,6 +1210,7 @@ class CgaController extends Controller
     public function actionUpdateOthers($id)
     {
         $evidenceModel = StaffCompetencyIndicatorEvidence::findOne(['id' => $id]);
+        $evidenceModel->scenario = 'otherEvidence';
 
         $indicator = CompetencyIndicator::findOne($evidenceModel->staffCompetencyIndicator->indicator_id);
 
