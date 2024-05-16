@@ -29,6 +29,7 @@ class EvidencePerformance extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
+            [['ipcr_id'], 'required'],
             [['evidence_id', 'ipcr_id'], 'integer'],
             [['evidence_id'], 'exist', 'skipOnError' => true, 'targetClass' => StaffCompetencyIndicatorEvidence::className(), 'targetAttribute' => ['evidence_id' => 'id']],
         ];
