@@ -43,7 +43,7 @@ class EvidencePerformance extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'evidence_id' => 'Evidence ID',
-            'ipcr_id' => 'Ipcr ID',
+            'ipcr_id' => 'IPCR',
         ];
     }
 
