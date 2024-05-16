@@ -60,8 +60,8 @@
                         'url' => '#',
                         'visible' => Yii::$app->user->can('Staff'),
                         'items' => [
+                            ['label' => 'Staff CGA', 'icon' => 'folder', 'url' => ['/npis/cga'], 'visible' => Yii::$app->user->can('HR')],
                             ['label' => 'My CGA', 'icon' => 'folder', 'url' => ['/npis/cga/view'], 'visible' => Yii::$app->user->can('Staff')],
-                            //['label' => 'Staff CGA', 'icon' => 'folder', 'url' => ['npis/cga/'], 'visible' => Yii::$app->user->can('HR')],
                             ['label' => 'Competencies', 'icon' => 'folder', 'url' => ['/npis/competency'], 'visible' => Yii::$app->user->can('HR')],
                             ['label' => 'Indicators', 'icon' => 'folder', 'url' => ['/npis/indicator'], 'visible' => Yii::$app->user->can('HR')],
                             ['label' => 'LSPs', 'icon' => 'folder', 'url' => ['/npis/lsp'], 'visible' => Yii::$app->user->can('HR')],
@@ -71,7 +71,7 @@
                         
                     ],
                     
-                    ['label' => 'Administrator', 'options' => ['class' => 'header'], Yii::$app->user->can('SuperAdministrator')],
+                    ['label' => 'Administrator', 'options' => ['class' => 'header'], 'visible' => Yii::$app->user->can('SuperAdministrator'), Yii::$app->user->can('SuperAdministrator')],
                     ['label' => 'User Management', 'icon' => 'users', 'url' => ['/user/admin'], 'visible' => Yii::$app->user->can('SuperAdministrator')],
                 ],
             ]

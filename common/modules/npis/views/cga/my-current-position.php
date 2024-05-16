@@ -78,10 +78,10 @@ if ($successMessage) {
 
 <?php
     $script = '
-        function viewCompetencies()
+        function viewCompetencies(emp_id)
         {
             $.ajax({
-                url: "'.Url::to(['/npis/cga/view-competencies']).'",
+                url: "'.Url::to(['/npis/cga/view-competencies']).'?emp_id=" + emp_id,
                 beforeSend: function(){
                     $("#competencies").html("<div class=\"text-center\" style=\"height: calc(100vh - 297px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
                 },
@@ -98,10 +98,10 @@ if ($successMessage) {
             });
         }
 
-        function viewIndicator(id)
+        function viewIndicator(id, emp_id)
         {
             $.ajax({
-                url: "'.Url::to(['/npis/cga/view-indicator']).'?id=" + id,
+                url: "'.Url::to(['/npis/cga/view-indicator']).'?id=" + id + "&emp_id=" + emp_id,
                 beforeSend: function(){
                     $("#indicator-information").html("<div class=\"text-center\" style=\"height: calc(100vh - 297px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
                 },
@@ -119,7 +119,7 @@ if ($successMessage) {
         }
 
         $(document).ready(function(){
-            viewCompetencies("'.$model->item_no.'");
+            viewCompetencies("'.$model->emp_id.'");
         });
     ';
 

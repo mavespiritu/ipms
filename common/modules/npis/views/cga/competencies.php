@@ -44,10 +44,10 @@ use yii\bootstrap\Collapse;
 
 <?php
     $script = '
-        function viewSelectedCompetency(competency_id)
+        function viewSelectedCompetency(competency_id, emp_id)
         {
             $.ajax({
-                url: "'.Url::to(['/npis/cga/view-selected-competency']).'?competency_id=" + competency_id,
+                url: "'.Url::to(['/npis/cga/view-selected-competency']).'?competency_id=" + competency_id + "&emp_id=" + emp_id,
                 beforeSend: function(){
                     $("#my-selected-competency-"+competency_id+"-information").html("<div class=\"text-center\"><svg class=\"spinner\" width=\"20px\" height=\"20px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
                 },

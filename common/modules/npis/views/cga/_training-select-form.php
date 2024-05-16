@@ -15,6 +15,7 @@ use \file\components\AttachmentsInput;
 use yii\web\JsExpression;
 use buttflatteryormwizard\FormWizard;
 use dosamigos\switchery\Switchery;
+use dosamigos\ckeditor\CKEditor;
 use faryshta\disableSubmitButtons\Asset as DisableButtonAsset;
 DisableButtonAsset::register($this);
 
@@ -38,6 +39,11 @@ DisableButtonAsset::register($this);
             ],
         ])->label('Select training')
     ?>
+
+    <?= $form->field($evidenceModel, 'description')->widget(CKEditor::className(), [
+        'options' => ['rows' => 3, 'id' => 'evidence-training-select-description-'.$idx],
+        'preset' => 'basic'
+    ]) ?>
 
     <div class="row">
         <div class="col-md-12 col-xs-12">
@@ -67,8 +73,8 @@ DisableButtonAsset::register($this);
                 $(".modal-backdrop").remove();
                 $("body").removeClass("modal-open");
                 $("body").css("padding-right", "");
-                viewEvidences('.$indicator->id.');
-                if('.$action.' == "create"){
+                viewEvidences('.$indicator->id.', "'.$model->emp_id.'");
+                if("'.$action.'" == "create"){
                     $("#evidence-badge-'.$indicator->id.'").html(parseInt($("#evidence-badge-'.$indicator->id.'").html()) + 1);
                 }
             },

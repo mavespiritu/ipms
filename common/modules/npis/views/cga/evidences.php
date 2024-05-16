@@ -39,7 +39,7 @@ use yii\bootstrap\ButtonDropdown;
             'items' => [
                 ['label' => 'Training', 'url' => '#', 'options' => ['id' => 'create-training-button', 'data-url' => Url::to(['/npis/cga/create-training', 'id' => $indicator->id, 'reference' => 'Training'])]],
                 ['label' => 'Award', 'url' => '#', 'options' => ['id' => 'create-award-button', 'data-url' => Url::to(['/npis/cga/select-award', 'id' => $indicator->id, 'reference' => 'Award'])]],
-                ['label' => 'Performance', 'url' => '#', 'options' => ['id' => 'create-performance-button', 'data-url' => Url::to(['/npis/cga/create-others', 'id' => $indicator->id, 'reference' => 'Performance'])]],
+                ['label' => 'Performance', 'url' => '#', 'options' => ['id' => 'create-performance-button', 'data-url' => Url::to(['/npis/cga/select-performance', 'id' => $indicator->id, 'reference' => 'Performance'])]],
                 ['label' => 'Others', 'url' => '#', 'options' => ['id' => 'create-others-button', 'data-url' => Url::to(['/npis/cga/create-others', 'id' => $indicator->id, 'reference' => 'Others'])]],
             ],
         ],
@@ -90,7 +90,18 @@ use yii\bootstrap\ButtonDropdown;
                     $attachments[] = $model->evidenceAward->award->filePath;
                 }
             }
-        }else if($model->reference == 'Performance' || $model->reference == 'Others'){
+        }else if($model->reference == 'Performance'){
+            if($model->evidencePerformance){
+                if($model->evidencePerformance->performance){
+                    $performance = $model->evidencePerformance->performance;
+                    if($performance->files){
+                        foreach($performance->files as $file){
+                            $attachments[] = Html::a($file->name.'.'.$file->type, ['/file/file/download', 'id' => $file->id], ['download' => true, 'data-pjax' => 0]);
+                        }
+                    }
+                }
+            }
+        }else if($model->reference == 'Others'){
             if($model->files){
                 foreach($model->files as $file){
                     $attachments[] = Html::a($file->name.'.'.$file->type, ['/file/file/download', 'id' => $file->id], ['download' => true, 'data-pjax' => 0]);
@@ -100,7 +111,7 @@ use yii\bootstrap\ButtonDropdown;
 
         $date = '';
 
-        if($model->reference == 'Training' || $model->reference == 'Performance' || $model->reference == 'Others'){
+        if($model->reference == 'Training' || $model->reference == 'Others'){
             $date = $model->start_date != $model->end_date ? 
                 date("Y", strtotime($model->start_date)) == date("Y", strtotime($model->end_date)) ?
                     date("F", strtotime($model->start_date)) == date("F", strtotime($model->end_date)) ?
@@ -108,7 +119,7 @@ use yii\bootstrap\ButtonDropdown;
                         date("F j", strtotime($model->start_date)).'-'.date("F j, Y", strtotime($model->end_date)) : 
                 date("F j, Y", strtotime($model->start_date)).'<br>-</br>'.date("F j, Y", strtotime($model->end_date)) : 
             date("F j, Y", strtotime($model->start_date));
-        }else if($model->reference == 'Award'){
+        }else if($model->reference == 'Award' || $model->reference == 'Performance'){
             $date = date("Y", strtotime($model->start_date));
         }
 
@@ -140,8 +151,9 @@ use yii\bootstrap\ButtonDropdown;
                                         ]).'</span>
                                     </div>
                                 </span>
-                                <div style="width: 80%; text-align: justify;"><b>'.$model->description.'</b></div>
-                                <span class="product-description" style="width: 80%;">
+                                <div style="width: 80%; text-align: justify; word-wrap: break-word; overflow-wrap: break-word; white-space: normal;"><b>'.$model->title.'</b></div>
+                                <span class="product-description" style="width: 80%; word-wrap: break-word; overflow-wrap: break-word; white-space: normal;">
+                                '.$model->description.'
                                 '.(!empty($attachments) ? '<small><i class="fa fa-file-text-o"></i> Attachments: <br></small>' : '').'
                                 '.(!empty($attachments) ? implode("<br>", $attachments) : '').'
                                 </span>

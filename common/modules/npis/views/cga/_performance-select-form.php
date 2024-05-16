@@ -24,16 +24,16 @@ DisableButtonAsset::register($this);
 /* @var $form yii\widgets\ActiveForm */
 ?>
 
-<div class="evidence-award-select-form">
+<div class="evidence-performance-select-form">
 
     <?php $form = ActiveForm::begin([
-        'options' => ['id' => 'award-select-form', 'enctype' => 'multipart/form-data', 'method' => 'post'],
+        'options' => ['id' => 'performance-select-form', 'enctype' => 'multipart/form-data', 'method' => 'post'],
         //'enableAjaxValidation' => true,
     ]); ?>
 
-    <?= $form->field($evidenceAwardModel, 'description')->widget(Select2::classname(), [
-            'data' => $awards,
-            'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'award-select', 'id' => 'evidence-award-select-title-'.$idx],
+    <?= $form->field($evidencePerformanceModel, 'ipcr_id')->widget(Select2::classname(), [
+            'data' => $performances,
+            'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'ipcr-select', 'id' => 'evidence-performance-select-title-'.$idx],
             'pluginOptions' => [
                 'allowClear' =>  true,
             ],
@@ -41,7 +41,7 @@ DisableButtonAsset::register($this);
     ?>
 
     <?= $form->field($evidenceModel, 'description')->widget(CKEditor::className(), [    
-        'options' => ['rows' => 3, 'id' => 'evidence-award-select-description-'.$idx],
+        'options' => ['rows' => 3, 'id' => 'evidence-performance-select-description-'.$idx],
         'preset' => 'basic'
     ]) ?>
 
@@ -59,7 +59,7 @@ DisableButtonAsset::register($this);
 </div>
 <?php
     $script = '
-    $("#award-select-form").on("beforeSubmit", function(e) {
+    $("#performance-select-form").on("beforeSubmit", function(e) {
         e.preventDefault();
         var form = $(this);
         var formData = form.serialize();
@@ -74,7 +74,6 @@ DisableButtonAsset::register($this);
                 $("body").removeClass("modal-open");
                 $("body").css("padding-right", "");
                 viewEvidences('.$indicator->id.', "'.$model->emp_id.'");
-                
                 if("'.$action.'" == "create"){
                     $("#evidence-badge-'.$indicator->id.'").html(parseInt($("#evidence-badge-'.$indicator->id.'").html()) + 1);
                 }

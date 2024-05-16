@@ -37,8 +37,10 @@ DisableButtonAsset::register($this);
         ],
     ]); ?>
 
+    <?= $form->field($evidenceModel, 'title')->textInput(['maxlength' => true]) ?>
+
     <?= $form->field($evidenceModel, 'description')->widget(CKEditor::className(), [
-        'options' => ['rows' => 3, 'id' => 'evidence-description-'.$idx],
+        'options' => ['rows' => 3, 'id' => 'evidence-others-description-'.$idx],
         'preset' => 'basic'
     ]) ?>
 
@@ -119,8 +121,8 @@ DisableButtonAsset::register($this);
                 $(".modal-backdrop").remove();
                 $("body").removeClass("modal-open");
                 $("body").css("padding-right", "");
-                viewEvidences('.$indicator->id.');
-                if('.$action.' == "create"){
+                viewEvidences('.$indicator->id.', "'.$model->emp_id.'");
+                if("'.$action.'" == "create"){
                     $("#evidence-badge-'.$indicator->id.'").html(parseInt($("#evidence-badge-'.$indicator->id.'").html()) + 1);
                 }
             },
