@@ -11,20 +11,21 @@ use yii\widgets\ListView;
 use yii\widgets\Pjax;
 use yii\widgets\ActiveForm;
 use yii\bootstrap\ButtonDropdown;
+
 ?>
 <?php 
     $cloneDataProvider = clone $dataProvider;
     $cloneDataProvider->pagination = false;
     if($cloneDataProvider->models){
-        foreach($cloneDataProvider->models as $idx => $model){
+        foreach($cloneDataProvider->models as $idx => $data){
 
             Modal::begin([
-                'id' => 'update-evidence-modal-'.$model->id,
+                'id' => 'update-evidence-modal-'.$data->id,
                 'size' => 'modal-lg',
-                'header' => '<div id="update-evidence-modal-'.$model->id.'-header"><h4>Edit Evidence</h4></div>',
+                'header' => '<div id="update-evidence-modal-'.$data->id.'-header"><h4>Edit Evidence</h4></div>',
                 'options' => ['tabindex' => false],
             ]);
-            echo '<div id="update-evidence-modal-'.$model->id.'-content"></div>';
+            echo '<div id="update-evidence-modal-'.$data->id.'-content"></div>';
             Modal::end();
         }    
     } 
@@ -37,10 +38,10 @@ use yii\bootstrap\ButtonDropdown;
         'options' => ['class' => 'btn btn-success btn-sm'],
         'dropdown' => [
             'items' => [
-                ['label' => 'Training', 'url' => '#', 'options' => ['id' => 'create-training-button', 'data-url' => Url::to(['/npis/cga/create-training', 'id' => $indicator->id, 'reference' => 'Training'])]],
-                ['label' => 'Award', 'url' => '#', 'options' => ['id' => 'create-award-button', 'data-url' => Url::to(['/npis/cga/select-award', 'id' => $indicator->id, 'reference' => 'Award'])]],
-                ['label' => 'Performance', 'url' => '#', 'options' => ['id' => 'create-performance-button', 'data-url' => Url::to(['/npis/cga/select-performance', 'id' => $indicator->id, 'reference' => 'Performance'])]],
-                ['label' => 'Others', 'url' => '#', 'options' => ['id' => 'create-others-button', 'data-url' => Url::to(['/npis/cga/create-others', 'id' => $indicator->id, 'reference' => 'Others'])]],
+                ['label' => 'Training', 'url' => '#', 'options' => ['id' => 'create-training-button', 'data-url' => Url::to(['/npis/cga/create-training', 'id' => $indicator->id, 'reference' => 'Training', 'emp_id' => $model->emp_id])]],
+                ['label' => 'Award', 'url' => '#', 'options' => ['id' => 'create-award-button', 'data-url' => Url::to(['/npis/cga/select-award', 'id' => $indicator->id, 'reference' => 'Award', 'emp_id' => $model->emp_id])]],
+                ['label' => 'Performance', 'url' => '#', 'options' => ['id' => 'create-performance-button', 'data-url' => Url::to(['/npis/cga/select-performance', 'id' => $indicator->id, 'reference' => 'Performance', 'emp_id' => $model->emp_id])]],
+                ['label' => 'Others', 'url' => '#', 'options' => ['id' => 'create-others-button', 'data-url' => Url::to(['/npis/cga/create-others', 'id' => $indicator->id, 'reference' => 'Others', 'emp_id' => $model->emp_id])]],
             ],
         ],
     ]); ?>
@@ -74,9 +75,13 @@ use yii\bootstrap\ButtonDropdown;
         <?php endif;
     ?>
 
+    <?php 
+        $employee = clone $model;
+    ?>
+
     <?= ListView::widget([
         'dataProvider' => $dataProvider,
-        'itemView' => function($model){
+        'itemView' => function($model) use ($employee){
         $attachments = [];
         if($model->reference == 'Training'){
             if($model->evidenceTraining){
@@ -143,10 +148,10 @@ use yii\bootstrap\ButtonDropdown;
                                             'class' => 'update-evidence-button btn btn-xs btn-info',
                                             'data-toggle' => 'modal',
                                             'data-target' => '#update-evidence-modal-'.$model->id,
-                                            'data-url' => Url::to(['/npis/cga/update-'.strtolower($model->reference), 'id' => $model->id]),
+                                            'data-url' => Url::to(['/npis/cga/update-'.strtolower($model->reference), 'id' => $model->id, 'emp_id' => $employee->emp_id]),
                                         ]).'</span>
                                         <span class="delete-icon">'.Html::a('<i class="fa fa-trash"></i>', 'javascript:void(0)', [
-                                            'onClick' => 'deleteEvidence('.$model->id.')',
+                                            'onClick' => 'deleteEvidence('.$model->id.', "'.$employee->emp_id.'")',
                                             'class' => 'btn btn-danger btn-xs',
                                         ]).'</span>
                                     </div>
@@ -291,7 +296,7 @@ use yii\bootstrap\ButtonDropdown;
                 type: "POST",
                 data: {id: id},
                 success: function (data) {
-                    viewEvidences('.$indicator->id.');
+                    viewEvidences('.$indicator->id.', "'.$model->emp_id.'");
                     $("#evidence-badge-'.$indicator->id.'").html(parseInt($("#evidence-badge-'.$indicator->id.'").html()) - 1);
                 },
                 error: function (err) {

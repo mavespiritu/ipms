@@ -478,14 +478,14 @@ class CgaController extends Controller
             'evidenceModels' => $evidenceModels,
         ]);
     }
-    // replace emp_id to model->emp_id : continue here
-    public function actionCreateTraining($id, $reference)
+
+    public function actionCreateTraining($id, $reference, $emp_id)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
         $model = EmployeeItem::find()
             ->andWhere([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+                'emp_id' => $emp_id
             ])
             ->andWhere([
                 'is', 'to_date', null
@@ -498,17 +498,18 @@ class CgaController extends Controller
         return $this->renderAjax('_training-form.php', [
             'indicator' => $indicator,
             'reference' => $reference,
+            'model' => $model,
             'idx' => 0,
         ]);
     }
 
-    public function actionSelectTraining($id, $reference)
+    public function actionSelectTraining($id, $reference, $emp_id)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
         $model = EmployeeItem::find()
             ->andWhere([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+                'emp_id' => $emp_id
             ])
             ->andWhere([
                 'is', 'to_date', null
@@ -590,13 +591,13 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionNewTraining($id, $reference)
+    public function actionNewTraining($id, $reference, $emp_id)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
         $model = EmployeeItem::find()
             ->andWhere([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+                'emp_id' => $emp_id
             ])
             ->andWhere([
                 'is', 'to_date', null
@@ -678,13 +679,13 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionSelectAward($id, $reference)
+    public function actionSelectAward($id, $reference, $emp_id)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
         $model = EmployeeItem::find()
             ->andWhere([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+                'emp_id' => $emp_id
             ])
             ->andWhere([
                 'is', 'to_date', null
@@ -764,13 +765,13 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionSelectPerformance($id, $reference)
+    public function actionSelectPerformance($id, $reference, $emp_id)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
         $model = EmployeeItem::find()
             ->andWhere([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+                'emp_id' => $emp_id
             ])
             ->andWhere([
                 'is', 'to_date', null
@@ -844,13 +845,13 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionCreateOthers($id, $reference)
+    public function actionCreateOthers($id, $reference, $emp_id)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
         $model = EmployeeItem::find()
             ->andWhere([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+                'emp_id' => $emp_id
             ])
             ->andWhere([
                 'is', 'to_date', null
@@ -894,7 +895,7 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionUpdateTraining($id)
+    public function actionUpdateTraining($id, $emp_id)
     {
         $evidenceModel = StaffCompetencyIndicatorEvidence::findOne(['id' => $id]);
 
@@ -902,7 +903,7 @@ class CgaController extends Controller
 
         $model = EmployeeItem::find()
             ->andWhere([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+                'emp_id' => $emp_id
             ])
             ->andWhere([
                 'is', 'to_date', null
@@ -1048,7 +1049,7 @@ class CgaController extends Controller
         }
     }
 
-    public function actionUpdateAward($id)
+    public function actionUpdateAward($id, $emp_id)
     {
         $evidenceModel = StaffCompetencyIndicatorEvidence::findOne(['id' => $id]);
 
@@ -1056,7 +1057,7 @@ class CgaController extends Controller
 
         $model = EmployeeItem::find()
             ->andWhere([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+                'emp_id' => $emp_id
             ])
             ->andWhere([
                 'is', 'to_date', null
@@ -1132,7 +1133,7 @@ class CgaController extends Controller
         ]);
     }
     
-    public function actionUpdatePerformance($id)
+    public function actionUpdatePerformance($id, $emp_id)
     {
         $evidenceModel = StaffCompetencyIndicatorEvidence::findOne(['id' => $id]);
 
@@ -1140,7 +1141,7 @@ class CgaController extends Controller
 
         $model = EmployeeItem::find()
             ->andWhere([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+                'emp_id' => $emp_id
             ])
             ->andWhere([
                 'is', 'to_date', null
@@ -1207,7 +1208,7 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionUpdateOthers($id)
+    public function actionUpdateOthers($id, $emp_id)
     {
         $evidenceModel = StaffCompetencyIndicatorEvidence::findOne(['id' => $id]);
         $evidenceModel->scenario = 'otherEvidence';
@@ -1216,7 +1217,7 @@ class CgaController extends Controller
 
         $model = EmployeeItem::find()
             ->andWhere([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+                'emp_id' => $emp_id
             ])
             ->andWhere([
                 'is', 'to_date', null
