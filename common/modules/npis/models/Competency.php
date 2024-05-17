@@ -93,11 +93,11 @@ class Competency extends \yii\db\ActiveRecord
         return $this->hasMany(Tblintervention::className(), ['comp_id' => 'comp_id']);
     }
 
-    public function getStaffCompetencyPercentage()
+    public function getStaffCompetencyPercentage($emp_id)
     {
         $model = EmployeeItem::find()
             ->andWhere([
-                'emp_id' => Yii::$app->user->identity->userinfo->EMP_N
+                'emp_id' => $emp_id
             ])
             ->andWhere([
                 'is', 'to_date', null
@@ -117,7 +117,7 @@ class Competency extends \yii\db\ActiveRecord
         $staffIndicatorsCount = StaffCompetencyIndicator::find()
                     ->leftJoin('competency_indicator', 'competency_indicator.id = staff_competency_indicator.indicator_id')
                     ->andWhere([
-                        'emp_id' => Yii::$app->user->identity->userinfo->EMP_N,
+                        'emp_id' => $emp_id,
                         'compliance' => 1,
                         'competency_indicator.competency_id' => $this->comp_id
                     ])

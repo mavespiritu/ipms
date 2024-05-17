@@ -278,7 +278,7 @@ class CgaController extends Controller
         if(!empty($descriptors)){
             foreach($descriptors as $i => $descriptor){
                 $item = [];
-                $percent = Competency::findOne(['comp_id' => $descriptor['id']])->getStaffCompetencyPercentage();
+                $percent = Competency::findOne(['comp_id' => $descriptor['id']])->getStaffCompetencyPercentage($model->emp_id);
 
                 if($percent > 0 && $percent < 100){
                     $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important; background:
@@ -362,9 +362,9 @@ class CgaController extends Controller
             foreach($descriptors as $descriptor){
                 $availableDescriptors[$descriptor['proficiency']][] = $descriptor;
 
-                $indicatorModel = StaffCompetencyIndicator::findOne(['emp_id' => Yii::$app->user->identity->userinfo->EMP_N, 'position_id' => $model->item_no, 'indicator_id' => $descriptor['id']]) ? StaffCompetencyIndicator::findOne(['emp_id' => Yii::$app->user->identity->userinfo->EMP_N, 'position_id' => $model->item_no, 'indicator_id' => $descriptor['id']]) : new StaffCompetencyIndicator();
+                $indicatorModel = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $descriptor['id']]) ? StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $descriptor['id']]) : new StaffCompetencyIndicator();
 
-                $indicatorModel->emp_id = Yii::$app->user->identity->userinfo->EMP_N;
+                $indicatorModel->emp_id = $model->emp_id;
                 $indicatorModel->position_id = $model->item_no;
                 $indicatorModel->indicator_id = $descriptor['id'];
 
@@ -377,9 +377,9 @@ class CgaController extends Controller
         if(Yii::$app->request->post()){
             $postData = Yii::$app->request->post();
 
-            $indicatorModel = StaffCompetencyIndicator::findOne(['emp_id' => Yii::$app->user->identity->userinfo->EMP_N, 'position_id' => $model->item_no, 'indicator_id' => $postData['id']]) ? StaffCompetencyIndicator::findOne(['emp_id' => Yii::$app->user->identity->userinfo->EMP_N, 'position_id' => $model->item_no, 'indicator_id' => $postData['id']]) : new StaffCompetencyIndicator();
+            $indicatorModel = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $postData['id']]) ? StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $postData['id']]) : new StaffCompetencyIndicator();
 
-            $indicatorModel->emp_id = Yii::$app->user->identity->userinfo->EMP_N;
+            $indicatorModel->emp_id = $model->emp_id;
             $indicatorModel->position_id = $model->item_no;
             $indicatorModel->indicator_id = $postData['id'];
             $indicatorModel->compliance = $postData['value'];
@@ -478,7 +478,7 @@ class CgaController extends Controller
             'evidenceModels' => $evidenceModels,
         ]);
     }
-
+    // replace emp_id to model->emp_id : continue here
     public function actionCreateTraining($id, $reference)
     {
         $indicator = CompetencyIndicator::findOne($id);
