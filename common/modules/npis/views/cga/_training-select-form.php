@@ -33,7 +33,7 @@ DisableButtonAsset::register($this);
 
     <?= $form->field($evidenceTrainingModel, 'seminar_title')->widget(Select2::classname(), [
             'data' => $trainings,
-            'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'training-select'],
+            'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'training-select', 'id' => 'evidence-training-select-title-'.$idx],
             'pluginOptions' => [
                 'allowClear' =>  true,
             ],
