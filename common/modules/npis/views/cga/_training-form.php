@@ -25,7 +25,6 @@ use yii\bootstrap\Collapse;
 ?>
 
 <div class="evidence-training-form">
-    
     <div class="text-center">
         <a href="javascript:void(0)" id="select-training-button" onClick="viewSelectTrainingForm(<?= $indicator->id ?>, '<?= $reference ?>', '<?= $model->emp_id ?>')" class="menu-link">Select training</a>
         <a href="javascript:void(0)" id="new-training-button" onClick="viewNewTrainingForm(<?= $indicator->id ?>, '<?= $reference ?>', '<?= $model->emp_id ?>')" class="menu-link">Add new training</a>
