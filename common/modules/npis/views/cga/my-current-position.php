@@ -52,8 +52,8 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
         <div id="competencies"></div>
     </div>
     <div class="col-sm-8 col-md-8 col-lg-8 col-xs-12">
-        <div id="indicator-information" style="height: calc(100vh - 315px);">
-            <div class="flex-center" style="height: 100%;">
+        <div id="indicator-information">
+            <div class="flex-center" style="height: calc(100vh - 315px);">
                 <h4 style="color: gray;">Select indicator at the left to add or view evidences.</h4>
             </div>
         </div>
