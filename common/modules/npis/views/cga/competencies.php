@@ -44,10 +44,30 @@ use yii\bootstrap\Collapse;
 
 <?php
     $script = '
-        function viewSelectedCompetency(competency_id, emp_id)
+        function viewSelectedPositionCompetency(competency_id, emp_id)
         {
             $.ajax({
-                url: "'.Url::to(['/npis/cga/view-selected-competency']).'?competency_id=" + competency_id + "&emp_id=" + emp_id,
+                url: "'.Url::to(['/npis/cga/view-selected-position-competency']).'?competency_id=" + competency_id + "&emp_id=" + emp_id,
+                beforeSend: function(){
+                    $("#my-selected-competency-"+competency_id+"-information").html("<div class=\"text-center\"><svg class=\"spinner\" width=\"20px\" height=\"20px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
+                },
+                success: function (data) {
+                    console.log(this.data);
+                    $("#my-selected-competency-"+competency_id+"-information").empty();
+                    $("#my-selected-competency-"+competency_id+"-information").hide();
+                    $("#my-selected-competency-"+competency_id+"-information").fadeIn("slow");
+                    $("#my-selected-competency-"+competency_id+"-information").html(data);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        function viewSelectedAllCompetency(competency_id, emp_id)
+        {
+            $.ajax({
+                url: "'.Url::to(['/npis/cga/view-selected-all-competency']).'?competency_id=" + competency_id + "&emp_id=" + emp_id,
                 beforeSend: function(){
                     $("#my-selected-competency-"+competency_id+"-information").html("<div class=\"text-center\"><svg class=\"spinner\" width=\"20px\" height=\"20px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
                 },

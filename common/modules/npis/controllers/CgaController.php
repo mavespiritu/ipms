@@ -25,6 +25,7 @@ use common\modules\npis\models\TrainingCategory;
 use common\modules\npis\models\EvidenceTraining;
 use common\modules\npis\models\EvidenceAward;
 use common\modules\npis\models\EvidencePerformance;
+use common\modules\npis\models\StaffAllIndicator;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -63,7 +64,9 @@ class CgaController extends Controller
                             'my-career-path', 
                             'my-competencies', 
                             'view-competencies', 
-                            'view-selected-competency', 
+                            'view-all-competencies', 
+                            'view-selected-position-competency', 
+                            'view-selected-all-competency',
                             'view-indicator', 
                             'view-evidences', 
                             'view-trainings', 
@@ -282,13 +285,13 @@ class CgaController extends Controller
 
                 if($percent > 0 && $percent < 100){
                     $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important; background:
-                    linear-gradient(90deg, rgba(164,212,180,1) '.$percent.'%, #F5F5F5 '.$percent.'%) !important;"><tr><td style="padding: 10px;" onClick="viewSelectedCompetency('.$descriptor['id'].',\''.$model->emp_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td>
+                    linear-gradient(90deg, rgba(164,212,180,1) '.$percent.'%, #F5F5F5 '.$percent.'%) !important;"><tr><td style="padding: 10px;" onClick="viewSelectedPositionCompetency('.$descriptor['id'].',\''.$model->emp_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td>
                     <td align=right style="padding: 10px;">'.number_format($percent, 2).'%</td></tr></table>';
                 }else if($percent == 100){
-                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important; background: rgba(164,212,180,1) !important;"><tr><td style="padding: 10px;" onClick="viewSelectedCompetency('.$descriptor['id'].',\''.$model->emp_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td>
+                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important; background: rgba(164,212,180,1) !important;"><tr><td style="padding: 10px;" onClick="viewSelectedPositionCompetency('.$descriptor['id'].',\''.$model->emp_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td>
                     <td align=right style="padding: 10px;">'.$percent.'%</td></tr></table>';
                 }else{
-                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important;"><tr><td style="padding: 10px;" onClick="viewSelectedCompetency('.$descriptor['id'].',\''.$model->emp_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td></tr></table>';
+                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important;"><tr><td style="padding: 10px;" onClick="viewSelectedPositionCompetency('.$descriptor['id'].',\''.$model->emp_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td></tr></table>';
                 }
                 $item['content'] = '<div id="my-selected-competency-'.$descriptor['id'].'-information"></div>';
                 $item['options'] = ['class' => 'panel panel-default'];
@@ -304,7 +307,7 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionViewSelectedCompetency($competency_id, $emp_id)
+    public function actionViewSelectedPositionCompetency($competency_id, $emp_id)
     {
         $model = EmployeeItem::find()
             ->andWhere([
@@ -362,29 +365,43 @@ class CgaController extends Controller
             foreach($descriptors as $descriptor){
                 $availableDescriptors[$descriptor['proficiency']][] = $descriptor;
 
-                $indicatorModel = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $descriptor['id']]) ? StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $descriptor['id']]) : new StaffCompetencyIndicator();
+                $staffAllIndicatorModel = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $descriptor['id']]) ? StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $descriptor['id']]) : new StaffAllIndicator();
 
-                $indicatorModel->emp_id = $model->emp_id;
-                $indicatorModel->position_id = $model->item_no;
-                $indicatorModel->indicator_id = $descriptor['id'];
+                $staffAllIndicatorModel->emp_id = $model->emp_id;
+                $staffAllIndicatorModel->indicator_id = $descriptor['id'];
 
-                $descriptorModels[$descriptor['proficiency']][$descriptor['id']] = $indicatorModel;
+                $staffCompetencyIndicatorModel = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $descriptor['id']]) ? StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $descriptor['id']]) : new StaffCompetencyIndicator();
 
-                $checkCompetencyProficiencies[$descriptor['proficiency']] += !$indicatorModel->isNewRecord ? $indicatorModel->compliance : 0; 
+                $staffCompetencyIndicatorModel->emp_id = $model->emp_id;
+                $staffCompetencyIndicatorModel->position_id = $model->item_no;
+                $staffCompetencyIndicatorModel->indicator_id = $descriptor['id'];
+
+                $descriptorModels[$descriptor['proficiency']][$descriptor['id']] = $staffCompetencyIndicatorModel;
+
+                $checkCompetencyProficiencies[$descriptor['proficiency']] += !$staffAllIndicatorModel->isNewRecord ? $staffAllIndicatorModel->compliance : 0; 
             }
         }
 
         if(Yii::$app->request->post()){
             $postData = Yii::$app->request->post();
 
-            $indicatorModel = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $postData['id']]) ? StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $postData['id']]) : new StaffCompetencyIndicator();
+            $staffAllIndicatorModel = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $postData['id']]) ? StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $postData['id']]) : new StaffAllIndicator();
 
-            $indicatorModel->emp_id = $model->emp_id;
-            $indicatorModel->position_id = $model->item_no;
-            $indicatorModel->indicator_id = $postData['id'];
-            $indicatorModel->compliance = $postData['value'];
+            $staffAllIndicatorModel->emp_id = $model->emp_id;
+            $staffAllIndicatorModel->indicator_id = $postData['id'];
+            $staffAllIndicatorModel->compliance = $postData['value'];
 
-            $indicatorModel->save();
+            if($staffAllIndicatorModel->save())
+            {
+                $staffCompetencyIndicatorModel = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $postData['id']]) ? StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $postData['id']]) : new StaffCompetencyIndicator();
+
+                $staffCompetencyIndicatorModel->emp_id = $model->emp_id;
+                $staffCompetencyIndicatorModel->position_id = $model->item_no;
+                $staffCompetencyIndicatorModel->indicator_id = $postData['id'];
+                $staffCompetencyIndicatorModel->compliance = $postData['value'];
+
+                $staffCompetencyIndicatorModel->save();
+            }
         }
 
         return $this->renderAjax('competency', [
@@ -412,16 +429,24 @@ class CgaController extends Controller
             ])
             ->one();
 
-        $staffIndicatorModel = $model ? StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]) ? StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]) : new StaffCompetencyIndicator() : new StaffCompetencyIndicator();
+        $staffAllIndicatorModel = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $indicator->id]) ? StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $indicator->id]) : new StaffAllIndicator();
 
-        $staffIndicatorModel->emp_id = $emp_id;
-        $staffIndicatorModel->position_id = $model ? $model->item_no : '';
-        $staffIndicatorModel->indicator_id = $indicator->id;
+        $staffAllIndicatorModel->emp_id = $emp_id;
+        $staffAllIndicatorModel->indicator_id = $indicator->id;
+        if($staffAllIndicatorModel->save())
+        {
+            $staffIndicatorModel = $model ? StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]) ? StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]) : new StaffCompetencyIndicator() : new StaffCompetencyIndicator();
 
-        $staffIndicatorModel->save();
+            $staffIndicatorModel->emp_id = $emp_id;
+            $staffIndicatorModel->position_id = $model ? $model->item_no : '';
+            $staffIndicatorModel->indicator_id = $indicator->id;
+
+            $staffIndicatorModel->save();
+        }
 
         return $this->renderAjax('indicator', [
             'indicator' => $indicator,
+            'staffAllIndicatorModel' => $staffAllIndicatorModel,
             'staffIndicatorModel' => $staffIndicatorModel,
             'model' => $model,
         ]);
@@ -443,18 +468,18 @@ class CgaController extends Controller
             ])
             ->one();
         
-        $staffIndicator = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]);
+        $staffIndicator = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $indicator->id]);
 
         $dataProvider = new ActiveDataProvider([
             'query' => StaffCompetencyIndicatorEvidence::find()
-                ->where(['staff_competency_indicator_id' => $staffIndicator->id])
+                ->where(['emp_id' => $staffIndicator->emp_id, 'indicator_id' => $staffIndicator->indicator_id])
                 ->orderBy([
                     'start_date' => SORT_DESC,
                 ]),
         ]);
 
         $evidences = StaffCompetencyIndicatorEvidence::find()
-        ->where(['staff_competency_indicator_id' => $staffIndicator->id])
+        ->where(['emp_id' => $staffIndicator->emp_id, 'indicator_id' => $staffIndicator->indicator_id])
         ->orderBy([
             'start_date' => SORT_DESC,
         ])
@@ -519,7 +544,7 @@ class CgaController extends Controller
             ])
             ->one();
 
-        $staffIndicator = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]);
+        $staffIndicator = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $indicator->id]);
 
         $trainings = EmployeeTraining::find()
             ->select([
@@ -537,7 +562,8 @@ class CgaController extends Controller
         $trainings = ArrayHelper::map($trainings, 'id', 'title');
 
         $evidenceModel = new StaffCompetencyIndicatorEvidence();
-        $evidenceModel->staff_competency_indicator_id = $staffIndicator->id;
+        $evidenceModel->emp_id = $model->emp_id;
+        $evidenceModel->indicator_id = $indicator->id;
         $evidenceModel->reference = $reference;
 
         $evidenceTrainingModel = new EvidenceTraining();
@@ -607,10 +633,11 @@ class CgaController extends Controller
             ])
             ->one();
 
-        $staffIndicator = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]);
+        $staffIndicator = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $indicator->id]);
 
         $evidenceModel = new StaffCompetencyIndicatorEvidence();
-        $evidenceModel->staff_competency_indicator_id = $staffIndicator->id;
+        $evidenceModel->emp_id = $model->emp_id;
+        $evidenceModel->indicator_id = $indicator->id;
         $evidenceModel->reference = $reference;
 
         $evidenceTrainingModel = new EvidenceTraining();
@@ -635,6 +662,11 @@ class CgaController extends Controller
 
             $transaction = Yii::$app->ipms->beginTransaction();
 
+            $idModel->emp_id = $model->emp_id;
+            $idModel->seminar_title = $trainingModel->seminar_title;
+            $idModel->from_date = $trainingModel->from_date;
+            $idModel->save();
+
             try {
                 if($trainingModel->save())
                 {
@@ -643,10 +675,7 @@ class CgaController extends Controller
                     $evidenceModel->end_date = $trainingModel->to_date;
 
                     if($evidenceModel->save()){
-                        $idModel->seminar_title = $trainingModel->seminar_title;
-                        $idModel->from_date = $trainingModel->from_date;
-                        $idModel->save();
-    
+                        
                         $evidenceTrainingModel->evidence_id = $evidenceModel->id;
                         $evidenceTrainingModel->emp_id = $model->emp_id;
                         $evidenceTrainingModel->seminar_title = $trainingModel->seminar_title;
@@ -695,7 +724,7 @@ class CgaController extends Controller
             ])
             ->one();
 
-        $staffIndicator = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]);
+        $staffIndicator = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $indicator->id]);
 
         $awards = EmployeeOtherInfo::find()
             ->select([
@@ -713,7 +742,8 @@ class CgaController extends Controller
         $awards = ArrayHelper::map($awards, 'description', 'description');
 
         $evidenceModel = new StaffCompetencyIndicatorEvidence();
-        $evidenceModel->staff_competency_indicator_id = $staffIndicator->id;
+        $evidenceModel->emp_id = $model->emp_id;
+        $evidenceModel->indicator_id = $indicator->id;
         $evidenceModel->reference = $reference;
 
         $evidenceAwardModel = new EvidenceAward();
@@ -781,7 +811,7 @@ class CgaController extends Controller
             ])
             ->one();
 
-        $staffIndicator = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]);
+        $staffIndicator = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $indicator->id]);
 
         $performances = Ipcr::find()
             ->select([
@@ -797,7 +827,8 @@ class CgaController extends Controller
         $performances = ArrayHelper::map($performances, 'id', 'title');
 
         $evidenceModel = new StaffCompetencyIndicatorEvidence();
-        $evidenceModel->staff_competency_indicator_id = $staffIndicator->id;
+        $evidenceModel->emp_id = $model->emp_id;
+        $evidenceModel->indicator_id = $indicator->id;
         $evidenceModel->reference = $reference;
 
         $evidencePerformanceModel = new EvidencePerformance();
@@ -861,11 +892,12 @@ class CgaController extends Controller
             ])
             ->one();
 
-        $staffIndicator = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]);
+        $staffIndicator = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $indicator->id]);
 
         $evidenceModel = new StaffCompetencyIndicatorEvidence();
         $evidenceModel->scenario = 'otherEvidence';
-        $evidenceModel->staff_competency_indicator_id = $staffIndicator->id;
+        $evidenceModel->emp_id = $model->emp_id;
+        $evidenceModel->indicator_id = $indicator->id;
         $evidenceModel->reference = $reference;
 
         if($evidenceModel->load(Yii::$app->request->post())){
@@ -899,7 +931,7 @@ class CgaController extends Controller
     {
         $evidenceModel = StaffCompetencyIndicatorEvidence::findOne(['id' => $id]);
 
-        $indicator = CompetencyIndicator::findOne($evidenceModel->staffCompetencyIndicator->indicator_id);
+        $indicator = CompetencyIndicator::findOne($evidenceModel->indicator_id);
 
         $model = EmployeeItem::find()
             ->andWhere([
@@ -913,7 +945,7 @@ class CgaController extends Controller
             ])
             ->one();
 
-        $staffIndicator = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]);
+        $staffIndicator = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $indicator->id]);
 
         $trainings = EmployeeTraining::find()
             ->select([
@@ -957,6 +989,10 @@ class CgaController extends Controller
 
             $transaction = Yii::$app->ipms->beginTransaction();
 
+            $idModel->seminar_title = $trainingModel->seminar_title;
+            $idModel->from_date = $trainingModel->from_date;
+            $idModel->save();
+
             try {
                 if($trainingModel->approval == 'yes'){
                     $trainingID = explode("__", $evidenceTrainingModel->seminar_title);
@@ -994,10 +1030,7 @@ class CgaController extends Controller
                         $evidenceModel->end_date = $trainingModel->to_date;
 
                         if($evidenceModel->save()){
-                            $idModel->seminar_title = $trainingModel->seminar_title;
-                            $idModel->from_date = $trainingModel->from_date;
-                            $idModel->save();
-        
+
                             $evidenceTrainingModel->evidence_id = $evidenceModel->id;
                             $evidenceTrainingModel->emp_id = $model->emp_id;
                             $evidenceTrainingModel->seminar_title = $trainingModel->seminar_title;
@@ -1053,7 +1086,7 @@ class CgaController extends Controller
     {
         $evidenceModel = StaffCompetencyIndicatorEvidence::findOne(['id' => $id]);
 
-        $indicator = CompetencyIndicator::findOne($evidenceModel->staffCompetencyIndicator->indicator_id);
+        $indicator = CompetencyIndicator::findOne($evidenceModel->indicator_id);
 
         $model = EmployeeItem::find()
             ->andWhere([
@@ -1067,7 +1100,7 @@ class CgaController extends Controller
             ])
             ->one();
 
-        $staffIndicator = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]);
+        $staffIndicator = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $indicator->id]);
 
         $awards = EmployeeOtherInfo::find()
             ->select([
@@ -1137,7 +1170,7 @@ class CgaController extends Controller
     {
         $evidenceModel = StaffCompetencyIndicatorEvidence::findOne(['id' => $id]);
 
-        $indicator = CompetencyIndicator::findOne($evidenceModel->staffCompetencyIndicator->indicator_id);
+        $indicator = CompetencyIndicator::findOne($evidenceModel->indicator_id);
 
         $model = EmployeeItem::find()
             ->andWhere([
@@ -1151,7 +1184,7 @@ class CgaController extends Controller
             ])
             ->one();
 
-        $staffIndicator = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]);
+        $staffIndicator = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $indicator->id]);
 
         $performances = Ipcr::find()
             ->select([
@@ -1213,7 +1246,7 @@ class CgaController extends Controller
         $evidenceModel = StaffCompetencyIndicatorEvidence::findOne(['id' => $id]);
         $evidenceModel->scenario = 'otherEvidence';
 
-        $indicator = CompetencyIndicator::findOne($evidenceModel->staffCompetencyIndicator->indicator_id);
+        $indicator = CompetencyIndicator::findOne($evidenceModel->indicator_id);
 
         $model = EmployeeItem::find()
             ->andWhere([
@@ -1227,7 +1260,7 @@ class CgaController extends Controller
             ])
             ->one();
 
-        $staffIndicator = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $model->item_no, 'indicator_id' => $indicator->id]);
+        $staffIndicator = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $indicator->id]);
 
         if($evidenceModel->load(Yii::$app->request->post())){
 
@@ -1277,5 +1310,184 @@ class CgaController extends Controller
                 \Yii::$app->getSession()->setFlash('error', 'Error occurred while deleting evidence');
             }
         }
+    }
+
+    public function actionMyCompetencies($emp_id)
+    {
+        $model = EmployeeItem::find()
+            ->andWhere([
+                'emp_id' => $emp_id
+            ])
+            ->andWhere([
+                'is', 'to_date', null
+            ])
+            ->orderBy([
+                'from_date' => SORT_DESC
+            ])
+            ->one();
+
+        return $this->renderAjax('my-competencies', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionViewAllCompetencies($emp_id)
+    {
+        $model = EmployeeItem::find()
+            ->andWhere([
+                'emp_id' => $emp_id
+            ])
+            ->andWhere([
+                'is', 'to_date', null
+            ])
+            ->orderBy([
+                'from_date' => SORT_DESC
+            ])
+            ->one();
+
+        $descriptors = CompetencyIndicator::find()
+            ->select([
+                'competency.comp_id as id',
+                'competency.competency as competency',
+                'type' => new \yii\db\Expression('CASE 
+                        WHEN competency.comp_type = "org" THEN "Organizational"
+                        WHEN competency.comp_type = "mnt" THEN "Managerial"
+                        ELSE "Technical/Functional"
+                    END')
+            ])
+            ->leftJoin('competency', 'competency.comp_id = competency_indicator.competency_id')
+            ->groupBy(['competency.comp_id'])
+            ->orderBy([
+                'type' => SORT_ASC,
+                'competency' => SORT_ASC,
+            ])
+            ->asArray()
+            ->all();
+
+        $availableDescriptors = [];
+
+        usort($descriptors, function($a, $b) {
+            $order = ['Organizational', 'Managerial', 'Technical/Functional'];
+            $index_a = array_search($a['type'], $order);
+            $index_b = array_search($b['type'], $order);
+            return $index_a - $index_b;
+        });
+
+        if(!empty($descriptors)){
+            foreach($descriptors as $i => $descriptor){
+                $item = [];
+                $percent = Competency::findOne(['comp_id' => $descriptor['id']])->getStaffAllCompetencyPercentage($model->emp_id);
+
+                if($percent > 0 && $percent < 100){
+                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important; background:
+                    linear-gradient(90deg, rgba(164,212,180,1) '.$percent.'%, #F5F5F5 '.$percent.'%) !important;"><tr><td style="padding: 10px;" onClick="viewSelectedAllCompetency('.$descriptor['id'].',\''.$model->emp_id.'\')">'.$descriptor['competency'].'</td>
+                    <td align=right style="padding: 10px;">'.number_format($percent, 2).'%</td></tr></table>';
+                }else if($percent == 100){
+                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important; background: rgba(164,212,180,1) !important;"><tr><td style="padding: 10px;" onClick="viewSelectedAllCompetency('.$descriptor['id'].',\''.$model->emp_id.'\')">'.$descriptor['competency'].'</td>
+                    <td align=right style="padding: 10px;">'.$percent.'%</td></tr></table>';
+                }else{
+                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important;"><tr><td style="padding: 10px;" onClick="viewSelectedAllCompetency('.$descriptor['id'].',\''.$model->emp_id.'\')">'.$descriptor['competency'].'</td></tr></table>';
+                }
+                $item['content'] = '<div id="my-selected-competency-'.$descriptor['id'].'-information"></div>';
+                $item['options'] = ['class' => 'panel panel-default'];
+
+                $availableDescriptors[$descriptor['type']][] = $item;
+            }
+        }
+
+
+        return $this->renderAjax('competencies', [
+            'model' => $model,
+            'availableDescriptors' => $availableDescriptors,
+        ]);
+    }
+
+    public function actionViewSelectedAllCompetency($competency_id, $emp_id)
+    {
+        $model = EmployeeItem::find()
+            ->andWhere([
+                'emp_id' => $emp_id
+            ])
+            ->andWhere([
+                'is', 'to_date', null
+            ])
+            ->orderBy([
+                'from_date' => SORT_DESC
+            ])
+            ->one();
+
+        $competency = Competency::findOne(['comp_id' => $competency_id]);
+        
+        $descriptors = $model ? CompetencyIndicator::find()
+        ->select([
+            'competency_indicator.id as id',
+            'competency.competency as competency',
+            'competency.description as description',
+            'competency_indicator.indicator as indicator',
+            'competency_indicator.proficiency as proficiency',
+            'type' => new \yii\db\Expression('CASE 
+                    WHEN competency.comp_type = "org" THEN "Organizational"
+                    WHEN competency.comp_type = "mnt" THEN "Managerial"
+                    ELSE "Technical/Functional"
+                END')
+        ])
+        ->leftJoin('competency', 'competency.comp_id = competency_indicator.competency_id')
+        ->where([
+            'competency.comp_id' => $competency->comp_id
+        ])
+        ->orderBy([
+            'type' => SORT_ASC,
+            'competency' => SORT_ASC,
+            'proficiency' => SORT_DESC
+        ])
+        ->asArray()
+        ->all() : [];
+
+        $availableDescriptors = [];
+        $descriptorModels = [];
+        
+        $checkCompetencyProficiencies = [];
+        $isChecked = true;
+
+        if($descriptors){
+            foreach($descriptors as $descriptor){
+                $checkCompetencyProficiencies[$descriptor['proficiency']] = 0;
+            }
+        }
+
+        if($descriptors){
+            foreach($descriptors as $descriptor){
+                $availableDescriptors[$descriptor['proficiency']][] = $descriptor;
+
+                $indicatorModel = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $descriptor['id']]) ? StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $descriptor['id']]) : new StaffAllIndicator();
+
+                $indicatorModel->emp_id = $model->emp_id;
+                $indicatorModel->indicator_id = $descriptor['id'];
+
+                $descriptorModels[$descriptor['proficiency']][$descriptor['id']] = $indicatorModel;
+
+                $checkCompetencyProficiencies[$descriptor['proficiency']] += !$indicatorModel->isNewRecord ? $indicatorModel->compliance : 0; 
+            }
+        }
+
+        if(Yii::$app->request->post()){
+            $postData = Yii::$app->request->post();
+
+            $indicatorModel = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $postData['id']]) ? StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $postData['id']]) : new StaffAllIndicator();
+
+            $indicatorModel->emp_id = $model->emp_id;
+            $indicatorModel->indicator_id = $postData['id'];
+            $indicatorModel->compliance = $postData['value'];
+
+            $indicatorModel->save();
+        }
+
+        return $this->renderAjax('competency', [
+            'model' => $model,
+            'competency' => $competency,
+            'availableDescriptors' => $availableDescriptors,
+            'checkCompetencyProficiencies' => $checkCompetencyProficiencies,
+            'descriptorModels' => $descriptorModels,
+        ]);
     }
 }

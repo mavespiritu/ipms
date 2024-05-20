@@ -33,7 +33,7 @@ use yii\web\View;
         'encodeLabels' => false,
         'items' => [
             [
-                'label' => 'Evidences <span class="badge bg-green" id="evidence-badge-'.$indicator->id.'">'.$staffIndicatorModel->getStaffCompetencyIndicatorEvidences()->count().'</span>',
+                'label' => 'Evidences <span class="badge bg-green" id="evidence-badge-'.$indicator->id.'">'.$staffAllIndicatorModel->getStaffCompetencyIndicatorEvidences()->count().'</span>',
                 'content' => '<div id="evidences"></div>',
                 'headerOptions' => ['onClick' => 'viewEvidences("'.$indicator->id.'", "'.$model->emp_id.'")'],
             ],

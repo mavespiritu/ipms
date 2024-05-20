@@ -8,6 +8,7 @@ use yii\web\View;
 /* @var $model common\modules\npis\models\Ipcr */
 
 $this->title = 'Staff PDS';
+$this->params['breadcrumbs'][] = 'NPIS';
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>

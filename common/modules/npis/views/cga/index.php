@@ -5,9 +5,10 @@ use yii\helpers\Url;
 use yii\bootstrap\Tabs;
 use yii\web\View;
 /* @var $this yii\web\View */
-/* @var $model common\modules\npis\models\Ipcr */
+/* @var $model common\modules\npis\models\Cga */
 
 $this->title = 'Staff CGA';
+$this->params['breadcrumbs'][] = 'CGA';
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>

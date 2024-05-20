@@ -10,6 +10,8 @@ use yii\widgets\Pjax;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Other Documents';
+$this->params['breadcrumbs'][] = 'NPIS';
+$this->params['breadcrumbs'][] = 'Staff 201';
 $this->params['breadcrumbs'][] = $this->title;
 
 $successMessage = \Yii::$app->getSession()->getFlash('success');

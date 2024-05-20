@@ -12,6 +12,7 @@ use common\models\Employee;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Staff Profile';
+$this->params['breadcrumbs'][] = 'NPIS';
 $this->params['breadcrumbs'][] = $this->title;
 
 $successMessage = \Yii::$app->getSession()->getFlash('success');
