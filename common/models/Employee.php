@@ -365,6 +365,28 @@ class Employee extends \yii\db\ActiveRecord
         return ArrayHelper::map($list, 'emp_id', 'name');
     }
 
+    public static function getListPerDivision()
+    {
+        $staff = Employee::findOne(['emp_id' => Yii::$app->user->identity->userinfo->EMP_N]);
+
+        $list = Employee::find()
+        ->select([
+            'emp_id',
+            'concat(lname,", ",fname," ",mname) as name'
+        ])
+        ->andWhere([
+            'division_id' => $staff->division_id,
+            'work_status' => 'active'
+        ])
+        ->orderBy([
+            'concat(lname,", ",fname," ",mname)' => SORT_ASC
+        ])
+        ->asArray()
+        ->all();
+
+        return ArrayHelper::map($list, 'emp_id', 'name');
+    }
+
     /**
      * Gets query for [[Chats]].
      *
