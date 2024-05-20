@@ -29,6 +29,9 @@ use common\modules\npis\models\EmployeeReference;
 use common\modules\npis\models\EducationalLevel;
 use common\modules\npis\models\TrainingCategory;
 use common\modules\npis\models\TrainingDiscipline;
+use common\modules\npis\models\EvidenceTraining;
+use common\modules\npis\models\EvidencePerformance;
+use common\modules\npis\models\EvidenceAward;
 use common\modules\npis\models\Ipcr;
 use common\modules\npis\models\IpcrSearch;
 use markavespiritu\user\models\User;
@@ -1880,6 +1883,17 @@ class PdsController extends \yii\web\Controller
                         if($trainingId){
                             $trainingId->delete();
                         }
+
+                        $evidenceTraining = EvidenceTraining::findOne([
+                            'emp_id' => $selectedTraining->emp_id,
+                            'seminar_title' => $selectedTraining->seminar_title,
+                            'from_date' => $selectedTraining->from_date,
+                        ]);
+
+                        if($evidenceTraining){
+                            $evidenceTraining->delete();
+                        }
+
                         $selectedTraining->delete();
                     }
                 }
@@ -2480,6 +2494,17 @@ class PdsController extends \yii\web\Controller
                         if($recognitionId){
                             $recognitionId->delete();
                         }
+
+                        $evidenceAward = EvidenceAward::findOne([
+                            'emp_id' => $selectedRecognition->emp_id,
+                            'type' => $selectedRecognition->type,
+                            'description' => $selectedRecognition->description,
+                        ]);
+
+                        if($evidenceAward){
+                            $evidenceAward->delete();
+                        }
+
                         $selectedRecognition->delete();
                     }
                 }

@@ -30,8 +30,8 @@ class StaffCompetencyIndicatorEvidence extends \yii\db\ActiveRecord
     {
         return [
             [['title', 'description', 'start_date', 'end_date'], 'required', 'on' => 'otherEvidence'],
-            [['staff_competency_indicator_id'], 'integer'],
-            [['description'], 'string'],
+            [['indicator_id'], 'integer'],
+            [['emp_id', 'description'], 'string'],
             [['start_date', 'end_date'], 'safe'],
         ];
     }
@@ -43,7 +43,8 @@ class StaffCompetencyIndicatorEvidence extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'staff_competency_indicator_id' => 'Indicator',
+            'emp_id' => 'Employee ID',
+            'indicator_id' => 'Indicator',
             'title' => 'Title',
             'description' => 'Description',
             'start_date' => 'Start Date',
@@ -68,9 +69,9 @@ class StaffCompetencyIndicatorEvidence extends \yii\db\ActiveRecord
         ];
     }
 
-    public function getStaffCompetencyIndicator()
+    public function getStaffCompetencyIndicators()
     {
-        return $this->hasOne(StaffCompetencyIndicator::className(), ['id' => 'staff_competency_indicator_id']);
+        return $this->hasMany(StaffCompetencyIndicator::className(), ['emp_id' => 'emp_id', 'indicator_id' => 'indicator_id']);
     }
 
     public function getEvidenceTraining()

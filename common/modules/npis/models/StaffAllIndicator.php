@@ -5,21 +5,21 @@ namespace common\modules\npis\models;
 use Yii;
 
 /**
- * This is the model class for table "staff_competency_indicator".
+ * This is the model class for table "staff_all_indicator".
  *
  * @property int $id
  * @property string|null $emp_id
- * @property string|null $position_id
  * @property int|null $indicator_id
+ * @property int|null $compliance
  */
-class StaffCompetencyIndicator extends \yii\db\ActiveRecord
+class StaffAllIndicator extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'staff_competency_indicator';
+        return 'staff_all_indicator';
     }
 
     /**
@@ -30,7 +30,6 @@ class StaffCompetencyIndicator extends \yii\db\ActiveRecord
         return [
             [['indicator_id', 'compliance'], 'integer'],
             [['emp_id'], 'string', 'max' => 20],
-            [['position_id'], 'string', 'max' => 50],
         ];
     }
 
@@ -42,19 +41,8 @@ class StaffCompetencyIndicator extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'emp_id' => 'Emp ID',
-            'position_id' => 'Position ID',
             'indicator_id' => 'Indicator ID',
-            'compliance' => 'Compliance'
-        ];
-    }
-
-    public function behaviors()
-    {
-        return [
-            'fileBehavior' => [
-                'class' => \file\behaviors\FileBehavior::className()
-            ],
-            'bedezign\yii2\audit\AuditTrailBehavior'
+            'compliance' => 'Compliance',
         ];
     }
 

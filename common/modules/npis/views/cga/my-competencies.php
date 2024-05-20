@@ -31,24 +31,7 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
 <div id="alert" class="alert" role="alert" style="display: none;"></div>
 <div class="row">
     <div class="col-sm-4 col-md-4 col-lg-4 col-xs-12">
-        <h4>My Current Position</h4>
-        <small>
-            <table class="table table-condensed table-responsive">
-                <tr>
-                    <td>Item No.:</td>
-                    <td><b><?= $model->item_no ?></b></td>
-                    <td>Position:</td>
-                    <td><b><?= $model->positionItem->position_id ?></b></td>
-                </tr>
-                <tr>
-                    <td>Division:</td>
-                    <td><b><?= $model->positionItem->division_id ?></b></td>
-                    <td>SG and Step:</td>
-                    <td><b><?= $model->positionItem->grade.'-'.$model->positionItem->step ?></b></td>
-                </tr>
-            </table>
-        </small>
-        <h4>Required Competencies</h4>
+        <h4>Competencies</h4>
         <div id="competencies"></div>
     </div>
     <div class="col-sm-8 col-md-8 col-lg-8 col-xs-12">
@@ -78,10 +61,10 @@ if ($successMessage) {
 
 <?php
     $script = '
-        function viewCompetencies(emp_id)
+        function viewAllCompetencies(emp_id)
         {
             $.ajax({
-                url: "'.Url::to(['/npis/cga/view-competencies']).'?emp_id=" + emp_id,
+                url: "'.Url::to(['/npis/cga/view-all-competencies']).'?emp_id=" + emp_id,
                 beforeSend: function(){
                     $("#competencies").html("<div class=\"text-center\" style=\"height: calc(100vh - 297px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
                 },
@@ -119,7 +102,7 @@ if ($successMessage) {
         }
 
         $(document).ready(function(){
-            viewCompetencies("'.$model->emp_id.'");
+            viewAllCompetencies("'.$model->emp_id.'");
         });
     ';
 

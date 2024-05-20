@@ -24,7 +24,7 @@ DisableButtonAsset::register($this);
 
 
 ?>
-
+<p><?= $competency->description ?></p>
 <?php if(!empty($availableDescriptors)){ ?>
     <?php foreach($availableDescriptors as $proficiency => $competencies){ ?>
         <div class="table-responsive">

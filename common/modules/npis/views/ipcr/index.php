@@ -9,6 +9,8 @@ use yii\web\View;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'IPCR';
+$this->params['breadcrumbs'][] = 'NPIS';
+$this->params['breadcrumbs'][] = 'Staff 201';
 $this->params['breadcrumbs'][] = $this->title;
 
 $successMessage = \Yii::$app->getSession()->getFlash('success');

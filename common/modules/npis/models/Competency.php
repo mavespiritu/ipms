@@ -125,4 +125,25 @@ class Competency extends \yii\db\ActiveRecord
 
         return $competencyIndicatorsCount > 0 ? ($staffIndicatorsCount/$competencyIndicatorsCount)*100 : 0;
     }
+
+    public function getStaffAllCompetencyPercentage($emp_id)
+    {
+        $competencyIndicatorsCount = PositionCompetencyIndicator::find()
+                    ->leftJoin('competency_indicator', 'competency_indicator.id = position_competency_indicator.indicator_id')
+                    ->where([
+                        'competency_indicator.competency_id' => $this->comp_id,
+                    ])
+                    ->count();
+                    
+        $staffIndicatorsCount = StaffCompetencyIndicator::find()
+                    ->leftJoin('competency_indicator', 'competency_indicator.id = staff_competency_indicator.indicator_id')
+                    ->andWhere([
+                        'emp_id' => $emp_id,
+                        'compliance' => 1,
+                        'competency_indicator.competency_id' => $this->comp_id
+                    ])
+                    ->count();
+
+        return $competencyIndicatorsCount > 0 ? ($staffIndicatorsCount/$competencyIndicatorsCount)*100 : 0;
+    }
 }

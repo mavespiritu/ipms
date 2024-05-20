@@ -5,6 +5,7 @@ namespace common\modules\npis\controllers;
 use Yii;
 use common\modules\npis\models\Ipcr;
 use common\modules\npis\models\IpcrSearch;
+use common\modules\npis\models\EvidencePerformance;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -90,6 +91,8 @@ class IpcrController extends Controller
                 if(!empty($selectedIndexes)){
                     if(Ipcr::deleteAll(['id' => $selectedIndexes]))
                     {
+                        EvidencePerformance::deleteAll(['ipcr_id' => $selectedIndexes]);
+
                         $transaction->commit();
                         \Yii::$app->getSession()->setFlash('success', 'Records have been deleted successfully');
                         return $this->redirect(['index']);
