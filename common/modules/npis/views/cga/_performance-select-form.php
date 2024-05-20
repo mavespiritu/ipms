@@ -31,6 +31,23 @@ DisableButtonAsset::register($this);
         //'enableAjaxValidation' => true,
     ]); ?>
 
+    <small>
+        <div class="table-responsive">
+            <table class="table table-condensed table-responsive">
+                <tbody>
+                    <tr>
+                        <td>Competency:</td>
+                        <td><b><?= $indicator->competency->competency ?></b></td>
+                        <td>Proficiency Level:</td>
+                        <td><b><?= $indicator->proficiency ?></b></td>
+                        <td>Indicator:</td>
+                        <td><b><?= $indicator->indicator ?></b></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </small>
+
     <?= $form->field($evidencePerformanceModel, 'ipcr_id')->widget(Select2::classname(), [
             'data' => $performances,
             'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'ipcr-select', 'id' => 'evidence-performance-select-title-'.$idx],

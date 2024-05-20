@@ -37,6 +37,23 @@ DisableButtonAsset::register($this);
         ],
     ]); ?>
 
+    <small>
+        <div class="table-responsive">
+            <table class="table table-condensed table-responsive">
+                <tbody>
+                    <tr>
+                        <td>Competency:</td>
+                        <td><b><?= $indicator->competency->competency ?></b></td>
+                        <td>Proficiency Level:</td>
+                        <td><b><?= $indicator->proficiency ?></b></td>
+                        <td>Indicator:</td>
+                        <td><b><?= $indicator->indicator ?></b></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </small>
+
     <?= $form->field($trainingModel, 'seminar_title')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($evidenceModel, 'description')->widget(CKEditor::className(), [
