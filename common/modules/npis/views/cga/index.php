@@ -18,7 +18,7 @@ $this->params['breadcrumbs'][] = $this->title;
             <div class="box-body">
                 <div class="row">
                     <div class="col-sm-4 col-md-4 col-lg-4 col-xs-12">
-                        <?= Yii::$app->user->can('HR') ? $this->render('_search', ['model' => $model]) : '' ?>
+                        <?= Yii::$app->user->can('DivisionChief') || Yii::$app->user->can('HR') ? $this->render('_search', ['model' => $model]) : '' ?>
 
                         <div id="staff-cga-profile"></div>
                     </div>

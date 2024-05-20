@@ -177,10 +177,6 @@ class CgaController extends Controller
 
         Yii::$app->session->remove('selectedCgaStaffProfile');
 
-        if(!Yii::$app->user->can('HR')){
-            throw new NotFoundHttpException('The requested page does not exist.');
-        }
-
         return $this->renderAjax('_staff', [
             'model' => $model,
             'employee' => $employee,

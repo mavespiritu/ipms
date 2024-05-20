@@ -20,7 +20,7 @@ $selectedStaffCgaProfile = '<script>localStorage.getItem("selectedStaffCgaProfil
     ]); ?>
 
     <?= $form->field($model, 'emp_id')->widget(Select2::classname(), [
-        'data' => \common\models\Employee::getList(),
+        'data' => Yii::$app->user->can('DivisionChief') ? \common\models\Employee::getListPerDivision() : \common\models\Employee::getList(),
         'options' => [
             'multiple' => false, 
             'placeholder' => 'Select one', 
