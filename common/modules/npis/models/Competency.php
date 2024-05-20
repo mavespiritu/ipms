@@ -3,7 +3,7 @@
 namespace common\modules\npis\models;
 
 use Yii;
-
+use yii\helpers\ArrayHelper;
 /**
  * This is the model class for table "competency".
  *
@@ -114,12 +114,26 @@ class Competency extends \yii\db\ActiveRecord
                         'position_id' => $model->item_no
                     ])
                     ->count();
+
+        $proficiencies = PositionCompetencyIndicator::find()
+                        ->select(['distinct(competency_indicator.proficiency) as proficiency'])
+                        ->leftJoin('competency_indicator', 'competency_indicator.id = position_competency_indicator.indicator_id')
+                        ->where([
+                            'competency_indicator.competency_id' => $this->comp_id,
+                            'position_id' => $model->item_no
+                        ])
+                        ->asArray()
+                        ->all();
+
+        $proficiencies = ArrayHelper::map($proficiencies, 'proficiency', 'proficiency');
+
         $staffIndicatorsCount = StaffCompetencyIndicator::find()
                     ->leftJoin('competency_indicator', 'competency_indicator.id = staff_competency_indicator.indicator_id')
                     ->andWhere([
                         'emp_id' => $emp_id,
                         'compliance' => 1,
-                        'competency_indicator.competency_id' => $this->comp_id
+                        'competency_indicator.competency_id' => $this->comp_id,
+                        'competency_indicator.proficiency' => $proficiencies
                     ])
                     ->count();
 

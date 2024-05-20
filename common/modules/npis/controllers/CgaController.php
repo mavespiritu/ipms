@@ -1479,7 +1479,25 @@ class CgaController extends Controller
             $indicatorModel->indicator_id = $postData['id'];
             $indicatorModel->compliance = $postData['value'];
 
-            $indicatorModel->save();
+            if($indicatorModel->save())
+            {
+                $positions = StaffCompetencyIndicator::find()->select(['distinct(position_id) as position_id'])->where(['emp_id' => $model->emp_id])->asArray()->all();
+                $positions = ArrayHelper::map($positions, 'position_id', 'position_id');
+
+                if(!empty($positions)){
+                    foreach($positions as $position){
+
+                        $staffCompetencyIndicator = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $position, 'indicator_id' => $postData['id']]) ? StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $position, 'indicator_id' => $postData['id']]) : new StaffCompetencyIndicator();
+
+                        $staffCompetencyIndicator->emp_id = $model->emp_id;
+                        $staffCompetencyIndicator->position_id = $position;
+                        $staffCompetencyIndicator->indicator_id = $postData['id'];
+                        $staffCompetencyIndicator->compliance = $postData['value'];
+                        $staffCompetencyIndicator->save();
+
+                    }
+                }
+            }
         }
 
         return $this->renderAjax('competency', [

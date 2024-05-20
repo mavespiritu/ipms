@@ -29,7 +29,7 @@ use yii\bootstrap\Collapse;
         <p class="text-center">No included compentency found.</p>
     <?php } ?>
     <br>
-    <div style="height: calc(100vh - 350px); overflow-y: auto; padding: 10px;">
+    <div style="height: calc(100vh - 250px); overflow-y: auto; padding: 10px;">
         <?php if(!empty($availableDescriptors)){ ?>
             <?php $i = 0; ?>
             <?php foreach($availableDescriptors as $type => $competencies){ ?>

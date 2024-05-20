@@ -59,7 +59,7 @@ use yii\bootstrap\ButtonDropdown;
         'enableReplaceState' => false,
     ]);  ?>
 
-    <div style="max-height: calc(100vh - 395px); overflow-y: auto; padding: 10px;">
+    <div style="min-height: calc(100vh - 395px); max-height: 65vh; overflow-y: auto; padding: 10px;">
 
     <div id="alert" class="alert" role="alert" style="display: none;"></div>
     <?php
