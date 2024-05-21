@@ -91,9 +91,9 @@ class Competency extends \yii\db\ActiveRecord
     public function getTblinterventions()
     {
         return $this->hasMany(Tblintervention::className(), ['comp_id' => 'comp_id']);
-    }
+    } 
 
-    public function getStaffCompetencyPerPositionPercentage($emp_id, $position_id)
+    public function getStaffCompetencyPerCareerPercentage($emp_id, $position_id)
     {
         $competencyIndicatorsCount = PositionCompetencyIndicator::find()
                     ->leftJoin('competency_indicator', 'competency_indicator.id = position_competency_indicator.indicator_id')
@@ -115,18 +115,19 @@ class Competency extends \yii\db\ActiveRecord
 
         $proficiencies = ArrayHelper::map($proficiencies, 'proficiency', 'proficiency');
 
-        $staffIndicatorsCount = StaffCompetencyIndicator::find()
-                    ->leftJoin('competency_indicator', 'competency_indicator.id = staff_competency_indicator.indicator_id')
+        $staffIndicatorsCount = StaffAllIndicator::find()
+                    ->select(['distinct(indicator_id)'])
+                    ->leftJoin('competency_indicator', 'competency_indicator.id = staff_all_indicator.indicator_id')
                     ->andWhere([
                         'emp_id' => $emp_id,
                         'compliance' => 1,
-                        'position_id' => $position_id,
                         'competency_indicator.competency_id' => $this->comp_id,
                         'competency_indicator.proficiency' => $proficiencies
                     ])
-                    ->count();
+                    ->asArray()
+                    ->all();
 
-        return $competencyIndicatorsCount > 0 ? ($staffIndicatorsCount/$competencyIndicatorsCount)*100 : 0;
+        return $competencyIndicatorsCount > 0 ? (count($staffIndicatorsCount)/$competencyIndicatorsCount)*100 : 0;
     }
 
     public function getStaffAllCompetencyPercentage($emp_id)
@@ -137,15 +138,17 @@ class Competency extends \yii\db\ActiveRecord
                     ])
                     ->count();
                     
-        $staffIndicatorsCount = StaffCompetencyIndicator::find()
-                    ->leftJoin('competency_indicator', 'competency_indicator.id = staff_competency_indicator.indicator_id')
+        $staffIndicatorsCount = StaffAllIndicator::find()
+                    ->select(['distinct(indicator_id)'])
+                    ->leftJoin('competency_indicator', 'competency_indicator.id = staff_all_indicator.indicator_id')
                     ->andWhere([
                         'emp_id' => $emp_id,
                         'compliance' => 1,
-                        'competency_indicator.competency_id' => $this->comp_id
+                        'competency_indicator.competency_id' => $this->comp_id,
                     ])
-                    ->count();
+                    ->asArray()
+                    ->all();
 
-        return $competencyIndicatorsCount > 0 ? ($staffIndicatorsCount/$competencyIndicatorsCount)*100 : 0;
+        return $competencyIndicatorsCount > 0 ? (count($staffIndicatorsCount)/$competencyIndicatorsCount)*100 : 0;
     }
 }
