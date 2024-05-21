@@ -35,7 +35,7 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
                         [
                             'label' => 'My Career Path',
                             'content' => '<div id="my-career-path"></div>',
-                            'headerOptions' => ['onclick' => 'viewMyCareerPath()'],
+                            'headerOptions' => ['onclick' => 'viewMyCareerPath("'.$model->emp_id.'")'],
                         ],
                         [
                             'label' => 'My Competencies',
@@ -80,6 +80,26 @@ if ($successMessage) {
                     $("#my-current-position").hide();
                     $("#my-current-position").fadeIn("slow");
                     $("#my-current-position").html(data);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        function viewMyCareerPath(emp_id)
+        {
+            $.ajax({
+                url: "'.Url::to(['/npis/cga/my-career-path']).'?emp_id=" + emp_id,
+                beforeSend: function(){
+                    $("#my-career-path").html("<div class=\"text-center\" style=\"height: calc(100vh - 297px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
+                },
+                success: function (data) {
+                    console.log(this.data);
+                    $("#my-career-path").empty();
+                    $("#my-career-path").hide();
+                    $("#my-career-path").fadeIn("slow");
+                    $("#my-career-path").html(data);
                 },
                 error: function (err) {
                     console.log(err);

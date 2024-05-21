@@ -5,21 +5,20 @@ namespace common\modules\npis\models;
 use Yii;
 
 /**
- * This is the model class for table "staff_competency_indicator".
+ * This is the model class for table "career_path".
  *
  * @property int $id
  * @property string|null $emp_id
  * @property string|null $position_id
- * @property int|null $indicator_id
  */
-class StaffCompetencyIndicator extends \yii\db\ActiveRecord
+class CareerPath extends \yii\db\ActiveRecord
 {
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'staff_competency_indicator';
+        return 'career_path';
     }
 
     /**
@@ -28,9 +27,19 @@ class StaffCompetencyIndicator extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['indicator_id', 'compliance'], 'integer'],
+            [['position_id'], 'required'],
             [['emp_id'], 'string', 'max' => 20],
             [['position_id'], 'string', 'max' => 50],
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            'fileBehavior' => [
+                'class' => \file\behaviors\FileBehavior::className()
+            ],
+            'bedezign\yii2\audit\AuditTrailBehavior'
         ];
     }
 
@@ -43,20 +52,11 @@ class StaffCompetencyIndicator extends \yii\db\ActiveRecord
             'id' => 'ID',
             'emp_id' => 'Emp ID',
             'position_id' => 'Position ID',
-            'indicator_id' => 'Indicator ID',
-            'compliance' => 'Compliance'
         ];
     }
 
-    public function behaviors()
+    public function getEmployeePositionItem()
     {
-        return [
-            'bedezign\yii2\audit\AuditTrailBehavior'
-        ];
-    }
-
-    public function getStaffCompetencyIndicatorEvidences()
-    {
-        return $this->hasMany(StaffCompetencyIndicatorEvidence::className(), ['emp_id' => 'emp_id', 'indicator_id' => 'indicator_id']);
+        return $this->hasOne(EmployeePositionItem::className(), ['item_no' => 'position_id']);
     }
 }
