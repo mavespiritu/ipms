@@ -341,6 +341,8 @@ class CgaController extends Controller
         ->orderBy([
             'type' => SORT_ASC,
             'competency' => SORT_ASC,
+            'proficiency' => SORT_DESC,
+            'indicator' => SORT_ASC
         ])
         ->asArray()
         ->all() : [];
@@ -1434,7 +1436,8 @@ class CgaController extends Controller
         ->orderBy([
             'type' => SORT_ASC,
             'competency' => SORT_ASC,
-            'proficiency' => SORT_DESC
+            'proficiency' => SORT_DESC,
+            'indicator' => SORT_ASC
         ])
         ->asArray()
         ->all() : [];
