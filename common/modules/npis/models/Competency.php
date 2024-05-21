@@ -132,6 +132,7 @@ class Competency extends \yii\db\ActiveRecord
                     ->andWhere([
                         'emp_id' => $emp_id,
                         'compliance' => 1,
+                        'position_id' => $model->item_no,
                         'competency_indicator.competency_id' => $this->comp_id,
                         'competency_indicator.proficiency' => $proficiencies
                     ])
