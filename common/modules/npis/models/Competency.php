@@ -93,25 +93,13 @@ class Competency extends \yii\db\ActiveRecord
         return $this->hasMany(Tblintervention::className(), ['comp_id' => 'comp_id']);
     }
 
-    public function getStaffCompetencyPercentage($emp_id)
+    public function getStaffCompetencyPerPositionPercentage($emp_id, $position_id)
     {
-        $model = EmployeeItem::find()
-            ->andWhere([
-                'emp_id' => $emp_id
-            ])
-            ->andWhere([
-                'is', 'to_date', null
-            ])
-            ->orderBy([
-                'from_date' => SORT_DESC
-            ])
-            ->one();
-
         $competencyIndicatorsCount = PositionCompetencyIndicator::find()
                     ->leftJoin('competency_indicator', 'competency_indicator.id = position_competency_indicator.indicator_id')
                     ->where([
                         'competency_indicator.competency_id' => $this->comp_id,
-                        'position_id' => $model->item_no
+                        'position_id' => $position_id
                     ])
                     ->count();
 
@@ -120,7 +108,7 @@ class Competency extends \yii\db\ActiveRecord
                         ->leftJoin('competency_indicator', 'competency_indicator.id = position_competency_indicator.indicator_id')
                         ->where([
                             'competency_indicator.competency_id' => $this->comp_id,
-                            'position_id' => $model->item_no
+                            'position_id' => $position_id
                         ])
                         ->asArray()
                         ->all();
@@ -132,7 +120,7 @@ class Competency extends \yii\db\ActiveRecord
                     ->andWhere([
                         'emp_id' => $emp_id,
                         'compliance' => 1,
-                        'position_id' => $model->item_no,
+                        'position_id' => $position_id,
                         'competency_indicator.competency_id' => $this->comp_id,
                         'competency_indicator.proficiency' => $proficiencies
                     ])

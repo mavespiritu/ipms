@@ -277,7 +277,7 @@ class CgaController extends Controller
         if(!empty($descriptors)){
             foreach($descriptors as $i => $descriptor){
                 $item = [];
-                $percent = Competency::findOne(['comp_id' => $descriptor['id']])->getStaffCompetencyPercentage($model->emp_id);
+                $percent = Competency::findOne(['comp_id' => $descriptor['id']])->getStaffCompetencyPerPositionPercentage($model->emp_id, $model->item_no);
 
                 if($percent > 0 && $percent < 100){
                     $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important; background:
