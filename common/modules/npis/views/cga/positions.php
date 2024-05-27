@@ -28,7 +28,7 @@ use yii\bootstrap\Collapse;
     <?php if($positions){ ?>
         <?php foreach($positions as $position){ ?>
             <li onclick="viewPositionCompetencies('<?= $model->emp_id ?>','<?= $position->position_id ?>'); setActive(this);">
-                <span style="font-weight: bolder;"><?= $position->employeePositionItem->position->post_description ?></span><br>
+                <span style="font-weight: bolder;"><a href="javascript:void(0)"><?= $position->employeePositionItem->position->post_description ?></a></span><br>
                 <small style="color: rgb(153, 153, 153);">
                 <?= $position->employeePositionItem->division_id ?>
                 <span class="pull-right">SG: <?= $position->employeePositionItem->grade.'-'.$position->employeePositionItem->step ?></span>
