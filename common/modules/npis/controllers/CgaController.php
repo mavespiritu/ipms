@@ -86,6 +86,8 @@ class CgaController extends Controller
                             'view-career-path',
                             'view-position-competencies',
                             'view-selected-career-competency', 
+                            'view-selected-career',
+                            'delete-career',
                         ],
                         'allow' => true,
                         'roles' => ['cga-view'],
@@ -420,7 +422,7 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionViewIndicator($id, $emp_id)
+    public function actionViewIndicator($id, $emp_id, $tab)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
@@ -456,10 +458,11 @@ class CgaController extends Controller
             'staffAllIndicatorModel' => $staffAllIndicatorModel,
             'staffIndicatorModel' => $staffIndicatorModel,
             'model' => $model,
+            'tab' => $tab,
         ]);
     }
 
-    public function actionViewEvidences($id, $emp_id)
+    public function actionViewEvidences($id, $emp_id, $tab)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
@@ -508,10 +511,11 @@ class CgaController extends Controller
             'model' => $model,
             'dataProvider' => $dataProvider,
             'evidenceModels' => $evidenceModels,
+            'tab' => $tab
         ]);
     }
 
-    public function actionCreateTraining($id, $reference, $emp_id)
+    public function actionCreateTraining($id, $reference, $emp_id, $tab)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
@@ -532,10 +536,11 @@ class CgaController extends Controller
             'reference' => $reference,
             'model' => $model,
             'idx' => 0,
+            'tab' => $tab
         ]);
     }
 
-    public function actionSelectTraining($id, $reference, $emp_id)
+    public function actionSelectTraining($id, $reference, $emp_id, $tab)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
@@ -620,11 +625,12 @@ class CgaController extends Controller
             'trainings' => $trainings,
             'reference' => $reference,
             'idx' => 0,
-            'action' => 'create'
+            'action' => 'create',
+            'tab' => $tab,
         ]);
     }
 
-    public function actionNewTraining($id, $reference, $emp_id)
+    public function actionNewTraining($id, $reference, $emp_id, $tab)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
@@ -711,11 +717,12 @@ class CgaController extends Controller
             'categories' => $categories,
             'reference' => $reference,
             'idx' => 0,
-            'action' => 'create'
+            'action' => 'create',
+            'tab' => $tab
         ]);
     }
 
-    public function actionSelectAward($id, $reference, $emp_id)
+    public function actionSelectAward($id, $reference, $emp_id, $tab)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
@@ -799,10 +806,11 @@ class CgaController extends Controller
             'reference' => $reference,
             'action' => 'create',
             'idx' => 0,
+            'tab' => $tab
         ]);
     }
 
-    public function actionSelectPerformance($id, $reference, $emp_id)
+    public function actionSelectPerformance($id, $reference, $emp_id, $tab)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
@@ -879,11 +887,12 @@ class CgaController extends Controller
             'performances' => $performances,
             'reference' => $reference,
             'idx' => 0,
-            'action' => 'create'
+            'action' => 'create',
+            'tab' => $tab
         ]);
     }
 
-    public function actionCreateOthers($id, $reference, $emp_id)
+    public function actionCreateOthers($id, $reference, $emp_id, $tab)
     {
         $indicator = CompetencyIndicator::findOne($id);
 
@@ -930,11 +939,12 @@ class CgaController extends Controller
             'evidenceModel' => $evidenceModel,
             'reference' => $reference,
             'idx' => 0,
-            'action' => 'create'
+            'action' => 'create',
+            'tab' => $tab
         ]);
     }
 
-    public function actionUpdateTraining($id, $emp_id)
+    public function actionUpdateTraining($id, $emp_id, $tab)
     {
         $evidenceModel = StaffCompetencyIndicatorEvidence::findOne(['id' => $id]);
 
@@ -1069,7 +1079,8 @@ class CgaController extends Controller
                 'trainings' => $trainings,
                 'reference' => $evidenceModel->reference,
                 'idx' => $evidenceModel->id,
-                'action' => 'update'
+                'action' => 'update',
+                'tab' => $tab
             ]);
         }else{
             return $this->renderAjax('_training-new-form.php', [
@@ -1084,12 +1095,13 @@ class CgaController extends Controller
                 'categories' => $categories,
                 'reference' => $evidenceModel->reference,
                 'idx' => $evidenceModel->id,
-                'action' => 'update'
+                'action' => 'update',
+                'tab' => $tab
             ]);
         }
     }
 
-    public function actionUpdateAward($id, $emp_id)
+    public function actionUpdateAward($id, $emp_id, $tab)
     {
         $evidenceModel = StaffCompetencyIndicatorEvidence::findOne(['id' => $id]);
 
@@ -1170,10 +1182,11 @@ class CgaController extends Controller
             'reference' => $evidenceModel->reference,
             'action' => 'update',
             'idx' => $evidenceModel->id,
+            'tab' => $tab
         ]);
     }
     
-    public function actionUpdatePerformance($id, $emp_id)
+    public function actionUpdatePerformance($id, $emp_id, $tab)
     {
         $evidenceModel = StaffCompetencyIndicatorEvidence::findOne(['id' => $id]);
 
@@ -1244,11 +1257,12 @@ class CgaController extends Controller
             'performances' => $performances,
             'reference' => $evidenceModel->reference,
             'idx' => $evidenceModel->id,
-            'action' => 'update'
+            'action' => 'update',
+            'tab' => $tab
         ]);
     }
 
-    public function actionUpdateOthers($id, $emp_id)
+    public function actionUpdateOthers($id, $emp_id, $tab)
     {
         $evidenceModel = StaffCompetencyIndicatorEvidence::findOne(['id' => $id]);
         $evidenceModel->scenario = 'otherEvidence';
@@ -1292,7 +1306,8 @@ class CgaController extends Controller
             'evidenceModel' => $evidenceModel,
             'reference' => $evidenceModel->reference,
             'idx' => $evidenceModel->id,
-            'action' => 'update'
+            'action' => 'update',
+            'tab' => $tab
         ]);
     }
 
@@ -1611,10 +1626,27 @@ class CgaController extends Controller
             ])
             ->one();
 
-        $positions = CareerPath::findAll(['emp_id' => $model->emp_id]);
+        $existingCareers = CareerPath::findAll(['emp_id' => $model->emp_id]);
+        $existingCareers = ArrayHelper::map($existingCareers, 'position_id', 'position_id');
+
+        $positions = EmployeePositionItem::find()
+            ->select(['item_no', 'concat(division_id," - ",p.post_description) as title'])
+            ->leftJoin('tblposition p', 'p.position_id = tblemp_position_item.position_id')
+            ->andWhere(['tblemp_position_item.item_no' => $existingCareers])
+            ->orderBy([
+                'tblemp_position_item.division_id' => SORT_ASC,
+                'p.post_description' => SORT_ASC,
+            ])
+            ->asArray()
+            ->all();
+
+        $positions = ArrayHelper::map($positions, 'item_no', 'title');
+
+        $careerModel = new CareerPath();
 
         return $this->renderAjax('positions.php', [
             'model' => $model,
+            'careerModel' => $careerModel,
             'positions' => $positions,
         ]);
     }
@@ -1805,5 +1837,37 @@ class CgaController extends Controller
             'checkCompetencyProficiencies' => $checkCompetencyProficiencies,
             'descriptorModels' => $descriptorModels
         ]);
+    }
+
+    public function actionViewSelectedCareer($emp_id, $position_id)
+    {
+        $model = CareerPath::findOne(['emp_id' => $emp_id, 'position_id' => $position_id]);
+
+        return $this->renderAjax('_selected-career.php', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionDeleteCareer($id)
+    {
+        if(Yii::$app->request->post()){
+
+            $career = CareerPath::findOne(['id' => $id]);
+
+            $transaction = Yii::$app->ipms->beginTransaction();
+
+            try {
+                if($career->delete()){
+                    $transaction->commit();
+                    \Yii::$app->getSession()->setFlash('success', 'Position has been removed successfully');
+                }else{
+                    $career->rollBack();
+                    \Yii::$app->getSession()->setFlash('error', 'Error occurred while removing position');
+                }
+            } catch (\Exception $e) {
+                $career->rollBack();
+                \Yii::$app->getSession()->setFlash('error', 'Error occurred while removing position');
+            }
+        }
     }
 }

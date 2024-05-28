@@ -34,13 +34,13 @@ use yii\web\View;
         'items' => [
             [
                 'label' => 'Evidences <span class="badge bg-green" id="evidence-badge-'.$indicator->id.'">'.$staffAllIndicatorModel->getStaffCompetencyIndicatorEvidences()->count().'</span>',
-                'content' => '<div class="evidences"></div>',
-                'headerOptions' => ['onClick' => 'viewEvidences("'.$indicator->id.'", "'.$model->emp_id.'")'],
+                'content' => '<div id="evidences-'.$tab.'"></div>',
+                'headerOptions' => ['onClick' => 'viewEvidences("'.$indicator->id.'", "'.$model->emp_id.'", "'.$tab.'")'],
             ],
             [
                 'label' => 'Proposed Trainings <span class="badge bg-green" id="training-badge-'.$indicator->id.'">0</span>',
-                'content' => '<div id="trainings"></div>',
-                'headerOptions' => ['onClick' => 'viewTrainings("'.$indicator->id.'")'],
+                'content' => '<div id="trainings-'.$tab.'"></div>',
+                'headerOptions' => ['onClick' => 'viewTrainings("'.$indicator->id.'", "'.$tab.'")'],
             ],
         ],
     ]); ?>
@@ -49,21 +49,21 @@ use yii\web\View;
 <?php
     $script = '
         $(document).ready(function(){
-            viewEvidences('.$indicator->id.', "'.$model->emp_id.'");
+            viewEvidences('.$indicator->id.', "'.$model->emp_id.'", "'.$tab.'");
         });
 
-        function viewEvidences(id, emp_id)
+        function viewEvidences(id, emp_id, tab)
         {
             $.ajax({
-                url: "'.Url::to(['/npis/cga/view-evidences']).'?id=" + id + "&emp_id=" + emp_id,
+                url: "'.Url::to(['/npis/cga/view-evidences']).'?id=" + id + "&emp_id=" + emp_id + "&tab=" + tab,
                 beforeSend: function(){
-                    $(".evidences").html("<div class=\"text-center\" style=\"height: calc(100vh - 445px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
+                    $("#evidences").html("<div class=\"text-center\" style=\"height: calc(100vh - 445px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
                 },
                 success: function (data) {
-                    $(".evidences").empty();
-                    $(".evidences").hide();
-                    $(".evidences").fadeIn("slow");
-                    $(".evidences").html(data);
+                    $("#evidences-'.$tab.'").empty();
+                    $("#evidences-'.$tab.'").hide();
+                    $("#evidences-'.$tab.'").fadeIn("slow");
+                    $("#evidences-'.$tab.'").html(data);
                 },
                 error: function (err) {
                     console.log(err);
@@ -71,18 +71,18 @@ use yii\web\View;
             });
         }
 
-        function viewTrainings(id)
+        function viewTrainings(id, tab)
         {
             $.ajax({
-                url: "'.Url::to(['/npis/cga/view-trainings']).'?id=" + id,
+                url: "'.Url::to(['/npis/cga/view-trainings']).'?id=" + id + "&tab=" + tab,
                 beforeSend: function(){
-                    $("#trainings").html("<div class=\"text-center\" style=\"height: calc(100vh - 445px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
+                    $("#trainings-'.$tab.'").html("<div class=\"text-center\" style=\"height: calc(100vh - 445px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
                 },
                 success: function (data) {
-                    $("#trainings").empty();
-                    $("#trainings").hide();
-                    $("#trainings").fadeIn("slow");
-                    $("#trainings").html(data);
+                    $("#trainings-'.$tab.'").empty();
+                    $("#trainings-'.$tab.'").hide();
+                    $("#trainings-'.$tab.'").fadeIn("slow");
+                    $("#trainings-'.$tab.'").html(data);
                 },
                 error: function (err) {
                     console.log(err);

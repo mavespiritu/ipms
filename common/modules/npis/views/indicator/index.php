@@ -68,6 +68,7 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
                     [
                         'attribute' => 'indicator',
                         'header' => 'INDICATOR',
+                        'format' => 'raw',
                         'headerOptions' => [
                             'style' => 'width: 32%;'
                         ],

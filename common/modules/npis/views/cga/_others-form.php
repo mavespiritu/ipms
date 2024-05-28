@@ -57,13 +57,13 @@ DisableButtonAsset::register($this);
     <?= $form->field($evidenceModel, 'title')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($evidenceModel, 'description')->widget(CKEditor::className(), [
-        'options' => ['rows' => 3, 'id' => 'evidence-others-description-'.$idx],
+        'options' => ['rows' => 3, 'id' => 'evidence-others-description-'.$idx.'-'.$tab],
         'preset' => 'basic'
     ]) ?>
 
     <?= $form->field($evidenceModel, 'start_date')->widget(DatePicker::className(), [
         'type' => DatePicker::TYPE_COMPONENT_APPEND,
-        'options' => ['placeholder' => 'Enter date', 'autocomplete' => 'off', 'id' => $idx.'-evidence-from_date'],
+        'options' => ['placeholder' => 'Enter date', 'autocomplete' => 'off', 'id' => $idx.'-'.$tab.'-evidence-from_date'],
         'pluginOptions' => [
             'autoclose'=>true,
             'format' => 'yyyy-mm-dd'
@@ -81,7 +81,7 @@ DisableButtonAsset::register($this);
 
     <?= $form->field($evidenceModel, 'end_date')->widget(DatePicker::className(), [
         'type' => DatePicker::TYPE_COMPONENT_APPEND,
-        'options' => ['placeholder' => 'Enter date', 'autocomplete' => 'off', 'id' => $idx.'-evidence-end_date'],
+        'options' => ['placeholder' => 'Enter date', 'autocomplete' => 'off', 'id' => $idx.'-'.$tab.'-evidence-end_date'],
         'pluginOptions' => [
             'autoclose'=>true,
             'format' => 'yyyy-mm-dd'
@@ -94,7 +94,7 @@ DisableButtonAsset::register($this);
             <div class="row">
                 <div class="col-md-12 col-xs-12">
                     <?= AttachmentsInput::widget([
-                        'id' => $idx.'-evidence-others-attachment-select',
+                        'id' => $idx.'-'.$tab.'-evidence-others-attachment-select',
                         'model' => $evidenceModel,
                         'options' => [ 
                             'multiple' => true,
@@ -138,7 +138,7 @@ DisableButtonAsset::register($this);
                 $(".modal-backdrop").remove();
                 $("body").removeClass("modal-open");
                 $("body").css("padding-right", "");
-                viewEvidences('.$indicator->id.', "'.$model->emp_id.'");
+                viewEvidences('.$indicator->id.', "'.$model->emp_id.'", "'.$tab.'");
                 if("'.$action.'" == "create"){
                     $("#evidence-badge-'.$indicator->id.'").html(parseInt($("#evidence-badge-'.$indicator->id.'").html()) + 1);
                 }

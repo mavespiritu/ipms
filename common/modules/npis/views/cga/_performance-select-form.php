@@ -50,7 +50,7 @@ DisableButtonAsset::register($this);
 
     <?= $form->field($evidencePerformanceModel, 'ipcr_id')->widget(Select2::classname(), [
             'data' => $performances,
-            'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'ipcr-select', 'id' => 'evidence-performance-select-title-'.$idx],
+            'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'ipcr-select', 'id' => 'evidence-performance-select-title-'.$idx.'-'.$tab],
             'pluginOptions' => [
                 'allowClear' =>  true,
             ],
@@ -58,7 +58,7 @@ DisableButtonAsset::register($this);
     ?>
 
     <?= $form->field($evidenceModel, 'description')->widget(CKEditor::className(), [    
-        'options' => ['rows' => 3, 'id' => 'evidence-performance-select-description-'.$idx],
+        'options' => ['rows' => 3, 'id' => 'evidence-performance-select-description-'.$idx.'-'.$tab],
         'preset' => 'basic'
     ]) ?>
 
@@ -90,7 +90,7 @@ DisableButtonAsset::register($this);
                 $(".modal-backdrop").remove();
                 $("body").removeClass("modal-open");
                 $("body").css("padding-right", "");
-                viewEvidences('.$indicator->id.', "'.$model->emp_id.'");
+                viewEvidences('.$indicator->id.', "'.$model->emp_id.'", "'.$tab.'");
                 if("'.$action.'" == "create"){
                     $("#evidence-badge-'.$indicator->id.'").html(parseInt($("#evidence-badge-'.$indicator->id.'").html()) + 1);
                 }

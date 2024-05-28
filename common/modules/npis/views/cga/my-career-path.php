@@ -30,28 +30,19 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
 ?>
 <div id="alert" class="alert" role="alert" style="display: none;"></div>
 <div class="row">
-    <div class="col-sm-12 col-md-3 col-lg-3 col-xs-12">
+    <div class="col-sm-12 col-md-4 col-lg-4 col-xs-12">
         <h4>My Career Path</h4>
-        <?= Html::button('Select Position', ['value' => Url::to(['/npis/cga/select-position', 'emp_id' => $model->emp_id]), 'class' => 'btn btn-success btn-block', 'id' => 'select-position-button']) ?>
-        <br>
         <div id="career-path"></div>
-    </div>
-    <div class="col-sm-12 col-md-9 col-lg-9 col-xs-12">
-        <div class="row">
-            <div class="col-md-5 col-xs-12 col-sm-12 col-lg-5">
-                <h4>Required Competencies</h4>
-                <div id="career-path-competencies">
-                    <div class="flex-center" style="height: calc(100vh - 315px);">
-                        <h4 style="color: gray;">Select position at the left to view required competencies.</h4>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-7 col-xs-12 col-sm-12 col-lg-7">
-                <div id="indicator-information-career-path">
-                    
-                </div>
+        <div id="selected-career"></div>
+        <h4>Required Competencies</h4>
+        <div id="career-path-competencies">
+            <div class="flex-center" style="height: calc(100vh - 315px);">
+                <h4 style="color: gray;">Select position above to view required competencies.</h4>
             </div>
         </div>
+    </div>
+    <div class="col-sm-12 col-md-8 col-lg-8 col-xs-12">
+        <div id="indicator-information-career-path"></div>
     </div>
 </div>
 
@@ -69,17 +60,6 @@ if ($successMessage) {
         });
     ");
 }
-?>
-
-<?php
-    Modal::begin([
-        'id' => 'select-position-modal',
-        'size' => "modal-md",
-        'header' => '<div id="select-position-modal-header"><h4>Select Position</h4></div>',
-        'options' => ['tabindex' => false],
-    ]);
-    echo '<div id="select-position-modal-content"></div>';
-    Modal::end();
 ?>
 
 <?php
@@ -117,6 +97,27 @@ if ($successMessage) {
                     $("#career-path-competencies").hide();
                     $("#career-path-competencies").fadeIn("slow");
                     $("#career-path-competencies").html(data);
+                    $("#indicator-information-career-path").empty();
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        function viewSelectedCareer(emp_id, position_id)
+        {
+            $.ajax({
+                url: "'.Url::to(['/npis/cga/view-selected-career']).'?emp_id=" + emp_id + "&position_id=" + position_id,
+                beforeSend: function(){
+                    $("#selected-career").html("<div class=\"text-center\" style=\"height: calc(100vh - 297px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
+                },
+                success: function (data) {
+                    console.log(this.data);
+                    $("#selected-career").empty();
+                    $("#selected-career").hide();
+                    $("#selected-career").fadeIn("slow");
+                    $("#selected-career").html(data);
                 },
                 error: function (err) {
                     console.log(err);
