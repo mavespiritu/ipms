@@ -15,6 +15,7 @@ use \file\components\AttachmentsInput;
 use yii\web\JsExpression;
 use buttflatteryormwizard\FormWizard;
 use dosamigos\switchery\Switchery;
+use dosamigos\ckeditor\CKEditor;
 use faryshta\disableSubmitButtons\Asset as DisableButtonAsset;
 DisableButtonAsset::register($this);
 
@@ -58,7 +59,10 @@ DisableButtonAsset::register($this);
     ])
     ?>
 
-    <?= $form->field($model, 'indicator')->textArea(['rows' => 6]) ?>
+    <?= $form->field($model, 'indicator')->widget(CKEditor::className(), [
+        'options' => ['rows' => 3],
+        'preset' => 'full'
+    ]) ?>>
 
     <div class="row">
         <div class="col-md-12 col-xs-12">
