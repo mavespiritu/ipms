@@ -31,7 +31,7 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
                         'headerOptions' => ['onclick' => 'viewMyCareerPath("'.$model->emp_id.'")'],
                     ],
                     [
-                        'label' => 'My Competencies',
+                        'label' => 'All Competencies',
                         'content' => '<div id="my-competencies"></div>',
                         'headerOptions' => ['onclick' => 'viewMyCompetencies("'.$model->emp_id.'")'],
                     ],

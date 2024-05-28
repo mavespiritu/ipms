@@ -51,7 +51,7 @@ class CareerPath extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'emp_id' => 'Emp ID',
-            'position_id' => 'Position ID',
+            'position_id' => 'Position',
         ];
     }
 

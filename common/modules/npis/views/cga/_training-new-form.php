@@ -57,7 +57,7 @@ DisableButtonAsset::register($this);
     <?= $form->field($trainingModel, 'seminar_title')->textInput(['maxlength' => true]) ?>
 
     <?= $form->field($evidenceModel, 'description')->widget(CKEditor::className(), [
-        'options' => ['rows' => 3, 'id' => 'evidence-training-new-description-'.$idx],
+        'options' => ['rows' => 3, 'id' => 'evidence-training-new-description-'.$idx.'-'.$tab],
         'preset' => 'basic'
     ]) ?>
 
@@ -65,7 +65,7 @@ DisableButtonAsset::register($this);
 
     <?= $form->field($trainingModel, 'discipline')->widget(Select2::classname(), [
         'data' => $disciplines,
-        'options' => ['multiple' => false, 'placeholder' => 'Select One', 'class' => 'discipline-select','id' => $idx.'-discipline-select'],
+        'options' => ['multiple' => false, 'placeholder' => 'Select One', 'class' => 'discipline-select','id' => $idx.'-'.$tab.'-discipline-select'],
         'pluginOptions' => [
             'allowClear' =>  true,
         ],
@@ -74,7 +74,7 @@ DisableButtonAsset::register($this);
 
     <?= $form->field($trainingModel, 'category')->widget(Select2::classname(), [
         'data' => $categories,
-        'options' => ['multiple' => false, 'placeholder' => 'Select One', 'class' => 'category-select','id' => $idx.'-category-select'],
+        'options' => ['multiple' => false, 'placeholder' => 'Select One', 'class' => 'category-select','id' => $idx.'-'.$tab.'-category-select'],
         'pluginOptions' => [
             'allowClear' =>  true,
         ],
@@ -83,7 +83,7 @@ DisableButtonAsset::register($this);
 
     <?= $form->field($trainingModel, 'from_date')->widget(DatePicker::className(), [
         'type' => DatePicker::TYPE_COMPONENT_APPEND,
-        'options' => ['placeholder' => 'Enter date', 'autocomplete' => 'off', 'id' => $idx.'-employeetraining-from_date'],
+        'options' => ['placeholder' => 'Enter date', 'autocomplete' => 'off', 'id' => $idx.'-'.$tab.'-employeetraining-from_date'],
         'pluginOptions' => [
             'autoclose'=>true,
             'format' => 'yyyy-mm-dd'
@@ -101,7 +101,7 @@ DisableButtonAsset::register($this);
 
     <?= $form->field($trainingModel, 'to_date')->widget(DatePicker::className(), [
         'type' => DatePicker::TYPE_COMPONENT_APPEND,
-        'options' => ['placeholder' => 'Enter date', 'autocomplete' => 'off', 'id' => $idx.'-employeetraining-to_date'],
+        'options' => ['placeholder' => 'Enter date', 'autocomplete' => 'off', 'id' => $idx.'-'.$tab.'-employeetraining-to_date'],
         'pluginOptions' => [
             'autoclose'=>true,
             'format' => 'yyyy-mm-dd'
@@ -116,7 +116,7 @@ DisableButtonAsset::register($this);
             'Speaker' => 'Speaker',
             'Trainee' => 'Trainee',
         ],
-        'options' => ['multiple' => false, 'placeholder' => 'Select One', 'class' => 'participation-select','id' => $idx.'-participation-select'],
+        'options' => ['multiple' => false, 'placeholder' => 'Select One', 'class' => 'participation-select','id' => $idx.'-'.$tab.'-participation-select'],
         'pluginOptions' => [
             'allowClear' =>  true,
         ],
@@ -129,7 +129,7 @@ DisableButtonAsset::register($this);
             <div class="row">
                 <div class="col-md-12 col-xs-12">
                     <?= AttachmentsInput::widget([
-                        'id' => $idx.'-evidence-training-attachment-select',
+                        'id' => $idx.'-'.$tab.'-evidence-training-attachment-select',
                         'model' => $idModel,
                         'options' => [ 
                             'multiple' => false,
@@ -148,7 +148,7 @@ DisableButtonAsset::register($this);
     <div class="row">
         <div class="col-md-12 col-xs-12">
             <div class="pull-right">
-                <?= Html::submitButton('Save Record', ['class' => 'btn btn-success', 'onclick' => "$('#".$idx."-evidence-training-attachment-select').fileinput('upload');"]) ?>
+                <?= Html::submitButton('Save Record', ['class' => 'btn btn-success', 'onclick' => "$('#".$idx.'-'.$tab."-evidence-training-attachment-select').fileinput('upload');"]) ?>
             </div>
             <div class="clearfix"></div>
         </div>
@@ -173,7 +173,7 @@ DisableButtonAsset::register($this);
                 $(".modal-backdrop").remove();
                 $("body").removeClass("modal-open");
                 $("body").css("padding-right", "");
-                viewEvidences('.$indicator->id.', "'.$model->emp_id.'");
+                viewEvidences('.$indicator->id.', "'.$model->emp_id.'", "'.$tab.'");
                 if("'.$action.'" == "create"){
                     $("#evidence-badge-'.$indicator->id.'").html(parseInt($("#evidence-badge-'.$indicator->id.'").html()) + 1);
                 }

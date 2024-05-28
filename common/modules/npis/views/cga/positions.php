@@ -15,6 +15,7 @@ use \file\components\AttachmentsInput;
 use yii\web\JsExpression;
 use buttflatteryormwizard\FormWizard;
 use dosamigos\switchery\Switchery;
+use yii\bootstrap\Modal;
 use faryshta\disableSubmitButtons\Asset as DisableButtonAsset;
 DisableButtonAsset::register($this);
 use yii\bootstrap\Collapse;
@@ -23,20 +24,49 @@ use yii\bootstrap\Collapse;
 /* @var $model common\modules\npis\models\Ipcr */
 /* @var $form yii\widgets\ActiveForm */
 ?>
+<div id="alert" class="alert" role="alert" style="display: none;"></div>
+<?php
+    if(Yii::$app->session->hasFlash('success')):?>
+        <div class="alert alert-success" role="alert">
+            <?= Yii::$app->session->getFlash('success') ?>
+        </div>
+    <?php endif;
+    if(Yii::$app->session->hasFlash('error')):?>
+        <div class="alert alert-danger" role="alert">
+            <?= Yii::$app->session->getFlash('error') ?>
+        </div>
+    <?php endif;
+?>
 
-<ul type="none" class="position-menu" id="position-menu">
-    <?php if($positions){ ?>
-        <?php foreach($positions as $position){ ?>
-            <li onclick="viewPositionCompetencies('<?= $model->emp_id ?>','<?= $position->position_id ?>'); setActive(this);">
-                <span style="font-weight: bolder;"><a href="javascript:void(0)"><?= $position->employeePositionItem->position->post_description ?></a></span><br>
-                <small style="color: rgb(153, 153, 153);">
-                <?= $position->employeePositionItem->division_id ?>
-                <span class="pull-right">SG: <?= $position->employeePositionItem->grade.'-'.$position->employeePositionItem->step ?></span>
-                </small>
-            </li>
-        <?php } ?>
-    <?php } ?>
-</ul>
+<?= Html::button('Add position on my career path', ['value' => Url::to(['/npis/cga/select-position', 'emp_id' => $model->emp_id]), 'class' => 'btn btn-success btn-block', 'id' => 'select-position-button']) ?>
+
+<br>
+
+<div class="position-select-form">
+
+    <?php $form = ActiveForm::begin([
+        'options' => ['id' => 'position-view-form', 'enctype' => 'multipart/form-data', 'method' => 'post'],
+        //'enableAjaxValidation' => true,
+    ]); ?>
+
+    <?= $form->field($careerModel, 'position_id')->widget(Select2::classname(), [
+            'data' => $positions,
+            'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'position-select-view', 'id'=>'position-select-view'],
+            'pluginOptions' => [
+                'allowClear' =>  true,
+            ],
+            'pluginEvents' => [
+                'change' => 'function() { 
+                    viewPositionCompetencies("'.$model->emp_id.'", this.value); 
+                    viewSelectedCareer("'.$model->emp_id.'", this.value); 
+                }',
+            ],
+        ])->label('Choose position to view required competencies')
+    ?>
+
+    <?php ActiveForm::end(); ?>
+
+</div>
 
 <style>
     .position-menu{
@@ -66,6 +96,17 @@ use yii\bootstrap\Collapse;
 </style>
 
 <?php
+    Modal::begin([
+        'id' => 'select-position-modal',
+        'size' => "modal-md",
+        'header' => '<div id="select-position-modal-header"><h4>Select Position</h4></div>',
+        'options' => ['tabindex' => false],
+    ]);
+    echo '<div id="select-position-modal-content"></div>';
+    Modal::end();
+?>
+
+<?php
     $script = "
         function setActive(element) {
             // Remove the 'active' class from all list items
@@ -77,6 +118,12 @@ use yii\bootstrap\Collapse;
             // Add the 'active' class to the clicked list item
             element.classList.add('active');
         }
+
+        $(document).ready(function(){
+            $('#select-position-button').click(function(){
+                $('#select-position-modal').modal('show').find('#select-position-modal-content').load($(this).attr('value'));
+            });
+        });  
     ";
 
     $this->registerJs($script, View::POS_END);

@@ -82,7 +82,7 @@ $tab = generateRandomString(10);
                         ]); ?>
                         <tr>
                             <td><?= $idx + 1 ?></td>
-                            <td><?= Html::a($descriptor['indicator'], 'javascript:void(0);', ['onclick' => 'viewIndicator('.$descriptor['id'].',"'.$model->emp_id.'")']) ?></td>
+                            <td><?= Html::a($descriptor['indicator'], 'javascript:void(0);', ['onclick' => 'viewIndicator('.$descriptor['id'].',"'.$model->emp_id.'", "'.$tab.'")']) ?></td>
                             <td><?= $form->field($descriptorModels[$proficiency][$id], '[$proficiency][$id]compliance')->widget(Switchery::className(), [
                                         'options' => [
                                             'label' => '',

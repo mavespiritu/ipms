@@ -20,12 +20,12 @@ use yii\bootstrap\ButtonDropdown;
         foreach($cloneDataProvider->models as $idx => $data){
 
             Modal::begin([
-                'id' => 'update-evidence-modal-'.$data->id,
+                'id' => 'update-evidence-modal-'.$data->id.'-'.$tab,
                 'size' => 'modal-lg',
-                'header' => '<div id="update-evidence-modal-'.$data->id.'-header"><h4>Edit Evidence</h4></div>',
+                'header' => '<div id="update-evidence-modal-'.$data->id.'-'.$tab.'-header"><h4>Edit Evidence</h4></div>',
                 'options' => ['tabindex' => false],
             ]);
-            echo '<div id="update-evidence-modal-'.$data->id.'-content"></div>';
+            echo '<div id="update-evidence-modal-'.$data->id.'-'.$tab.'-content"></div>';
             Modal::end();
         }    
     } 
@@ -38,10 +38,10 @@ use yii\bootstrap\ButtonDropdown;
         'options' => ['class' => 'btn btn-success btn-sm'],
         'dropdown' => [
             'items' => [
-                ['label' => 'Training', 'url' => '#', 'options' => ['id' => 'create-training-button', 'data-url' => Url::to(['/npis/cga/create-training', 'id' => $indicator->id, 'reference' => 'Training', 'emp_id' => $model->emp_id])]],
-                ['label' => 'Award', 'url' => '#', 'options' => ['id' => 'create-award-button', 'data-url' => Url::to(['/npis/cga/select-award', 'id' => $indicator->id, 'reference' => 'Award', 'emp_id' => $model->emp_id])]],
-                ['label' => 'Performance', 'url' => '#', 'options' => ['id' => 'create-performance-button', 'data-url' => Url::to(['/npis/cga/select-performance', 'id' => $indicator->id, 'reference' => 'Performance', 'emp_id' => $model->emp_id])]],
-                ['label' => 'Others', 'url' => '#', 'options' => ['id' => 'create-others-button', 'data-url' => Url::to(['/npis/cga/create-others', 'id' => $indicator->id, 'reference' => 'Others', 'emp_id' => $model->emp_id])]],
+                ['label' => 'Training', 'url' => '#', 'options' => ['id' => 'create-training-button-'.$tab, 'data-url' => Url::to(['/npis/cga/create-training', 'id' => $indicator->id, 'reference' => 'Training', 'emp_id' => $model->emp_id, 'tab' => $tab])]],
+                ['label' => 'Award', 'url' => '#', 'options' => ['id' => 'create-award-button-'.$tab, 'data-url' => Url::to(['/npis/cga/select-award', 'id' => $indicator->id, 'reference' => 'Award', 'emp_id' => $model->emp_id, 'tab' => $tab])]],
+                ['label' => 'Performance', 'url' => '#', 'options' => ['id' => 'create-performance-button-'.$tab, 'data-url' => Url::to(['/npis/cga/select-performance', 'id' => $indicator->id, 'reference' => 'Performance', 'emp_id' => $model->emp_id, 'tab' => $tab])]],
+                ['label' => 'Others', 'url' => '#', 'options' => ['id' => 'create-others-button-'.$tab, 'data-url' => Url::to(['/npis/cga/create-others', 'id' => $indicator->id, 'reference' => 'Others', 'emp_id' => $model->emp_id, 'tab' => $tab])]],
             ],
         ],
     ]); ?>
@@ -50,11 +50,11 @@ use yii\bootstrap\ButtonDropdown;
     <br>
     <div class="clearfix"></div>
     <?php $form = ActiveForm::begin([
-        'options' => ['id' => 'evidence-check-form'],
+        'options' => ['id' => 'evidence-check-form-'.$tab],
     ]); ?>
 
     <?php  Pjax::begin([
-        'id' => 'evidence-grid-pjax', 
+        'id' => 'evidence-grid-pjax-'.$tab, 
         'enablePushState' => false, 
         'enableReplaceState' => false,
     ]);  ?>
@@ -81,7 +81,7 @@ use yii\bootstrap\ButtonDropdown;
 
     <?= ListView::widget([
         'dataProvider' => $dataProvider,
-        'itemView' => function($model) use ($employee){
+        'itemView' => function($model) use ($employee, $tab){
         $attachments = [];
         if($model->reference == 'Training'){
             if($model->evidenceTraining){
@@ -129,7 +129,6 @@ use yii\bootstrap\ButtonDropdown;
         }
 
         return '
-            <br>
             <div class="box box-solid">
                 <div class="box-body" style="min-height: auto !important; height: auto !important; padding: 10px 20px;">
                     <ul class="products-list product-list-in-box">
@@ -147,8 +146,8 @@ use yii\bootstrap\ButtonDropdown;
                                         <span class="edit-icon">'.Html::a('<i class="fa fa-pencil"></i>', '#', [
                                             'class' => 'update-evidence-button btn btn-xs btn-info',
                                             'data-toggle' => 'modal',
-                                            'data-target' => '#update-evidence-modal-'.$model->id,
-                                            'data-url' => Url::to(['/npis/cga/update-'.strtolower($model->reference), 'id' => $model->id, 'emp_id' => $employee->emp_id]),
+                                            'data-target' => '#update-evidence-modal-'.$model->id.'-'.$tab,
+                                            'data-url' => Url::to(['/npis/cga/update-'.strtolower($model->reference), 'id' => $model->id, 'emp_id' => $employee->emp_id, 'tab' => $tab]),
                                         ]).'</span>
                                         <span class="delete-icon">'.Html::a('<i class="fa fa-trash"></i>', 'javascript:void(0)', [
                                             'onClick' => 'deleteEvidence('.$model->id.', "'.$employee->emp_id.'")',
@@ -198,7 +197,7 @@ use yii\bootstrap\ButtonDropdown;
 
                 $(document).on("pjax:success", function() {
 
-                    if (!$("#evidence-grid-pjax").data("first-load")) {
+                    if (!$("#evidence-grid-pjax-'.$tab.'").data("first-load")) {
                         return;
                     }
                     $(".update-evidence-button").each(function() {
@@ -208,7 +207,7 @@ use yii\bootstrap\ButtonDropdown;
                         return false;
                     });
                     // Mark that the first load has completed
-                    $("#evidence-grid-pjax").data("first-load", false);
+                    $("#evidence-grid-pjax-'.$tab.'").data("first-load", false);
                 });
             });
         ');
@@ -220,62 +219,62 @@ use yii\bootstrap\ButtonDropdown;
 </div>
 <?php
     Modal::begin([
-        'id' => 'create-training-modal',
+        'id' => 'create-training-modal-'.$tab,
         'size' => "modal-lg",
-        'header' => '<div id="create-training-modal-header"><h4>Add Evidence</h4></div>',
+        'header' => '<div id="create-training-modal-header-'.$tab.'"><h4>Add Evidence</h4></div>',
         'options' => ['tabindex' => false],
     ]);
-    echo '<div id="create-training-modal-content"></div>';
+    echo '<div id="create-training-modal-content-'.$tab.'"></div>';
     Modal::end();
 ?>
 <?php
     Modal::begin([
-        'id' => 'create-award-modal',
+        'id' => 'create-award-modal-'.$tab,
         'size' => "modal-lg",
-        'header' => '<div id="create-award-modal-header"><h4>Add Evidence</h4></div>',
+        'header' => '<div id="create-award-modal-header-'.$tab.'"><h4>Add Evidence</h4></div>',
         'options' => ['tabindex' => false],
     ]);
-    echo '<div id="create-award-modal-content"></div>';
+    echo '<div id="create-award-modal-content-'.$tab.'"></div>';
     Modal::end();
 ?>
 <?php
     Modal::begin([
-        'id' => 'create-performance-modal',
+        'id' => 'create-performance-modal-'.$tab,
         'size' => "modal-lg",
-        'header' => '<div id="create-performance-modal-header"><h4>Add Evidence</h4></div>',
+        'header' => '<div id="create-performance-modal-header-'.$tab.'"><h4>Add Evidence</h4></div>',
         'options' => ['tabindex' => false],
     ]);
-    echo '<div id="create-performance-modal-content"></div>';
+    echo '<div id="create-performance-modal-content-'.$tab.'"></div>';
     Modal::end();
 ?>
 <?php
     Modal::begin([
-        'id' => 'create-others-modal',
+        'id' => 'create-others-modal-'.$tab,
         'size' => "modal-lg",
-        'header' => '<div id="create-others-modal-header"><h4>Add Evidence</h4></div>',
+        'header' => '<div id="create-others-modal-header-'.$tab.'"><h4>Add Evidence</h4></div>',
         'options' => ['tabindex' => false],
     ]);
-    echo '<div id="create-others-modal-content"></div>';
+    echo '<div id="create-others-modal-content-'.$tab.'"></div>';
     Modal::end();
 ?>
 
 <?php
     $script = '
         $(document).ready(function(){
-            $("#create-training-button").click(function(){
-                $("#create-training-modal").modal("show").find("#create-training-modal-content").load($(this).data("url"));
+            $("#create-training-button-'.$tab.'").click(function(){
+                $("#create-training-modal-'.$tab.'").modal("show").find("#create-training-modal-content-'.$tab.'").load($(this).data("url"));
             });
 
-            $("#create-award-button").click(function(){
-                $("#create-award-modal").modal("show").find("#create-award-modal-content").load($(this).data("url"));
+            $("#create-award-button-'.$tab.'").click(function(){
+                $("#create-award-modal-'.$tab.'").modal("show").find("#create-award-modal-content-'.$tab.'").load($(this).data("url"));
             });
 
-            $("#create-performance-button").click(function(){
-                $("#create-performance-modal").modal("show").find("#create-performance-modal-content").load($(this).data("url"));
+            $("#create-performance-button-'.$tab.'").click(function(){
+                $("#create-performance-modal-'.$tab.'").modal("show").find("#create-performance-modal-content-'.$tab.'").load($(this).data("url"));
             });
 
-            $("#create-others-button").click(function(){
-                $("#create-others-modal").modal("show").find("#create-others-modal-content").load($(this).data("url"));
+            $("#create-others-button-'.$tab.'").click(function(){
+                $("#create-others-modal-'.$tab.'").modal("show").find("#create-others-modal-content-'.$tab.'").load($(this).data("url"));
             });
 
             $(".check-evidence-item").removeAttr("checked");
@@ -296,7 +295,7 @@ use yii\bootstrap\ButtonDropdown;
                 type: "POST",
                 data: {id: id},
                 success: function (data) {
-                    viewEvidences('.$indicator->id.', "'.$model->emp_id.'");
+                    viewEvidences('.$indicator->id.', "'.$model->emp_id.'", "'.$tab.'");
                     $("#evidence-badge-'.$indicator->id.'").html(parseInt($("#evidence-badge-'.$indicator->id.'").html()) - 1);
                 },
                 error: function (err) {

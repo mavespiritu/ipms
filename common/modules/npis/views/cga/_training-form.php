@@ -26,8 +26,8 @@ use yii\bootstrap\Collapse;
 
 <div class="evidence-training-form">
     <div class="text-center">
-        <a href="javascript:void(0)" id="select-training-button" onClick="viewSelectTrainingForm(<?= $indicator->id ?>, '<?= $reference ?>', '<?= $model->emp_id ?>')" class="menu-link">Select training</a>
-        <a href="javascript:void(0)" id="new-training-button" onClick="viewNewTrainingForm(<?= $indicator->id ?>, '<?= $reference ?>', '<?= $model->emp_id ?>')" class="menu-link">Add new training</a>
+        <a href="javascript:void(0)" id="select-training-button" onClick="viewSelectTrainingForm(<?= $indicator->id ?>, '<?= $reference ?>', '<?= $model->emp_id ?>', '<?= $tab ?>')" class="menu-link">Select training</a>
+        <a href="javascript:void(0)" id="new-training-button" onClick="viewNewTrainingForm(<?= $indicator->id ?>, '<?= $reference ?>', '<?= $model->emp_id ?>', '<?= $tab ?>')" class="menu-link">Add new training</a>
     </div>
     <br>
     <div id="evidence-training-form" style="min-height: 500px;">
@@ -62,13 +62,13 @@ use yii\bootstrap\Collapse;
 
 <?php
     $script = '
-        function viewSelectTrainingForm(id, reference, emp_id)
+        function viewSelectTrainingForm(id, reference, emp_id, tab)
         {
             $("#select-training-button").addClass("active");
             $("#new-training-button").removeClass("active");
 
             $.ajax({
-                url: "'.Url::to(['/npis/cga/select-training']).'?id=" + id + "&reference=" + reference + "&emp_id=" + emp_id,
+                url: "'.Url::to(['/npis/cga/select-training']).'?id=" + id + "&reference=" + reference + "&emp_id=" + emp_id + "&tab=" + tab,
                 beforeSend: function(){
                     $("#evidence-training-form").html("<div class=\"text-center\"><svg class=\"spinner\" width=\"20px\" height=\"20px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
                 },
@@ -84,13 +84,13 @@ use yii\bootstrap\Collapse;
             });
         }
 
-        function viewNewTrainingForm(id, reference, emp_id)
+        function viewNewTrainingForm(id, reference, emp_id, tab)
         {
             $("#new-training-button").addClass("active");
             $("#select-training-button").removeClass("active");
 
             $.ajax({
-                url: "'.Url::to(['/npis/cga/new-training']).'?id=" + id + "&reference=" + reference + "&emp_id=" + emp_id,
+                url: "'.Url::to(['/npis/cga/new-training']).'?id=" + id + "&reference=" + reference + "&emp_id=" + emp_id + "&tab=" + tab,
                 beforeSend: function(){
                     $("#evidence-training-form").html("<div class=\"text-center\"><svg class=\"spinner\" width=\"20px\" height=\"20px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
                 },
