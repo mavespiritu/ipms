@@ -27,18 +27,36 @@ DisableButtonAsset::register($this);
 <div class="position-select-form">
 
     <?php $form = ActiveForm::begin([
-        'options' => ['id' => 'position-select-form', 'enctype' => 'multipart/form-data', 'method' => 'post'],
+        'options' => ['id' => 'designation-select-form', 'enctype' => 'multipart/form-data', 'method' => 'post'],
         //'enableAjaxValidation' => true,
     ]); ?>
 
-    <?= $form->field($careerModel, 'position_id')->widget(Select2::classname(), [
+    <?= $form->field($designationModel, 'position_id')->widget(Select2::classname(), [
             'data' => $positions,
-            'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'position-select'],
+            'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'designation-select'],
             'pluginOptions' => [
                 'allowClear' =>  true,
             ],
         ])->label('Select position')
     ?>
+
+    <?= $form->field($designationModel, 'start_date')->widget(DatePicker::className(), [
+        'type' => DatePicker::TYPE_COMPONENT_APPEND,
+        'options' => ['placeholder' => 'Enter date', 'autocomplete' => 'off'],
+        'pluginOptions' => [
+            'autoclose'=>true,
+            'format' => 'yyyy-mm-dd'
+        ],
+        /* 'pluginEvents' => [
+            'changeDate' => "function(e) {
+                const dateReceived = $('#employeeedesignation-start_date');
+                const dateActed = $('#employeeedesignation-end_date-kvdate');
+                dateActed.val('');
+                dateActed.kvDatepicker('update', '');
+                dateActed.kvDatepicker('setStartDate', dateReceived.val());
+            }",
+        ] */
+    ]); ?>
 
     <div class="row">
         <div class="col-md-12 col-xs-12">
@@ -54,7 +72,7 @@ DisableButtonAsset::register($this);
 </div>
 <?php
     $script = '
-    $("#position-select-form").on("beforeSubmit", function(e) {
+    $("#designation-select-form").on("beforeSubmit", function(e) {
         e.preventDefault();
         var form = $(this);
         var formData = form.serialize();
@@ -72,7 +90,7 @@ DisableButtonAsset::register($this);
                 $("#career-path-competencies").hide();
                 $("#career-path-competencies").fadeIn("slow");
                 $("#career-path-competencies").html(\'<div class="flex-center" style="height: calc(100vh - 315px);"><h4 style="color: gray;">Select position above to view required competencies.</h4></div>\');
-                viewCareerPath("'.$model->emp_id.'");
+                viewCurrentDesignation("'.$model->emp_id.'");
             },
             error: function (err) {
                 console.log(err);

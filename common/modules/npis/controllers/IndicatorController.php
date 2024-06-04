@@ -5,6 +5,8 @@ namespace common\modules\npis\controllers;
 use Yii;
 use common\modules\npis\models\Competency;
 use common\modules\npis\models\CompetencyIndicator;
+use common\modules\npis\models\PositionCompetencyIndicator;
+use common\modules\npis\models\StaffCompetencyIndicator;
 use common\modules\npis\models\CompetencyIndicatorSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
@@ -92,6 +94,10 @@ class IndicatorController extends Controller
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
             try {
                 if(!empty($selectedIndexes)){
+
+                    PositionCompetencyIndicator::deleteAll(['indicator_id' => $selectedIndexes]);
+                    StaffCompetencyIndicator::deleteAll(['indicator_id' => $selectedIndexes]);
+
                     if(CompetencyIndicator::deleteAll(['id' => $selectedIndexes]))
                     {
                         $transaction->commit();
@@ -140,8 +146,32 @@ class IndicatorController extends Controller
         $competencies = ArrayHelper::map($competencies, 'comp_id', 'competency');
 
         if ($model->load(Yii::$app->request->post())) {
+
+            $positions = PositionCompetencyIndicator::find()
+            ->select(['distinct(position_id) as position_id'])
+            ->leftJoin('competency_indicator', 'competency_indicator.id = position_competency_indicator.indicator_id')
+            ->andWhere([
+                'competency_id' => $model->competency_id,
+                'proficiency' => $model->proficiency,
+            ])
+            ->asArray()
+            ->all();
+
+            $positions = ArrayHelper::map($positions, 'position_id', 'position_id');
+
             if($model->save())
             {
+                if(!empty($positions)){
+                    foreach($positions as $position){
+                        $positionDescriptor = PositionCompetencyIndicator::findOne(['position_id' => $position, 'indicator_id' => $model->id]) ? PositionCompetencyIndicator::findOne(['position_id' => $position, 'indicator_id' => $model->id]) : new PositionCompetencyIndicator();
+
+                        $positionDescriptor->position_id = $position;
+                        $positionDescriptor->indicator_id = $model->id;
+                        $positionDescriptor->save();
+
+                    }
+                }
+
                 \Yii::$app->getSession()->setFlash('success', 'Record Saved');
                 return $this->redirect(['index']);
             }
@@ -169,8 +199,32 @@ class IndicatorController extends Controller
         $competencies = ArrayHelper::map($competencies, 'comp_id', 'competency');
 
         if ($model->load(Yii::$app->request->post())) {
+
+            $positions = PositionCompetencyIndicator::find()
+            ->select(['distinct(position_id) as position_id'])
+            ->leftJoin('competency_indicator', 'competency_indicator.id = position_competency_indicator.indicator_id')
+            ->andWhere([
+                'competency_id' => $model->competency_id,
+                'proficiency' => $model->proficiency,
+            ])
+            ->asArray()
+            ->all();
+
+            $positions = ArrayHelper::map($positions, 'position_id', 'position_id');
+
             if($model->save())
             {
+                if(!empty($positions)){
+                    foreach($positions as $position){
+                        $positionDescriptor = PositionCompetencyIndicator::findOne(['position_id' => $position, 'indicator_id' => $model->id]) ? PositionCompetencyIndicator::findOne(['position_id' => $position, 'indicator_id' => $model->id]) : new PositionCompetencyIndicator();
+
+                        $positionDescriptor->position_id = $position;
+                        $positionDescriptor->indicator_id = $model->id;
+                        $positionDescriptor->save();
+
+                    }
+                }
+
                 \Yii::$app->getSession()->setFlash('success', 'Record Updated');
                 return $this->redirect(['index']);
             }
@@ -191,8 +245,11 @@ class IndicatorController extends Controller
      */
     public function actionDelete($id)
     {
+        $model = $this->findModel($id);
+
         if (Yii::$app->request->post()) {
-            $this->findModel($id)->delete();
+
+            $model->delete();
             \Yii::$app->getSession()->setFlash('success', 'Record Deleted');
             return $this->redirect(['index']);
         }

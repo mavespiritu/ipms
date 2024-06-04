@@ -38,10 +38,10 @@ use yii\bootstrap\Collapse;
     <?php endif;
 ?>
 
-<?= Html::button('Add position on my career path', ['value' => Url::to(['/npis/cga/select-position', 'emp_id' => $model->emp_id]), 'class' => 'btn btn-success btn-block', 'id' => 'select-position-button']) ?>
-
+<div>
+    <?= Html::button('Add position on my career path', ['value' => Url::to(['/npis/cga/select-position', 'emp_id' => $model->emp_id]), 'class' => 'btn btn-success', 'id' => 'select-position-button']) ?>
+</div>
 <br>
-
 <div class="position-select-form">
 
     <?php $form = ActiveForm::begin([
@@ -49,11 +49,11 @@ use yii\bootstrap\Collapse;
         //'enableAjaxValidation' => true,
     ]); ?>
 
-    <?= $form->field($careerModel, 'position_id')->widget(Select2::classname(), [
+    <?= !empty($positions) ? $form->field($careerModel, 'position_id')->widget(Select2::classname(), [
             'data' => $positions,
             'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'position-select-view', 'id'=>'position-select-view'],
             'pluginOptions' => [
-                'allowClear' =>  true,
+                'allowClear' =>  false,
             ],
             'pluginEvents' => [
                 'change' => 'function() { 
@@ -61,7 +61,7 @@ use yii\bootstrap\Collapse;
                     viewSelectedCareer("'.$model->emp_id.'", this.value); 
                 }',
             ],
-        ])->label('Choose position to view required competencies')
+        ])->label('Choose position to view required competencies') : ''
     ?>
 
     <?php ActiveForm::end(); ?>

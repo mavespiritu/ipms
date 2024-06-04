@@ -35,7 +35,7 @@ function generateRandomString($length = 10) {
 }
 
 // Example usage:
-$tab = generateRandomString(10);
+$tab = generateRandomString(20);
 
 ?>
 <p><?= $competency->description ?></p>
