@@ -27,6 +27,7 @@ use common\modules\npis\models\EvidenceAward;
 use common\modules\npis\models\EvidencePerformance;
 use common\modules\npis\models\StaffAllIndicator;
 use common\modules\npis\models\CareerPath;
+use common\modules\npis\models\EmployeeDesignation;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
@@ -54,7 +55,12 @@ class CgaController extends Controller
                 'class' => AccessControl::className(),
                 'rules' => [
                     [
-                        'actions' => ['index', 'view-staff-cga-profile'],
+                        'actions' => [
+                            'index', 
+                            'view-staff-cga-profile', 
+                            'select-designation',
+                            'delete-designation',
+                        ],
                         'allow' => true,
                         'roles' => ['cga-index'],
                     ],
@@ -64,6 +70,7 @@ class CgaController extends Controller
                             'my-current-position', 
                             'my-career-path', 
                             'my-competencies', 
+                            'my-current-designation', 
                             'view-competencies', 
                             'view-all-competencies', 
                             'view-selected-position-competency', 
@@ -88,6 +95,10 @@ class CgaController extends Controller
                             'view-selected-career-competency', 
                             'view-selected-career',
                             'delete-career',
+                            'view-current-designation',
+                            'view-selected-designation',
+                            'select-designation-competency',
+                            'view-selected-designation-competency',
                         ],
                         'allow' => true,
                         'roles' => ['cga-view'],
@@ -1573,7 +1584,7 @@ class CgaController extends Controller
         $existingCareers = ArrayHelper::map($existingCareers, 'position_id', 'position_id');
 
         $positions = EmployeePositionItem::find()
-            ->select(['item_no', 'concat(division_id," - ",p.post_description) as title'])
+            ->select(['item_no', 'concat(division_id,": ",p.post_description," (",item_no,")") as title'])
             ->leftJoin('tblposition p', 'p.position_id = tblemp_position_item.position_id')
             ->andWhere(['<>', 'item_no', $currentPosition->item_no])
             ->andWhere(['>=', 'grade', $currentPosition->grade])
@@ -1582,6 +1593,7 @@ class CgaController extends Controller
                 'tblemp_position_item.division_id' => SORT_ASC,
                 'p.post_description' => SORT_ASC,
             ])
+            ->groupBy(['item_no'])
             ->asArray()
             ->all();
 
@@ -1630,7 +1642,7 @@ class CgaController extends Controller
         $existingCareers = ArrayHelper::map($existingCareers, 'position_id', 'position_id');
 
         $positions = EmployeePositionItem::find()
-            ->select(['item_no', 'concat(division_id," - ",p.post_description) as title'])
+            ->select(['item_no', 'concat(division_id,": ",p.post_description," (",item_no,")") as title'])
             ->leftJoin('tblposition p', 'p.position_id = tblemp_position_item.position_id')
             ->andWhere(['tblemp_position_item.item_no' => $existingCareers])
             ->orderBy([
@@ -1869,5 +1881,295 @@ class CgaController extends Controller
                 \Yii::$app->getSession()->setFlash('error', 'Error occurred while removing position');
             }
         }
+    }
+
+    public function actionMyCurrentDesignation($emp_id)
+    {
+        $model = EmployeeItem::find()
+            ->andWhere([
+                'emp_id' => $emp_id
+            ])
+            ->andWhere([
+                'is', 'to_date', null
+            ])
+            ->orderBy([
+                'from_date' => SORT_DESC
+            ])
+            ->one();
+
+        
+
+        return $this->renderAjax('my-current-designation', [
+            'model' => $model,
+        ]);
+    }
+
+    public function actionViewCurrentDesignation($emp_id)
+    {
+        $model = EmployeeItem::find()
+            ->andWhere([
+                'emp_id' => $emp_id
+            ])
+            ->andWhere([
+                'is', 'to_date', null
+            ])
+            ->orderBy([
+                'from_date' => SORT_DESC
+            ])
+            ->one();
+
+        $currentDesignation = EmployeeDesignation::find()
+            ->where([
+                'emp_id' => $emp_id
+            ])
+            ->orderBy(['start_date' => SORT_DESC])
+            ->one();
+
+        $designationModel = new EmployeeDesignation();
+        $designationModel->position_id = $currentDesignation ? $currentDesignation->position_id : null;
+
+        $existingDesignations = EmployeeDesignation::find()
+            ->where([
+                'emp_id' => $emp_id
+            ])
+            ->orderBy(['start_date' => SORT_DESC])
+            ->all();
+
+        $existingDesignations = ArrayHelper::map($existingDesignations, 'position_id', 'position_id');
+
+        $designations = EmployeePositionItem::find()
+            ->select(['item_no', 'concat(division_id,": ",p.post_description," (",item_no,")") as title'])
+            ->leftJoin('tblposition p', 'p.position_id = tblemp_position_item.position_id')
+            ->andWhere(['item_no' => $existingDesignations])
+            ->orderBy([
+                'tblemp_position_item.division_id' => SORT_ASC,
+                'p.post_description' => SORT_ASC,
+            ])
+            ->groupBy(['item_no'])
+            ->asArray()
+            ->all();
+
+        $designations = ArrayHelper::map($designations, 'item_no', 'title');
+
+        return $this->renderAjax('current-designation', [
+            'model' => $model,
+            'designationModel' => $designationModel,
+            'currentDesignation' => $currentDesignation,
+            'designations' => $designations,
+        ]);
+    }
+
+    public function actionSelectDesignation($emp_id)
+    {
+        $model = EmployeeItem::find()
+            ->andWhere([
+                'emp_id' => $emp_id
+            ])
+            ->andWhere([
+                'is', 'to_date', null
+            ])
+            ->orderBy([
+                'from_date' => SORT_DESC
+            ])
+            ->one();
+
+        $positions = EmployeePositionItem::find()
+            ->select(['item_no', 'concat(division_id,": ",p.post_description," (",item_no,")") as title'])
+            ->leftJoin('tblposition p', 'p.position_id = tblemp_position_item.position_id')
+            ->orderBy([
+                'tblemp_position_item.division_id' => SORT_ASC,
+                'p.post_description' => SORT_ASC,
+            ])
+            ->groupBy(['item_no'])
+            ->asArray()
+            ->all();
+
+        $positions = ArrayHelper::map($positions, 'item_no', 'title');
+
+        $designationModel = new EmployeeDesignation();
+        $designationModel->emp_id = $model->emp_id;
+
+        if($designationModel->load(Yii::$app->request->post())){
+
+            $transaction = Yii::$app->ipms->beginTransaction();
+
+            try {
+                if($designationModel->save()){
+                    $transaction->commit();
+                    //\Yii::$app->getSession()->setFlash('success', 'Position has been saved successfully');
+                }
+            } catch (\Exception $e) {
+                $transaction->rollBack();
+                //\Yii::$app->getSession()->setFlash('error', 'Error occurred while saving position');
+            }
+        }
+
+        return $this->renderAjax('_designation-select-form.php', [
+            'model' => $model,
+            'designationModel' => $designationModel,
+            'positions' => $positions,
+        ]);
+    }
+
+    public function actionViewSelectedDesignation($emp_id, $position_id)
+    {
+        $model = EmployeeDesignation::findOne(['emp_id' => $emp_id, 'position_id' => $position_id]);
+
+        $competencies = Competency::find()
+            ->select([
+                'comp_id',
+                'competency',
+                'description',
+                'type' => new \yii\db\Expression('CASE 
+                    WHEN comp_type = "org" THEN "Organizational"
+                    WHEN comp_type = "mnt" THEN "Managerial"
+                    ELSE "Technical/Functional"
+                END')
+            ])
+            ->asArray()
+            ->orderBy(['competency' => SORT_ASC])
+            ->all();
+
+        usort($competencies, function($a, $b) {
+            $order = ['Organizational', 'Managerial', 'Technical/Functional'];
+            $index_a = array_search($a['type'], $order);
+            $index_b = array_search($b['type'], $order);
+            return $index_a - $index_b;
+        });
+
+        $competencies = ArrayHelper::map($competencies, 'comp_id', 'competency', 'type');
+
+        return $this->renderAjax('_selected-designation.php', [
+            'model' => $model,
+            'competencies' => $competencies,
+        ]);
+    }
+    
+    public function actionDeleteDesignation($id)
+    {
+        if(Yii::$app->request->post()){
+
+            $designation = EmployeeDesignation::findOne(['id' => $id]);
+
+            $transaction = Yii::$app->ipms->beginTransaction();
+
+            try {
+                if($designation->delete()){
+                    $transaction->commit();
+                    \Yii::$app->getSession()->setFlash('success', 'Designation has been removed successfully');
+                }else{
+                    $designation->rollBack();
+                    \Yii::$app->getSession()->setFlash('error', 'Error occurred while removing designation');
+                }
+            } catch (\Exception $e) {
+                $designation->rollBack();
+                \Yii::$app->getSession()->setFlash('error', 'Error occurred while removing designation');
+            }
+        }
+    }
+
+    public function actionSelectDesignationCompetency($id, $position_id, $emp_id)
+    {
+        $model = Competency::findOne($id);
+        $position = EmployeePositionItem::findOne($position_id);
+
+        $existingDescriptors = StaffCompetencyIndicator::find()->where(['position_id' => $position_id, 'emp_id' => $emp_id])->asArray()->all();
+        $existingDescriptors = ArrayHelper::map($existingDescriptors, 'indicator_id', 'indicator_id');
+
+        $descriptors = CompetencyIndicator::find()
+            ->andWhere(['competency_id' => $model->comp_id])
+            ->andWhere(['not in', 'id', $existingDescriptors])
+            ->orderBy(['proficiency' => SORT_DESC, 'indicator' => SORT_ASC])
+            ->all();
+
+        $availableDescriptors = [];
+        $descriptorModels = [];
+
+        if($descriptors){
+            foreach($descriptors as $descriptor){
+                $descriptorModels[$descriptor->id] = $descriptor;
+            }
+        }
+
+        if($descriptors){
+            foreach($descriptors as $descriptor){
+                $availableDescriptors[$descriptor->proficiency][] = $descriptor;
+            }
+        }
+
+        return $this->renderAjax('_designation-competency-list', [
+            'model' => $model,
+            'position' => $position,
+            'descriptorModels' => $descriptorModels,
+            'availableDescriptors' => $availableDescriptors,
+        ]);
+    }
+
+    public function actionViewSelectedDesignationCompetency($id)
+    {
+        $model = EmployeeDesignation::findOne(['id' => $id]);
+        $model->item_no = $model->position_id;
+
+        $descriptors = PositionCompetencyIndicator::find()
+            ->select([
+                'competency.comp_id as id',
+                'competency.competency as competency',
+                'max(proficiency) as proficiency',
+                'type' => new \yii\db\Expression('CASE 
+                        WHEN competency.comp_type = "org" THEN "Organizational"
+                        WHEN competency.comp_type = "mnt" THEN "Managerial"
+                        ELSE "Technical/Functional"
+                    END')
+            ])
+            ->leftJoin('competency_indicator', 'competency_indicator.id = position_competency_indicator.indicator_id')
+            ->leftJoin('competency', 'competency.comp_id = competency_indicator.competency_id')
+            ->where([
+                'position_id' => $model->position_id
+            ])
+            ->groupBy(['competency.comp_id'])
+            ->orderBy([
+                'type' => SORT_ASC,
+                'competency' => SORT_ASC,
+            ])
+            ->asArray()
+            ->all();
+
+        $availableDescriptors = [];
+
+        usort($descriptors, function($a, $b) {
+            $order = ['Organizational', 'Managerial', 'Technical/Functional'];
+            $index_a = array_search($a['type'], $order);
+            $index_b = array_search($b['type'], $order);
+            return $index_a - $index_b;
+        });
+
+        if(!empty($descriptors)){
+            foreach($descriptors as $i => $descriptor){
+                $item = [];
+                $percent = Competency::findOne(['comp_id' => $descriptor['id']])->getStaffCompetencyPerCareerPercentage($model->emp_id, $model->position_id);
+
+                if($percent > 0 && $percent < 100){
+                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important; background:
+                    linear-gradient(90deg, rgba(164,212,180,1) '.$percent.'%, #F5F5F5 '.$percent.'%) !important;"><tr><td style="padding: 10px;" onClick="viewSelectedCareerCompetency('.$descriptor['id'].',\''.$model->emp_id.'\',\''.$model->position_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td>
+                    <td align=right style="padding: 10px;">'.number_format($percent, 2).'%</td></tr></table>';
+                }else if($percent == 100){
+                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important; background: rgba(164,212,180,1) !important;"><tr><td style="padding: 10px;" onClick="viewSelectedCareerCompetency('.$descriptor['id'].',\''.$model->emp_id.'\',\''.$model->position_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td>
+                    <td align=right style="padding: 10px;">'.$percent.'%</td></tr></table>';
+                }else{
+                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important;"><tr><td style="padding: 10px;" onClick="viewSelectedCareerCompetency('.$descriptor['id'].',\''.$model->emp_id.'\',\''.$model->position_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td></tr></table>';
+                }
+                $item['content'] = '<div id="my-selected-career-competency-'.$model->position_id.'-'.$descriptor['id'].'-information"></div>';
+                $item['options'] = ['class' => 'panel panel-default'];
+
+                $availableDescriptors[$descriptor['type']][] = $item;
+            }
+        }
+
+
+        return $this->renderAjax('competencies', [
+            'model' => $model,
+            'availableDescriptors' => $availableDescriptors,
+            'tab' => 'designation'
+        ]);
     }
 }

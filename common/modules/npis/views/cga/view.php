@@ -28,12 +28,12 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
                     'class' => 'nav-tabs-custom',
                     'items' => [
                         [
-                            'label' => 'My Current Position',
+                            'label' => 'Current Position',
                             'content' => '<div id="my-current-position"></div>',
                             'headerOptions' => ['onclick' => 'viewMyCurrentPosition("'.$model->emp_id.'")'],
                         ],
                         [
-                            'label' => 'My Career Path',
+                            'label' => 'Career Path',
                             'content' => '<div id="my-career-path"></div>',
                             'headerOptions' => ['onclick' => 'viewMyCareerPath("'.$model->emp_id.'")'],
                         ],

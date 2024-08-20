@@ -5,20 +5,23 @@ namespace common\modules\npis\models;
 use Yii;
 
 /**
- * This is the model class for table "career_path".
+ * This is the model class for table "employee_designation".
  *
  * @property int $id
  * @property string|null $emp_id
  * @property string|null $position_id
+ * @property string|null $start_date
+ * @property string|null $end_date
  */
-class CareerPath extends \yii\db\ActiveRecord
+class EmployeeDesignation extends \yii\db\ActiveRecord
 {
+    public $item_no;
     /**
      * {@inheritdoc}
      */
     public static function tableName()
     {
-        return 'career_path';
+        return 'employee_designation';
     }
 
     /**
@@ -27,19 +30,10 @@ class CareerPath extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['position_id'], 'required'],
+            [['position_id', 'start_date'], 'required'],
+            [['start_date', 'end_date'], 'safe'],
             [['emp_id'], 'string', 'max' => 20],
             [['position_id'], 'string', 'max' => 50],
-        ];
-    }
-
-    public function behaviors()
-    {
-        return [
-            'fileBehavior' => [
-                'class' => \file\behaviors\FileBehavior::className()
-            ],
-            'bedezign\yii2\audit\AuditTrailBehavior'
         ];
     }
 
@@ -52,6 +46,16 @@ class CareerPath extends \yii\db\ActiveRecord
             'id' => 'ID',
             'emp_id' => 'Emp ID',
             'position_id' => 'Position',
+            'start_date' => 'Start Date',
+            'end_date' => 'End Date',
+            'item_no' => 'Item No.'
+        ];
+    }
+
+    public function behaviors()
+    {
+        return [
+            'bedezign\yii2\audit\AuditTrailBehavior'
         ];
     }
 
@@ -70,8 +74,13 @@ class CareerPath extends \yii\db\ActiveRecord
      *
      * @return \yii\db\ActiveQuery
      */
-    public function getEmployeePositionItem()
+    public function getPositionItem()
     {
         return $this->hasOne(EmployeePositionItem::className(), ['item_no' => 'position_id']);
+    }
+
+    public function getItem_no()
+    {
+        return $this->position_id;
     }
 }

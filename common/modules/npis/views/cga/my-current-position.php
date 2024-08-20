@@ -31,7 +31,7 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
 <div id="alert" class="alert" role="alert" style="display: none;"></div>
 <div class="row">
     <div class="col-sm-4 col-md-4 col-lg-4 col-xs-12">
-        <h4>My Current Position</h4>
+        <h4>Current Position</h4>
         <small>
             <table class="table table-condensed table-responsive">
                 <tr>

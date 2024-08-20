@@ -29,7 +29,6 @@ use yii\jui\Accordion;
     <?php if(empty($availableDescriptors)){ ?>
         <p class="text-center">No included competencies found.</p>
     <?php } ?>
-    <br>
     <div style="height: calc(100vh - 250px); overflow-y: auto; padding: 10px;">
         <?php if(!empty($availableDescriptors)){ ?>
             <?php $i = 0; ?>

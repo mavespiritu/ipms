@@ -31,7 +31,7 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
 <div id="alert" class="alert" role="alert" style="display: none;"></div>
 <div class="row">
     <div class="col-sm-12 col-md-4 col-lg-4 col-xs-12">
-        <h4>My Career Path</h4>
+        <h4>Career Path</h4>
         <div id="career-path"></div>
         <div id="selected-career"></div>
         <h4>Required Competencies</h4>

@@ -55,6 +55,25 @@ DisableButtonAsset::register($this);
         ])
     ?>
 
+    <?= $form->field($model, 'coterminus')->widget(Select2::classname(), [
+        'data' => ['1' => 'Yes', '0' => 'No'],
+        'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'coterminus-select'],
+        'pluginOptions' => [
+            'allowClear' =>  true,
+        ],
+    ])
+    ?>
+
+    <?= $form->field($model, 'type')->widget(Select2::classname(), [
+        'data' => ['A' => 'Administrative', 'T' => 'Technical', 'ST', 'Support to Technical'],
+        'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'type-select'],
+        'pluginOptions' => [
+            'allowClear' =>  true,
+        ],
+    ])
+    ?>
+
+
     <?= $form->field($model, 'grade')->textInput(['type' => 'number', 'maxlength' => true]) ?>
 
     <?= $form->field($model, 'step')->textInput(['type' => 'number', 'maxlength' => true]) ?>

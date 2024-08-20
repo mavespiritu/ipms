@@ -35,9 +35,9 @@ class EmployeePositionItem extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['item_no', 'position_id', 'division_id', 'grade', 'step', 'status'], 'required'],
-            [['grade', 'step', 'status'], 'integer'],
-            [['item_no', 'position_id'], 'string', 'max' => 50],
+            [['item_no', 'position_id', 'division_id', 'grade', 'step', 'status', 'coterminus', 'type'], 'required'],
+            [['grade', 'step', 'status', 'coterminus'], 'integer'],
+            [['item_no', 'position_id', 'type'], 'string', 'max' => 50],
             [['division_id'], 'string', 'max' => 20],
             [['item_no'], 'unique'],
             [['position_id'], 'exist', 'skipOnError' => true, 'targetClass' => Position::className(), 'targetAttribute' => ['position_id' => 'position_id']],
@@ -56,7 +56,9 @@ class EmployeePositionItem extends \yii\db\ActiveRecord
             'division_id' => 'Division',
             'grade' => 'Grade',
             'step' => 'Step',
-            'status' => 'Status'
+            'status' => 'Status',
+            'coterminus' => 'Co-terminus',
+            'type' => 'Type',
         ];
     }
 

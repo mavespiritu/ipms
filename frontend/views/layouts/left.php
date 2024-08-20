@@ -67,6 +67,7 @@
                             ['label' => 'LSPs', 'icon' => 'folder', 'url' => ['/npis/lsp'], 'visible' => Yii::$app->user->can('HR')],
                             ['label' => 'Trainings', 'icon' => 'folder', 'url' => ['/npis/training'], 'visible' => Yii::$app->user->can('HR')],
                             ['label' => 'Positions', 'icon' => 'folder', 'url' => ['/npis/position'], 'visible' => Yii::$app->user->can('HR')],
+                            ['label' => 'Designations', 'icon' => 'folder', 'url' => ['/npis/designation'], 'visible' => Yii::$app->user->can('HR')],
                         ],
                         
                     ],
