@@ -79,6 +79,20 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
                         ],
                     ],
                     [
+                        'attribute' => 'coterminus',
+                        'header' => 'COTERMINOUS?',
+                        'contentOptions' => [
+                            'style' => 'text-align: center;'
+                        ],
+                    ],
+                    [
+                        'attribute' => 'type',
+                        'header' => 'Type',
+                        'contentOptions' => [
+                            'style' => 'text-align: center;'
+                        ],
+                    ],
+                    [
                         'attribute' => 'competencyIndicators',
                         'header' => 'HAS COMPETENCIES?',
                         'contentOptions' => [
