@@ -65,7 +65,7 @@ DisableButtonAsset::register($this);
     ?>
 
     <?= $form->field($model, 'type')->widget(Select2::classname(), [
-        'data' => ['A' => 'Administrative', 'T' => 'Technical', 'ST', 'Support to Technical'],
+        'data' => ['A' => 'Administrative', 'T' => 'Technical', 'ST' => 'Support to Technical'],
         'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'type-select'],
         'pluginOptions' => [
             'allowClear' =>  true,
