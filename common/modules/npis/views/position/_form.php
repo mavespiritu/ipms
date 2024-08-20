@@ -68,6 +68,24 @@ DisableButtonAsset::register($this);
     ])
     ?>
 
+    <?= $form->field($model, 'coterminus')->widget(Select2::classname(), [
+        'data' => ['1' => 'Yes', '0' => 'No'],
+        'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'coterminus-select'],
+        'pluginOptions' => [
+            'allowClear' =>  true,
+        ],
+    ])
+    ?>
+
+    <?= $form->field($model, 'type')->widget(Select2::classname(), [
+        'data' => ['A' => 'Administrative', 'T' => 'Technical', 'ST', 'Support to Technical'],
+        'options' => ['multiple' => false, 'placeholder' => 'Select one', 'class'=>'type-select'],
+        'pluginOptions' => [
+            'allowClear' =>  true,
+        ],
+    ])
+    ?>
+
     <div class="row">
         <div class="col-md-12 col-xs-12">
             <div class="pull-right">
