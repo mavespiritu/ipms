@@ -8,8 +8,8 @@ use yii\web\View;
 /* @var $searchModel common\modules\npis\models\lspSearch */
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
-$this->title = 'Competencies';
-$this->params['breadcrumbs'][] = 'CGA';
+$this->title = 'Dicitionary';
+$this->params['breadcrumbs'][] = 'Competencies';
 $this->params['breadcrumbs'][] = $this->title;
 
 $successMessage = \Yii::$app->getSession()->getFlash('success');
@@ -20,7 +20,7 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
         'competencyTypes' => $competencyTypes,
     ]) ?>
     <div class="box box-solid">
-        <div class="box-header with-border"><h3 class="box-title">Competency Records</h3></div>
+        <div class="box-header with-border"><h3 class="box-title">Competency Dictionary</h3></div>
         <div class="box-body">
             <div class="pull-right">
                 <?= Yii::$app->user->can('competency-create') ? Html::a('Add New Record', ['create'], ['class' => 'btn btn-success']) : '' ?>

@@ -28,8 +28,9 @@ class CareerPath extends \yii\db\ActiveRecord
     {
         return [
             [['position_id'], 'required'],
-            [['emp_id'], 'string', 'max' => 20],
+            [['emp_id', 'start_date', 'end_date'], 'string', 'max' => 20],
             [['position_id'], 'string', 'max' => 50],
+            [['type'], 'string', 'max' => 50],
         ];
     }
 
@@ -52,6 +53,9 @@ class CareerPath extends \yii\db\ActiveRecord
             'id' => 'ID',
             'emp_id' => 'Emp ID',
             'position_id' => 'Position',
+            'type' => 'Type',
+            'start_date' => 'Start Date',
+            'end_date' => 'End Date',
         ];
     }
 

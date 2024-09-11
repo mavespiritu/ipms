@@ -6,8 +6,8 @@ use yii\helpers\Html;
 /* @var $model common\modules\npis\models\Ipcr */
 
 $this->title = 'Add New Record';
-$this->params['breadcrumbs'][] = 'CGA';
-$this->params['breadcrumbs'][] = ['label' => 'Competencies', 'url' => ['index']];
+$this->params['breadcrumbs'][] = 'Competencies';
+$this->params['breadcrumbs'][] = ['label' => 'Dicitionary', 'url' => ['index']];
 $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="competency-create">

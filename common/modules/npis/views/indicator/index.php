@@ -9,7 +9,7 @@ use yii\web\View;
 /* @var $dataProvider yii\data\ActiveDataProvider */
 
 $this->title = 'Indicators';
-$this->params['breadcrumbs'][] = 'CGA';
+$this->params['breadcrumbs'][] = 'Competencies';
 $this->params['breadcrumbs'][] = $this->title;
 
 $successMessage = \Yii::$app->getSession()->getFlash('success');

@@ -11,7 +11,7 @@ use yii\bootstrap\Tabs;
 /* @var $model common\modules\npis\models\Cga */
 
 $this->title = 'My CGA';
-$this->params['breadcrumbs'][] = 'CGA';
+$this->params['breadcrumbs'][] = 'Competencies';
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 

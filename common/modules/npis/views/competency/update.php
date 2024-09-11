@@ -6,8 +6,8 @@ use yii\helpers\Html;
 /* @var $model common\modules\npis\models\Ipcr */
 
 $this->title = 'Update Record';
-$this->params['breadcrumbs'][] = 'CGA';
-$this->params['breadcrumbs'][] = ['label' => 'Competencies', 'url' => ['index']];
+$this->params['breadcrumbs'][] = 'Competencies';
+$this->params['breadcrumbs'][] = ['label' => 'Dictionary', 'url' => ['index']];
 $this->params['breadcrumbs'][] = 'Update';
 ?>
 <div class="competency-update">

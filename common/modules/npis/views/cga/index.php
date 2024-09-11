@@ -8,7 +8,7 @@ use yii\web\View;
 /* @var $model common\modules\npis\models\Cga */
 
 $this->title = 'Staff CGA';
-$this->params['breadcrumbs'][] = 'CGA';
+$this->params['breadcrumbs'][] = 'Competencies';
 $this->params['breadcrumbs'][] = $this->title;
 \yii\web\YiiAsset::register($this);
 ?>
