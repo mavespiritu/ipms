@@ -2080,19 +2080,36 @@ class CgaController extends Controller
             ->all(); */
 
         $designations = CareerPath::find()
-            ->select(['career_path.id', 'concat(e.division_id,": ",p.post_description," (",e.item_no,") effective ",DATE_FORMAT(career_path.start_date, "%M %e, %Y")) as title'])
-            ->leftJoin('personnel_dtr.tblemp_position_item e', 'e.item_no = career_path.position_id')
-            ->leftJoin('personnel_dtr.tblposition p', 'p.position_id = e.position_id')
+            ->select([
+                'career_path.id',
+                'career_path.emp_id',
+                'career_path.position_id',
+                'career_path.start_date'
+            ])
             ->andWhere([
                 'career_path.emp_id' => $emp_id,
                 'career_path.type' => 'Designation'
             ])
-            ->orderBy([
-                'e.division_id' => SORT_ASC,
-                'p.post_description' => SORT_ASC,
-            ])
             ->asArray()
             ->all();
+
+        foreach ($designations as &$designation) {
+            $designationDetails = (new \yii\db\Query())
+                ->select([
+                    'concat(e.division_id, ": ", p.post_description, " (", e.item_no, ") effective ", DATE_FORMAT(:start_date, "%M %e, %Y")) as title',
+                ])
+                ->from('personnel_dtr.tblemp_position_item e')
+                ->leftJoin('personnel_dtr.tblposition p', 'p.position_id = e.position_id')
+                ->where(['e.item_no' => $designation['position_id']])
+                ->addParams([':start_date' => $designation['start_date']])
+                ->createCommand(Yii::$app->ipms) // Uses the ipms connection for personnel_dtr
+                ->queryOne();
+        
+            // Merge the result into the careerPath array
+            if ($designationDetails) {
+                $designation['title'] = $designationDetails['title'];
+            }
+        }
 
         $designations = ArrayHelper::map($designations, 'id', 'title');
 
