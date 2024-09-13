@@ -3,7 +3,7 @@
 namespace common\modules\npis\models;
 
 use Yii;
-
+use common\models\Employee;
 /**
  * This is the model class for table "career_path".
  *
@@ -28,6 +28,7 @@ class CareerPath extends \yii\db\ActiveRecord
     {
         return [
             [['position_id'], 'required'],
+            [['emp_id', 'position_id', 'start_date'], 'required', 'on' => 'designationForm'],
             [['emp_id', 'start_date', 'end_date'], 'string', 'max' => 20],
             [['position_id'], 'string', 'max' => 50],
             [['type'], 'string', 'max' => 50],
@@ -51,7 +52,7 @@ class CareerPath extends \yii\db\ActiveRecord
     {
         return [
             'id' => 'ID',
-            'emp_id' => 'Emp ID',
+            'emp_id' => 'Employee',
             'position_id' => 'Position',
             'type' => 'Type',
             'start_date' => 'Start Date',

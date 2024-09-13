@@ -29,24 +29,19 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
 ?>
 <div id="alert" class="alert" role="alert" style="display: none;"></div>
 <div class="row">
-    <div class="col-md-12 col-xs-12 col-sm-12 col-lg-12">
-        <h4>Current Designation</h4>
+    <div class="col-md-12  col-md-4 col-lg-4 col-xs-12">
+        <h4>Designations</h4>
         <div id="current-designation"></div>
-    </div>
-</div>
-<div class="row">
-    <div class="col-sm-12 col-md-4 col-lg-4 col-xs-12">
         <div id="selected-designation"></div>
-    </div>
-    <div class="col-sm-12 col-md-8 col-lg-8 col-xs-12">
-        <div class="row">
-            <div class="col-sm-12 col-md-5 col-lg-5 col-xs-12">
-                <div id="designation-competency-indicator-information"></div>
-            </div>
-            <div class="col-sm-12 col-md-7 col-lg-7 col-xs-12">
-
+        <h4>Required Competencies</h4>
+        <div id="designation-competencies">
+            <div class="flex-center" style="height: calc(100vh - 315px);">
+                <h4 style="color: gray;">Select designation above to view required competencies.</h4>
             </div>
         </div>
+    </div>
+    <div class="col-sm-12 col-md-8 col-lg-8 col-xs-12">
+        <div id="indicator-information-designation"></div>
     </div>
 </div>
 
@@ -88,10 +83,31 @@ if ($successMessage) {
             });
         }
 
-        function viewSelectedDesignation(emp_id, position_id)
+        function viewDesignationCompetencies(id)
         {
             $.ajax({
-                url: "'.Url::to(['/npis/cga/view-selected-designation']).'?emp_id=" + emp_id + "&position_id=" + position_id,
+                url: "'.Url::to(['/npis/cga/view-designation-competencies']).'?id=" + id,
+                beforeSend: function(){
+                    $("#designation-competencies").html("<div class=\"text-center\" style=\"height: calc(100vh - 297px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
+                },
+                success: function (data) {
+                    console.log(this.data);
+                    $("#designation-competencies").empty();
+                    $("#designation-competencies").hide();
+                    $("#designation-competencies").fadeIn("slow");
+                    $("#designation-competencies").html(data);
+                    $("#indicator-information-designation").empty();
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        function viewSelectedDesignation(id)
+        {
+            $.ajax({
+                url: "'.Url::to(['/npis/cga/view-selected-designation']).'?id=" + id,
                 beforeSend: function(){
                     $("#selected-designation").html("<div class=\"text-center\" style=\"height: calc(100vh - 297px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
                 },

@@ -348,6 +348,23 @@ class Employee extends \yii\db\ActiveRecord
         return ArrayHelper::map($list, 'emp_id', 'name');
     }
 
+    public static function getAllActiveList()
+    {
+        $list = Employee::find()
+        ->select([
+            'emp_id',
+            'concat(lname,", ",fname," ",mname) as name'
+        ])
+        ->orderBy([
+            'concat(lname,", ",fname," ",mname)' => SORT_ASC
+        ])
+        ->andWhere(['work_status' => 'active'])
+        ->asArray()
+        ->all();
+
+        return ArrayHelper::map($list, 'emp_id', 'name');
+    }
+
     public static function getAllExceptSelfList()
     {
         $list = Employee::find()

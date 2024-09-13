@@ -39,7 +39,7 @@ use yii\bootstrap\Collapse;
 ?>
 
 <div>
-    <?= Html::button('Add position on my career path', ['value' => Url::to(['/npis/cga/select-position', 'emp_id' => $model->emp_id]), 'class' => 'btn btn-success', 'id' => 'select-position-button']) ?>
+    <?= Html::button('Add position on my career path', ['value' => Url::to(['/npis/cga/select-position', 'emp_id' => $model->emp_id, 'type' => 'CareerPath']), 'class' => 'btn btn-success', 'id' => 'select-position-button']) ?>
 </div>
 <br>
 <div class="position-select-form">
@@ -57,8 +57,8 @@ use yii\bootstrap\Collapse;
             ],
             'pluginEvents' => [
                 'change' => 'function() { 
-                    viewPositionCompetencies("'.$model->emp_id.'", this.value); 
                     viewSelectedCareer("'.$model->emp_id.'", this.value); 
+                    viewPositionCompetencies("'.$model->emp_id.'", this.value); 
                 }',
             ],
         ])->label('Choose position to view required competencies') : ''

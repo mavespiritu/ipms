@@ -99,6 +99,7 @@ class CgaController extends Controller
                             'view-selected-designation',
                             'select-designation-competency',
                             'view-selected-designation-competency',
+                            'view-designation-competencies'
                         ],
                         'allow' => true,
                         'roles' => ['cga-view'],
@@ -1564,7 +1565,7 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionSelectPosition($emp_id)
+    public function actionSelectPosition($emp_id, $type)
     {
         $model = EmployeeItem::find()
             ->andWhere([
@@ -1589,6 +1590,7 @@ class CgaController extends Controller
             ->andWhere(['<>', 'item_no', $currentPosition->item_no])
             ->andWhere(['>=', 'grade', $currentPosition->grade])
             ->andWhere(['not in', 'tblemp_position_item.item_no', $existingCareers])
+            ->andWhere(['status' => 1])
             ->orderBy([
                 'tblemp_position_item.division_id' => SORT_ASC,
                 'p.post_description' => SORT_ASC,
@@ -1601,6 +1603,7 @@ class CgaController extends Controller
 
         $careerModel = new CareerPath();
         $careerModel->emp_id = $model->emp_id;
+        $careerModel->type = $type;
 
         if($careerModel->load(Yii::$app->request->post())){
 
@@ -1624,6 +1627,45 @@ class CgaController extends Controller
         ]);
     }
 
+    public function actionViewDesignation($emp_id)
+    {
+        $model = EmployeeItem::find()
+            ->andWhere([
+                'emp_id' => $emp_id
+            ])
+            ->andWhere([
+                'is', 'to_date', null
+            ])
+            ->orderBy([
+                'from_date' => SORT_DESC
+            ])
+            ->one();
+
+        $existingDesignations = CareerPath::findAll(['emp_id' => $model->emp_id, 'type' => 'Designation']);
+        $existingDesignations = ArrayHelper::map($existingDesignations, 'position_id', 'position_id');
+
+        $positions = EmployeePositionItem::find()
+            ->select(['item_no', 'concat(division_id,": ",p.post_description," (",item_no,")") as title'])
+            ->leftJoin('tblposition p', 'p.position_id = tblemp_position_item.position_id')
+            ->andWhere(['tblemp_position_item.item_no' => $existingDesignations])
+            ->orderBy([
+                'tblemp_position_item.division_id' => SORT_ASC,
+                'p.post_description' => SORT_ASC,
+            ])
+            ->asArray()
+            ->all();
+
+        $positions = ArrayHelper::map($positions, 'item_no', 'title');
+
+        $careerModel = new CareerPath();
+
+        return $this->renderAjax('positions.php', [
+            'model' => $model,
+            'careerModel' => $careerModel,
+            'positions' => $positions,
+        ]);
+    }
+
     public function actionViewCareerPath($emp_id)
     {
         $model = EmployeeItem::find()
@@ -1638,7 +1680,7 @@ class CgaController extends Controller
             ])
             ->one();
 
-        $existingCareers = CareerPath::findAll(['emp_id' => $model->emp_id]);
+        $existingCareers = CareerPath::findAll(['emp_id' => $model->emp_id, 'type' => 'CareerPath']);
         $existingCareers = ArrayHelper::map($existingCareers, 'position_id', 'position_id');
 
         $positions = EmployeePositionItem::find()
@@ -1737,6 +1779,87 @@ class CgaController extends Controller
             'model' => $model,
             'availableDescriptors' => $availableDescriptors,
             'tab' => 'career-path'
+        ]);
+    }
+
+    public function actionViewDesignationCompetencies($id)
+    {
+        $designation = CareerPath::findOne($id);
+
+        $model = EmployeeItem::find()
+            ->andWhere([
+                'emp_id' => $designation->emp_id
+            ])
+            ->andWhere([
+                'is', 'to_date', null
+            ])
+            ->orderBy([
+                'from_date' => SORT_DESC
+            ])
+            ->one();
+
+        $position_id = $designation->position_id;
+
+        $descriptors = PositionCompetencyIndicator::find()
+            ->select([
+                'competency.comp_id as id',
+                'competency.competency as competency',
+                'max(proficiency) as proficiency',
+                'type' => new \yii\db\Expression('CASE 
+                        WHEN competency.comp_type = "org" THEN "Organizational"
+                        WHEN competency.comp_type = "mnt" THEN "Managerial"
+                        ELSE "Technical/Functional"
+                    END')
+            ])
+            ->leftJoin('competency_indicator', 'competency_indicator.id = position_competency_indicator.indicator_id')
+            ->leftJoin('competency', 'competency.comp_id = competency_indicator.competency_id')
+            ->where([
+                'position_id' => $position_id
+            ])
+            ->groupBy(['competency.comp_id'])
+            ->orderBy([
+                'type' => SORT_ASC,
+                'competency' => SORT_ASC,
+            ])
+            ->asArray()
+            ->all();
+
+        $availableDescriptors = [];
+
+        usort($descriptors, function($a, $b) {
+            $order = ['Organizational', 'Managerial', 'Technical/Functional'];
+            $index_a = array_search($a['type'], $order);
+            $index_b = array_search($b['type'], $order);
+            return $index_a - $index_b;
+        });
+
+        if(!empty($descriptors)){
+            foreach($descriptors as $i => $descriptor){
+                $item = [];
+                $percent = Competency::findOne(['comp_id' => $descriptor['id']])->getStaffCompetencyPerCareerPercentage($model->emp_id, $position_id);
+
+                if($percent > 0 && $percent < 100){
+                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important; background:
+                    linear-gradient(90deg, rgba(164,212,180,1) '.$percent.'%, #F5F5F5 '.$percent.'%) !important;"><tr><td style="padding: 10px;" onClick="viewSelectedDesignationCompetency('.$descriptor['id'].',\''.$model->emp_id.'\',\''.$position_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td>
+                    <td align=right style="padding: 10px;">'.number_format($percent, 2).'%</td></tr></table>';
+                }else if($percent == 100){
+                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important; background: rgba(164,212,180,1) !important;"><tr><td style="padding: 10px;" onClick="viewSelectedDesignationCompetency('.$descriptor['id'].',\''.$model->emp_id.'\',\''.$position_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td>
+                    <td align=right style="padding: 10px;">'.$percent.'%</td></tr></table>';
+                }else{
+                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important;"><tr><td style="padding: 10px;" onClick="viewSelectedDesignationCompetency('.$descriptor['id'].',\''.$model->emp_id.'\',\''.$position_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td></tr></table>';
+                }
+                $item['content'] = '<div id="my-selected-designation-competency-'.$position_id.'-'.$descriptor['id'].'-information"></div>';
+                $item['options'] = ['class' => 'panel panel-default'];
+
+                $availableDescriptors[$descriptor['type']][] = $item;
+            }
+        }
+
+
+        return $this->renderAjax('competencies', [
+            'model' => $model,
+            'availableDescriptors' => $availableDescriptors,
+            'tab' => 'designation'
         ]);
     }
 
@@ -1918,38 +2041,44 @@ class CgaController extends Controller
             ])
             ->one();
 
-        $currentDesignation = EmployeeDesignation::find()
+        $currentDesignation = CareerPath::find()
             ->where([
-                'emp_id' => $emp_id
+                'emp_id' => $emp_id,
+                'type' => 'Designation'
             ])
+            ->andWhere(['end_date' => null])
             ->orderBy(['start_date' => SORT_DESC])
             ->one();
 
-        $designationModel = new EmployeeDesignation();
-        $designationModel->position_id = $currentDesignation ? $currentDesignation->position_id : null;
+        $designationModel = new CareerPath();
+        $designationModel->position_id = $currentDesignation ? $currentDesignation->id : null;
 
-        $existingDesignations = EmployeeDesignation::find()
+        $existingDesignations = CareerPath::find()
             ->where([
-                'emp_id' => $emp_id
+                'emp_id' => $emp_id,
+                'type' => 'Designation'
             ])
             ->orderBy(['start_date' => SORT_DESC])
             ->all();
 
         $existingDesignations = ArrayHelper::map($existingDesignations, 'position_id', 'position_id');
 
-        $designations = EmployeePositionItem::find()
-            ->select(['item_no', 'concat(division_id,": ",p.post_description," (",item_no,")") as title'])
-            ->leftJoin('tblposition p', 'p.position_id = tblemp_position_item.position_id')
-            ->andWhere(['item_no' => $existingDesignations])
+        $designations = CareerPath::find()
+            ->select(['career_path.id', 'concat(e.division_id,": ",p.post_description," (",e.item_no,") effective ",DATE_FORMAT(career_path.start_date, "%M %e, %Y")) as title'])
+            ->leftJoin('personnel_dtr.tblemp_position_item e', 'e.item_no = career_path.position_id')
+            ->leftJoin('personnel_dtr.tblposition p', 'p.position_id = e.position_id')
+            ->andWhere([
+                'career_path.emp_id' => $emp_id,
+                'career_path.type' => 'Designation'
+            ])
             ->orderBy([
-                'tblemp_position_item.division_id' => SORT_ASC,
+                'e.division_id' => SORT_ASC,
                 'p.post_description' => SORT_ASC,
             ])
-            ->groupBy(['item_no'])
             ->asArray()
             ->all();
 
-        $designations = ArrayHelper::map($designations, 'item_no', 'title');
+        $designations = ArrayHelper::map($designations, 'id', 'title');
 
         return $this->renderAjax('current-designation', [
             'model' => $model,
@@ -2011,9 +2140,9 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionViewSelectedDesignation($emp_id, $position_id)
+    public function actionViewSelectedDesignation($id)
     {
-        $model = EmployeeDesignation::findOne(['emp_id' => $emp_id, 'position_id' => $position_id]);
+        $model = CareerPath::findOne(['id' => $id]);
 
         $competencies = Competency::find()
             ->select([
@@ -2105,71 +2234,114 @@ class CgaController extends Controller
         ]);
     }
 
-    public function actionViewSelectedDesignationCompetency($id)
+    public function actionViewSelectedDesignationCompetency($competency_id, $emp_id, $position_id)
     {
-        $model = EmployeeDesignation::findOne(['id' => $id]);
-        $model->item_no = $model->position_id;
-
-        $descriptors = PositionCompetencyIndicator::find()
-            ->select([
-                'competency.comp_id as id',
-                'competency.competency as competency',
-                'max(proficiency) as proficiency',
-                'type' => new \yii\db\Expression('CASE 
-                        WHEN competency.comp_type = "org" THEN "Organizational"
-                        WHEN competency.comp_type = "mnt" THEN "Managerial"
-                        ELSE "Technical/Functional"
-                    END')
+        $model = EmployeeItem::find()
+            ->andWhere([
+                'emp_id' => $emp_id
             ])
-            ->leftJoin('competency_indicator', 'competency_indicator.id = position_competency_indicator.indicator_id')
-            ->leftJoin('competency', 'competency.comp_id = competency_indicator.competency_id')
-            ->where([
-                'position_id' => $model->position_id
+            ->andWhere([
+                'is', 'to_date', null
             ])
-            ->groupBy(['competency.comp_id'])
             ->orderBy([
-                'type' => SORT_ASC,
-                'competency' => SORT_ASC,
+                'from_date' => SORT_DESC
             ])
-            ->asArray()
-            ->all();
+            ->one();
+
+        $competency = Competency::findOne(['comp_id' => $competency_id]);
+        
+        $descriptors = PositionCompetencyIndicator::find()
+        ->select([
+            'competency_indicator.id as id',
+            'competency.competency as competency',
+            'competency.description as description',
+            'competency_indicator.indicator as indicator',
+            'competency_indicator.proficiency as proficiency',
+            'type' => new \yii\db\Expression('CASE 
+                    WHEN competency.comp_type = "org" THEN "Organizational"
+                    WHEN competency.comp_type = "mnt" THEN "Managerial"
+                    ELSE "Technical/Functional"
+                END')
+        ])
+        ->leftJoin('competency_indicator', 'competency_indicator.id = position_competency_indicator.indicator_id')
+        ->leftJoin('competency', 'competency.comp_id = competency_indicator.competency_id')
+        ->where([
+            'position_id' => $position_id,
+            'competency.comp_id' => $competency->comp_id
+        ])
+        ->orderBy([
+            'type' => SORT_ASC,
+            'competency' => SORT_ASC,
+            'proficiency' => SORT_DESC,
+            'indicator' => SORT_ASC
+        ])
+        ->asArray()
+        ->all();
 
         $availableDescriptors = [];
+        $descriptorModels = [];
+        
+        $checkCompetencyProficiencies = [];
+        $isChecked = true;
 
-        usort($descriptors, function($a, $b) {
-            $order = ['Organizational', 'Managerial', 'Technical/Functional'];
-            $index_a = array_search($a['type'], $order);
-            $index_b = array_search($b['type'], $order);
-            return $index_a - $index_b;
-        });
-
-        if(!empty($descriptors)){
-            foreach($descriptors as $i => $descriptor){
-                $item = [];
-                $percent = Competency::findOne(['comp_id' => $descriptor['id']])->getStaffCompetencyPerCareerPercentage($model->emp_id, $model->position_id);
-
-                if($percent > 0 && $percent < 100){
-                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important; background:
-                    linear-gradient(90deg, rgba(164,212,180,1) '.$percent.'%, #F5F5F5 '.$percent.'%) !important;"><tr><td style="padding: 10px;" onClick="viewSelectedCareerCompetency('.$descriptor['id'].',\''.$model->emp_id.'\',\''.$model->position_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td>
-                    <td align=right style="padding: 10px;">'.number_format($percent, 2).'%</td></tr></table>';
-                }else if($percent == 100){
-                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important; background: rgba(164,212,180,1) !important;"><tr><td style="padding: 10px;" onClick="viewSelectedCareerCompetency('.$descriptor['id'].',\''.$model->emp_id.'\',\''.$model->position_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td>
-                    <td align=right style="padding: 10px;">'.$percent.'%</td></tr></table>';
-                }else{
-                    $item['label'] = '<table style="font-size: 14px; width: 100%; height: 100% !important;"><tr><td style="padding: 10px;" onClick="viewSelectedCareerCompetency('.$descriptor['id'].',\''.$model->emp_id.'\',\''.$model->position_id.'\')">'.$descriptor['competency'].' ('.$descriptor['proficiency'].')</td></tr></table>';
-                }
-                $item['content'] = '<div id="my-selected-career-competency-'.$model->position_id.'-'.$descriptor['id'].'-information"></div>';
-                $item['options'] = ['class' => 'panel panel-default'];
-
-                $availableDescriptors[$descriptor['type']][] = $item;
+        if($descriptors){
+            foreach($descriptors as $descriptor){
+                $checkCompetencyProficiencies[$descriptor['proficiency']] = 0;
             }
         }
 
+        if($descriptors){
+            foreach($descriptors as $descriptor){
+                $availableDescriptors[$descriptor['proficiency']][] = $descriptor;
 
-        return $this->renderAjax('competencies', [
+                $indicatorModel = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $descriptor['id']]) ? StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $descriptor['id']]) : new StaffAllIndicator();
+
+                $indicatorModel->emp_id = $model->emp_id;
+                $indicatorModel->indicator_id = $descriptor['id'];
+
+                $descriptorModels[$descriptor['proficiency']][$descriptor['id']] = $indicatorModel;
+
+                $checkCompetencyProficiencies[$descriptor['proficiency']] += !$indicatorModel->isNewRecord ? $indicatorModel->compliance : 0; 
+            }
+        }
+
+        if(Yii::$app->request->post()){
+            $postData = Yii::$app->request->post();
+
+            $indicatorModel = StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $postData['id']]) ? StaffAllIndicator::findOne(['emp_id' => $model->emp_id, 'indicator_id' => $postData['id']]) : new StaffAllIndicator();
+
+            $indicatorModel->emp_id = $model->emp_id;
+            $indicatorModel->indicator_id = $postData['id'];
+            $indicatorModel->compliance = $postData['value'];
+
+            if($indicatorModel->save())
+            {
+                $positions = StaffCompetencyIndicator::find()->select(['distinct(position_id) as position_id'])->where(['emp_id' => $model->emp_id])->asArray()->all();
+                $positions = ArrayHelper::map($positions, 'position_id', 'position_id');
+                $positions[$model->item_no] = $model->item_no;
+
+                if(!empty($positions)){
+                    foreach($positions as $position){
+
+                        $staffCompetencyIndicatorModel = StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $position, 'indicator_id' => $postData['id']]) ? StaffCompetencyIndicator::findOne(['emp_id' => $model->emp_id, 'position_id' => $position, 'indicator_id' => $postData['id']]) : new StaffCompetencyIndicator();
+
+                        $staffCompetencyIndicatorModel->emp_id = $model->emp_id;
+                        $staffCompetencyIndicatorModel->position_id = $position;
+                        $staffCompetencyIndicatorModel->indicator_id = $postData['id'];
+                        $staffCompetencyIndicatorModel->compliance = $postData['value'];
+                        $staffCompetencyIndicatorModel->save();
+
+                    }
+                }
+            }
+        }
+
+        return $this->renderAjax('competency', [
             'model' => $model,
+            'competency' => $competency,
             'availableDescriptors' => $availableDescriptors,
-            'tab' => 'designation'
+            'checkCompetencyProficiencies' => $checkCompetencyProficiencies,
+            'descriptorModels' => $descriptorModels
         ]);
     }
 }

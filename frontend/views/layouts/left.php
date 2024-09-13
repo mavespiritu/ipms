@@ -65,8 +65,8 @@
                             ['label' => 'Dictionary', 'icon' => 'folder', 'url' => ['/npis/competency'], 'visible' => Yii::$app->user->can('HR')],
                             ['label' => 'Indicators', 'icon' => 'folder', 'url' => ['/npis/indicator'], 'visible' => Yii::$app->user->can('HR')],
                             ['label' => 'LSPs', 'icon' => 'folder', 'url' => ['/npis/lsp'], 'visible' => Yii::$app->user->can('HR')],
-                            ['label' => 'Trainings', 'icon' => 'folder', 'url' => ['/npis/training'], 'visible' => Yii::$app->user->can('HR')],
-                            ['label' => 'Positions', 'icon' => 'folder', 'url' => ['/npis/position'], 'visible' => Yii::$app->user->can('HR')],
+                            ['label' => 'Trainings', 'icon' => 'folder', 'url' => ['/npis/training'], 'visible' => Yii::$app->user->can('Staff')],
+                            ['label' => 'Positions', 'icon' => 'folder', 'url' => ['/npis/position'], 'visible' => Yii::$app->user->can('Staff')],
                             ['label' => 'Designations', 'icon' => 'folder', 'url' => ['/npis/designation'], 'visible' => Yii::$app->user->can('HR')],
                         ],
                         

@@ -38,10 +38,6 @@ use yii\bootstrap\Collapse;
     <?php endif;
 ?>
 
-<div>
-    <?= Yii::$app->user->can('HR') ? Html::button('Add new designation', ['value' => Url::to(['/npis/cga/select-designation', 'emp_id' => $model->emp_id]), 'class' => 'btn btn-success', 'id' => 'select-designation-button']) : '' ?>
-</div>
-<br>
 <?php $form = ActiveForm::begin([
     'options' => ['id' => 'designation-view-form', 'enctype' => 'multipart/form-data', 'method' => 'post'],
     //'enableAjaxValidation' => true,
@@ -55,7 +51,8 @@ use yii\bootstrap\Collapse;
         ],
         'pluginEvents' => [
             'change' => 'function() { 
-                viewSelectedDesignation("'.$model->emp_id.'", this.value); 
+                viewSelectedDesignation(this.value); 
+                viewDesignationCompetencies(this.value); 
             }',
         ],
     ])->label('Choose designation to view competencies') : ''
@@ -102,8 +99,9 @@ use yii\bootstrap\Collapse;
 <?php
     $script = !empty($designations) ? "
         $(document).ready(function(){
-            viewSelectedDesignation('".$model->emp_id."', '".$currentDesignation->position_id."'); 
-            viewSelectedDesignationCompetency('".$model->emp_id."', '".$currentDesignation->position_id."'); 
+            viewSelectedDesignation('".$currentDesignation->id."'); 
+            viewDesignationCompetencies('".$currentDesignation->id."'); 
+            
         });  
     " : "";
 

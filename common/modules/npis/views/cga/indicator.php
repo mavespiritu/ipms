@@ -14,12 +14,12 @@ use yii\web\View;
             <table class="table table-condensed table-responsive">
                 <tbody>
                     <tr>
-                        <td>Competency:</td>
-                        <td><b><?= $indicator->competency->competency ?></b></td>
-                        <td>Proficiency Level:</td>
-                        <td><b><?= $indicator->proficiency ?></b></td>
-                        <td>Indicator:</td>
-                        <td><b><?= $indicator->indicator ?></b></td>
+                        <td style="width: 13%;">Competency:</td>
+                        <td style="width: 20%;"><b><?= $indicator->competency->competency ?></b></td>
+                        <td style="width: 13%;">Proficiency Level:</td>
+                        <td style="width: 20%;"><b><?= $indicator->proficiency ?></b></td>
+                        <td style="width: 13%;">Indicator:</td>
+                        <td style="width: 20%;"><b><?= $indicator->indicator ?></b></td>
                     </tr>
                 </tbody>
             </table>
@@ -37,11 +37,11 @@ use yii\web\View;
                 'content' => '<div id="evidences-'.$tab.'"></div>',
                 'headerOptions' => ['onClick' => 'viewEvidences("'.$indicator->id.'", "'.$model->emp_id.'", "'.$tab.'")'],
             ],
-            [
+            /* [
                 'label' => 'Proposed Trainings <span class="badge bg-green" id="training-badge-'.$indicator->id.'">0</span>',
                 'content' => '<div id="trainings-'.$tab.'"></div>',
                 'headerOptions' => ['onClick' => 'viewTrainings("'.$indicator->id.'", "'.$tab.'")'],
-            ],
+            ], */
         ],
     ]); ?>
     </div>

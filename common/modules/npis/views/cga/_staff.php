@@ -26,7 +26,7 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
                         'headerOptions' => ['onclick' => 'viewMyCurrentPosition("'.$model->emp_id.'")'],
                     ],
                     [
-                        'label' => 'Current Designation',
+                        'label' => 'Designations',
                         'content' => '<div id="my-current-designation"></div>',
                         'headerOptions' => ['onclick' => 'viewMyCurrentDesignation("'.$model->emp_id.'")'],
                     ],
