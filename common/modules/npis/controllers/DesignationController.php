@@ -118,7 +118,7 @@ class DesignationController extends Controller
 
         if(Yii::$app->request->post())
         {
-            $postData = Yii::$app->request->post('Training');
+            $postData = Yii::$app->request->post('CareerPath');
             $selectedIndexes = ArrayHelper::map($postData, 'id', 'id');
             $selectedIndexes = array_filter($selectedIndexes, function($value) {
                 return $value != 0;
@@ -129,7 +129,7 @@ class DesignationController extends Controller
             \Yii::$app->response->format = \yii\web\Response::FORMAT_JSON;
             try {
                 if(!empty($selectedIndexes)){
-                    if(Training::deleteAll(['id' => $selectedIndexes]))
+                    if(CareerPath::deleteAll(['id' => $selectedIndexes]))
                     {
                         $transaction->commit();
                         \Yii::$app->getSession()->setFlash('success', 'Records have been deleted successfully');

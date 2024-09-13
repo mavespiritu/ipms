@@ -33,6 +33,11 @@ $successMessage = \Yii::$app->getSession()->getFlash('success');
                             'headerOptions' => ['onclick' => 'viewMyCurrentPosition("'.$model->emp_id.'")'],
                         ],
                         [
+                            'label' => 'Designations',
+                            'content' => '<div id="my-current-designation"></div>',
+                            'headerOptions' => ['onclick' => 'viewMyCurrentDesignation("'.$model->emp_id.'")'],
+                        ],
+                        [
                             'label' => 'Career Path',
                             'content' => '<div id="my-career-path"></div>',
                             'headerOptions' => ['onclick' => 'viewMyCareerPath("'.$model->emp_id.'")'],
@@ -120,6 +125,26 @@ if ($successMessage) {
                     $("#my-competencies").hide();
                     $("#my-competencies").fadeIn("slow");
                     $("#my-competencies").html(data);
+                },
+                error: function (err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        function viewMyCurrentDesignation(emp_id)
+        {
+            $.ajax({
+                url: "'.Url::to(['/npis/cga/my-current-designation']).'?emp_id=" + emp_id,
+                beforeSend: function(){
+                    $("#my-current-designation").html("<div class=\"text-center\" style=\"height: calc(100vh - 297px); display: flex; align-items: center; justify-content: center;\"><svg class=\"spinner\" width=\"30px\" height=\"30px\" viewBox=\"0 0 66 66\" xmlns=\"http://www.w3.org/2000/svg\"><circle class=\"path\" fill=\"none\" stroke-width=\"6\" stroke-linecap=\"round\" cx=\"33\" cy=\"33\" r=\"30\"></circle></svg></div>");
+                },
+                success: function (data) {
+                    console.log(this.data);
+                    $("#my-current-designation").empty();
+                    $("#my-current-designation").hide();
+                    $("#my-current-designation").fadeIn("slow");
+                    $("#my-current-designation").html(data);
                 },
                 error: function (err) {
                     console.log(err);

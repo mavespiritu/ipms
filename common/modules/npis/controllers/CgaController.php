@@ -2063,6 +2063,22 @@ class CgaController extends Controller
 
         $existingDesignations = ArrayHelper::map($existingDesignations, 'position_id', 'position_id');
 
+        // for local setup
+        /* $designations = CareerPath::find()
+            ->select(['career_path.id', 'concat(e.division_id,": ",p.post_description," (",e.item_no,") effective ",DATE_FORMAT(career_path.start_date, "%M %e, %Y")) as title'])
+            ->leftJoin('personnel_dtr.tblemp_position_item e', 'e.item_no = career_path.position_id')
+            ->leftJoin('personnel_dtr.tblposition p', 'p.position_id = e.position_id')
+            ->andWhere([
+                'career_path.emp_id' => $emp_id,
+                'career_path.type' => 'Designation'
+            ])
+            ->orderBy([
+                'e.division_id' => SORT_ASC,
+                'p.post_description' => SORT_ASC,
+            ])
+            ->asArray()
+            ->all(); */
+
         $designations = CareerPath::find()
             ->select(['career_path.id', 'concat(e.division_id,": ",p.post_description," (",e.item_no,") effective ",DATE_FORMAT(career_path.start_date, "%M %e, %Y")) as title'])
             ->leftJoin('personnel_dtr.tblemp_position_item e', 'e.item_no = career_path.position_id')
